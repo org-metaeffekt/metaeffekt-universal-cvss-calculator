@@ -189,7 +189,19 @@
     --cvss-3P1-color: rgb(45, 156, 231);
     --cvss-4P0-color: rgb(255, 197, 62);
     --selected-vector-indicator-size: 8px;
-    --footer-height: 144px;
+    --footer-height: 70px;
+}
+
+@media (max-width: 1400px) {
+    :root {
+        --footer-height: 100px;
+    }
+}
+
+@media (max-width: 990px) {
+    :root {
+        --footer-height: 144px;
+    }
 }
 
 html {

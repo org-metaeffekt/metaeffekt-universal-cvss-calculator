@@ -83,3 +83,7 @@ outputs
   "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:L"
 }
 ```
+
+## Todo
+
+- Button to export images of the score tables, charts and vectors
