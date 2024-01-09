@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CVSS Calculator by {metæffekt}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="language" content="en">
+    <meta name="author" content="{metæffekt} GmbH">
+    <meta name="description"
+          content="An online CVSS Calculator for all currently released CVSS versions by {metæffekt}">
+    <meta name="keywords" content="CVSS, Calculator, CVSS Calculator, CVSS 2.0, CVSS 3.0, CVSS 3.1, CVSS 4.0">
+    <meta name="robots" content="index, follow">
+    <meta name="theme-color" content="#ffffff">
+
+    <meta property="og:title" content="CVSS Calculator by {metæffekt}">
+    <meta property="og:site_name" content="CVSS Calculator by {metæffekt}">
+    <meta property="og:description"
+          content="An online CVSS Calculator for all currently released CVSS versions by {metæffekt}">
+    <meta property="og:image" content="img/calculator-preview.png">
+    <meta property="og:type" content="website">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="CVSS Calculator by {metæffekt}">
+    <meta name="twitter:description"
+          content="An online CVSS Calculator for all currently released CVSS versions by {metæffekt}">
+    <meta name="twitter:image" content="img/calculator-preview.png">
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+            crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css" rel="stylesheet">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"
+            integrity="sha512-ElRFoEQdI5Ht6kZvyzXhYG9NqjtkmlkfYk0wr6wHxU9JEHakS7UJZNeml5ALk+8IKlU6jDgMabC3vkumRokgJA=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <!-- development version -->
+    <script src="../ae-cvss-calculator/dist/ae-cvss-calculator.js"></script>
+    <!-- production version -->
+    <!--<script src="js/ae-cvss-calculator.js"></script>-->
+
+    <link rel="stylesheet" href="styles.css">
+    <script src="js/nvd-api-fetcher.js" defer></script>
+    <script src="js/scripts.js" defer></script>
+</head>
+
+<body>
+
+<div class="container mt-5">
+    <h2 class="mb-4"><span>Universal CVSS Calculator</span>
+        <a class="fs-4 ms-2 by-metaeffekt-header" href="https://metaeffekt.com" target="_blank">by {metæffekt}</a>
+    </h2>
+    <div class="row">
+        <div class="col-lg-8 col-md-12 col-12 mb-3">
+
+            <div class="d-flex gap-4 cvss-creation-utils-container">
+                <div class="input-group mb-3" style="width: fit-content;">
+                    <button type="button" class="btn btn-success"
+                            data-bs-toggle="popover" data-bs-placement="top"
+                            data-bs-content="Use the buttons on the right to add a new vector." data-bs-trigger="hover">
+                        <i class="bi bi-plus-circle-fill"></i> &nbsp;CVSS
+                    </button>
+                    <button type="button" class="btn btn-outline-success" onclick="appendNewEmptyVector('2.0','2.0');"
+                            data-bs-toggle="popover" data-bs-placement="top"
+                            data-bs-content="Append a new CVSS 2.0 Vector" data-bs-trigger="hover">
+                        2.0
+                    </button>
+                    <button type="button" class="btn btn-outline-success" onclick="appendNewEmptyVector('3.1','3.1');"
+                            data-bs-toggle="popover" data-bs-placement="top"
+                            data-bs-content="Append a new CVSS 3.1 Vector" data-bs-trigger="hover">
+                        3.1
+                    </button>
+                    <button type="button" class="btn btn-outline-success" onclick="appendNewEmptyVector('4.0','4.0');"
+                            data-bs-toggle="popover" data-bs-placement="top"
+                            data-bs-content="Append a new CVSS 4.0 Vector" data-bs-trigger="hover">
+                        4.0
+                    </button>
+                </div>
+                <div class="input-group mb-3" style="flex-grow: 0; max-width: 270px;">
+                    <button type="button" class="btn btn-success" id="inputAddVectorByVulnerabilityLabel"
+                            onclick="appendVectorByVulnerability(document.getElementById('inputAddVectorByVulnerability').value);"
+                            data-bs-toggle="popover" data-bs-placement="top"
+                            data-bs-content="Enter a CVE to fetch it's vectors." data-bs-trigger="hover">
+                        <i class="bi bi-plus-circle-fill"></i> &nbsp;NVD
+                    </button>
+                    <input type="text" class="form-control" placeholder="CVE-2022-21703" aria-label="Vulnerability"
+                           id="inputAddVectorByVulnerability"
+                           aria-describedby="inputAddVectorByVulnerabilityLabel"
+                           onkeydown="if (event.keyCode === 13) { appendVectorByVulnerability(this.value); }">
+                </div>
+
+                <div class="mt-2 only-if-no-vectors-present hide-on-small-screens">
+                    <i class="bi bi-arrow-left me-2"></i>
+                    <span class="text-secondary">Enter a CVE to fetch it's CVSS vectors.</span>
+                </div>
+            </div>
+
+            <div class="mt-1 only-if-no-vectors-present" style="margin-left:115px;">
+                <i class="bi bi-arrow-90deg-up me-2"></i>
+                <span class="text-secondary">Add a CVSS vector using the buttons to get started!</span>
+            </div>
+
+            <div class="mt-3 only-if-no-vectors-present" style="margin-left:115px;">
+                <i class="bi bi-book me-2"></i>
+                <span class="text-secondary footer-link" style="cursor:pointer;"
+                      data-bs-toggle="modal" data-bs-target="#explanationModal">
+                    How to use
+                </span>
+            </div>
+
+            <div id="cvss-vector-list" class="d-flex flex-column gap-2"></div>
+
+            <!-- a section where the calculated CVSS score parts are shown -->
+            <div class="mt-4" id="cvss-score-details"></div>
+
+            <!-- a section where CVSS vector parts are explained and can be modified -->
+            <div class="accordion mt-5" id="cvss-component-details"></div>
+        </div>
+
+        <div id="additionalRadarChartContainer" class="col-lg-4 col-md-8 col-12">
+            <div class="card mb-3" id="defaultSeverityRadarContainer">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span>Severity Radar</span>
+                    <!-- input toggle switch between displaying them all in one chart or in separate charts -->
+                    <div class="d-flex align-items-center" id="severityRadarToggleContainer">
+                        <span class="me-2 text-secondary">combined</span>
+                        <div class="form-check form-switch" style="margin-right: -10px">
+                            <label class="form-check-label text-secondary" for="severityRadarToggle"
+                                   style="display: none">
+                                combined
+                            </label>
+                            <input class="form-check-input" type="checkbox" id="severityRadarToggle" checked>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <canvas id="defaultSeverityRadar"></canvas>
+                </div>
+            </div>
+
+            <!-- additional radar charts per version will be appended here -->
+
+            <div id="cvss4MacroVectorExplanationCard" class="card mb-3">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span>CVSS:4.0 MacroVector</span>
+                    <i class="bi bi-question-circle-fill" data-bs-toggle="popover" data-bs-placement="top"
+                       data-bs-content="The MacroVector is a representation of a CVSS:4.0 vector with a reduced amount of dimensions, used as an intermediate step in the calculation of a CVSS:4.0 score."
+                       data-bs-trigger="hover"></i>
+                </div>
+                <div id="cvss4MacroVectorExplanation" class="card-body">
+                    Test
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer class="footer">
+    <div class="container pt-3 pt-md-4 px-4 px-md-3 text-body-secondary">
+        <div class="row">
+            <div class="col-lg-4 mb-4">
+                <a class="d-inline-flex align-items-center mb-2 text-body-secondary text-decoration-none"
+                   href="https://metaeffekt.com" target="_blank">
+                    <span class="fs-5">Universal CVSS Calculator by {metæffekt}</span>
+                </a>
+                <ul class="list-unstyled small">
+                    <li>
+                        <i class="bi bi-info-circle-fill me-1"></i>
+                        <a data-bs-toggle="modal" data-bs-target="#licenseModal" href="#" class="footer-link">
+                            Project Licenses
+                        </a>
+                    </li>
+                    <li class="mb-2">
+                        <i class="bi bi-book-fill me-1"></i>
+                        <a data-bs-toggle="modal" data-bs-target="#explanationModal" href="#" class="footer-link">
+                            How to use
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<div class="modal fade" id="licenseModal" tabindex="-1" aria-labelledby="licenseModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="licenseModalLabel">Project Licenses</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>
+                    The "CVSS Calculator" by {metæffekt} is licensed under the Apache License, Version 2.0
+                    (the "License"). A copy of the License is available at
+                    <a href="http://www.apache.org/licenses/LICENSE-2.0" target="_blank">
+                        http://www.apache.org/licenses/LICENSE-2.0</a>.
+                </p>
+
+                <hr>
+
+                <p>
+                    Portions of this project incorporate software and services:
+                </p>
+
+                <p>
+                    <b>Chart.js</b>: Copyright [year of Chart.js release] by [Chart.js authors/contributors].
+                    Chart.js is open source software released under the MIT License. The license details can be found at
+                    <a href="https://github.com/chartjs/Chart.js/blob/master/LICENSE.md" target="_blank">
+                        Chart.js License</a>.
+                </p>
+
+                <p>
+                    <b>Bootstrap</b>: Copyright 2023 by the Bootstrap authors and contributors.
+                    Bootstrap is released under the MIT License. The license details are available at
+                    <a href="https://getbootstrap.com/docs/5.3/about/license/" target="_blank">
+                        Bootstrap License</a>.
+                </p>
+
+                <p>
+                    <b>NIST NVD</b>: This product uses data from the NVD API but is not endorsed or certified by the NVD.
+                    <a href="https://nvd.nist.gov/developers/start-here" target="_blank">
+                        https://nvd.nist.gov/developers/start-here</a>.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade modal-lg" id="explanationModal" tabindex="-1" aria-labelledby="explanationModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="explanationModalLabel">Usage Guide</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h5>Creating new CVSS vectors</h5>
+                To add a new vector, select your desired CVSS version by clicking one of the buttons in the left
+                button group.
+                For importing multiple vectors from a CVE, enter the CVE ID into the right-hand input field and click
+                the adjacent button or press enter.<br>
+                <img src="img/how-to-cvss-creation-buttons.webp" alt="CVSS creation buttons"
+                     style="width:70%" class="img-fluid">
+                <hr>
+                <h5>Editing CVSS vectors</h5>
+                Click on a vector in the list to select it.
+                A small arrow will appear to the left of the selected vector.
+                <img src="img/how-to-select-vectors.webp" alt="CVSS list" class="img-fluid">
+                You can directly edit the vector in the above text field, but below, you'll find a series of accordion
+                elements, each representing a different segment of the CVSS vector, which allow for more convenient
+                editing.
+                <img src="img/how-to-vector-accordion-closed.webp" alt="Closed editing accordion"
+                     class="img-fluid">
+                Expand an accordion section by clicking its header to view and modify the individual components of that
+                vector segment.
+                <img src="img/how-to-vector-accordion-open.webp" alt="Opened editing accordion" class="img-fluid">
+                <hr>
+                <h5>Interpreting the results</h5>
+                The scores calculated from the vectors are displayed in a table below the vector list.
+                Occasionally, scores are shown in a format like
+                "<span><span style="color: var(--strong-yellow)">3.4</span> →
+                    <span style="color: var(--strong-light-orange)">5.7</span></span>".<br>
+                The second score alongside the original one will be a scaled score, as some vector versions, like
+                CVSS:3.1, don't normalize Impact and Exploitability scores to a 1-10 scale.
+                <img src="img/how-to-score-table.webp" alt="Score table" class="img-fluid">
+                The radar chart on the right visualizes the scores of the vectors.
+                Vectors can be excluded from this chart using the eye icon in the vector list.
+                <img src="img/how-to-severity-radar-combined.webp" alt="Severity radar (Combined)"
+                     style="width:50%" class="img-fluid">
+                Toggle the switch at the top of the radar chart to split it into multiple charts for each CVSS version,
+                improving readability when many vectors are present.
+                <img src="img/how-to-severity-radar-split.webp" alt="Severity radar (Combined)"
+                     style="width:50%" class="img-fluid">
+                <hr>
+                <h5>CVSS:4.0</h5>
+                CVSS:4.0 differs from previous versions in several ways:
+                <ul>
+                    <li>
+                        Only a Base Score is provided, which is used on every axis of the radar chart.
+                    </li>
+                    <li>
+                        During calculation, a <code>MacroVector</code> is calculated from the vector, which is a
+                        representation of the vector with a reduced amount of dimensions. This MacroVector is displayed
+                        below the radar chart if a CVSS:4.0 vector is selected.
+                    </li>
+                    <li>
+                        The <code>supplemental</code> metrics are purely informational and do not affect the calculated
+                        score.
+                    </li>
+                </ul>
+                <img src="img/how-to-cvss-4.0-example.webp" alt="CVSS:4.0 example"
+                     style="width:50%" class="img-fluid">
+                <hr>
+                <h5>Further notes</h5>
+                More can be read about the CVSS standard at:
+                <ul>
+                    <li><a href="https://www.first.org/cvss/v2/guide" target="_blank">
+                        CVSS:2.0 documentation
+                    </a></li>
+                    <li><a href="https://www.first.org/cvss/v3.1/specification-document" target="_blank">
+                        CVSS:3.1 documentation
+                    </a></li>
+                    <li><a href="https://www.first.org/cvss/v4.0/specification-document" target="_blank">
+                        CVSS:4.0 documentation
+                    </a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+</body>
+</html>
