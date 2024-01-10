@@ -276,7 +276,7 @@ THE SOFTWARE.
                     <a href="https://getbootstrap.com/docs/5.3/about/license/" target="_blank">
                         Bootstrap License
                     </a>
-                    <pre>
+                <pre>
 The MIT License (MIT)
 
 Copyright (c) 2011-2023 The Bootstrap Authors
@@ -306,7 +306,7 @@ THE SOFTWARE.
                     <a href="https://github.com/twbs/icons/blob/v1.11.3/LICENSE" target="_blank">
                         Bootstrap Icons License
                     </a>
-                    <pre>
+                <pre>
 The MIT License (MIT)
 
 Copyright (c) 2019-2024 The Bootstrap Authors
@@ -366,15 +366,17 @@ THE SOFTWARE.
                 <img src="img/how-to-vector-accordion-open.webp" alt="Opened editing accordion" class="img-fluid">
                 <hr>
                 <h5>Interpreting the results</h5>
-                The scores calculated from the vectors are displayed in a table below the vector list.
-                Occasionally, scores are shown in a format like
-                "<span><span style="color: var(--strong-yellow)">3.4</span> →
-                    <span style="color: var(--strong-light-orange)">5.7</span></span>".<br>
-                The second score alongside the original one will be a scaled score, as some vector versions, like
-                CVSS:3.1, don't normalize Impact and Exploitability scores to a 1-10 scale.
+                The table below the vector list shows the available calculated scores for each CVSS vector.
                 <img src="img/how-to-score-table.webp" alt="Score table" class="img-fluid">
-                The radar chart on the right visualizes the scores of the vectors.
-                Vectors can be excluded from this chart using the eye icon in the vector list.
+                Certain CVSS versions do not normalize all their scores to a 0-10 scale before displaying them.
+                For example, the Exploitability Score of CVSS:3.1 only has a version range of 0-6.1, which can confuse
+                users.
+                To make the scores more comparable, the calculator will display a scaled score alongside the original
+                score, which looks as follows: <span><span style="color: var(--strong-yellow)">3.4</span> →
+                <span style="color: var(--strong-light-orange)">5.7</span></span><br><br>
+                The radar chart on the right visualizes these scores.
+                Vectors can be excluded from this chart using the <i class="bi bi-eye-fill"></i> eye icon in the vector
+                list.
                 <img src="img/how-to-severity-radar-combined.webp" alt="Severity radar (Combined)"
                      style="width:50%" class="img-fluid">
                 Toggle the switch at the top of the radar chart to split it into multiple charts for each CVSS version,
@@ -405,13 +407,13 @@ THE SOFTWARE.
                 More can be read about the CVSS standard at:
                 <ul>
                     <li><a href="https://www.first.org/cvss/v2/guide" target="_blank">
-                        CVSS:2.0 documentation
+                        CVSS:2.0 documentation (https://www.first.org/cvss/v2/guide)
                     </a></li>
                     <li><a href="https://www.first.org/cvss/v3.1/specification-document" target="_blank">
-                        CVSS:3.1 documentation
+                        CVSS:3.1 documentation (https://www.first.org/cvss/v3.1/specification-document)
                     </a></li>
                     <li><a href="https://www.first.org/cvss/v4.0/specification-document" target="_blank">
-                        CVSS:4.0 documentation
+                        CVSS:4.0 documentation (https://www.first.org/cvss/v4.0/specification-document)
                     </a></li>
                 </ul>
             </div>
