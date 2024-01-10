@@ -71,7 +71,7 @@ export class Cvss2 extends CvssVector<MultiScoreResult> {
 
     private calculateExactTemporalScore(): number {
         if (!this.isAnyTemporalDefined()) return 0;
-        let baseScore = this.calculateExactBaseScore();
+        let baseScore = super.round(this.calculateExactBaseScore(), 1);
         let exploitability = this.getComponent(Cvss2.E).value;
         let remediationLevel = this.getComponent(Cvss2.RL).value;
         let reportConfidence = this.getComponent(Cvss2.RC).value;

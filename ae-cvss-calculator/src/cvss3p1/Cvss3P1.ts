@@ -46,7 +46,7 @@ export class Cvss3P1 extends CvssVector<MultiScoreResult> {
             exploitability: baseFullyDefined ? super.normalizeScore(super.round(this.calculateExactExploitabilityScore(), 1), normalize ? 3.9 : 10) : undefined,
             temporal: baseFullyDefined && temporalAnyDefined ? super.round(this.calculateExactTemporalScore(), 1) : undefined,
             environmental: baseFullyDefined && environmentalAnyDefined ? super.round(this.calculateExactEnvironmentalScore(), 1) : undefined,
-            modifiedImpact: baseFullyDefined && environmentalAnyDefined ? super.normalizeScore(super.round(this.calculateExactAdjustedImpactScore(), 1), normalize ? 6.1 : 10) : undefined,
+            modifiedImpact: baseFullyDefined && environmentalAnyDefined ? super.normalizeScore(super.round(Math.max(0, this.calculateExactAdjustedImpactScore()), 1), normalize ? 6.1 : 10) : undefined,
             overall: super.round(this.calculateExactOverallScore(), 1),
             vector: this.toString()
         };
@@ -232,8 +232,8 @@ export class Cvss3P1 extends CvssVector<MultiScoreResult> {
     }
 
     public calculateExactOverallScore(): number {
-        if (this.isEnvironmentalFullyDefined()) return this.calculateExactEnvironmentalScore();
-        else if (this.isTemporalFullyDefined()) return this.calculateExactTemporalScore();
+        if (this.isAnyEnvironmentalDefined()) return this.calculateExactEnvironmentalScore();
+        else if (this.isAnyTemporalDefined()) return this.calculateExactTemporalScore();
         return this.calculateExactBaseScore();
     }
 

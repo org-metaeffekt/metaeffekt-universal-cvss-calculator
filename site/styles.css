@@ -198,9 +198,9 @@
     }
 }
 
-@media (max-width: 990px) {
+@media (max-width: 991px) {
     :root {
-        --footer-height: 144px;
+        --footer-height: 147px;
     }
 }
 
@@ -334,4 +334,42 @@ body {
     margin-top: 1rem;
     padding-left: 1rem;
     padding-right: 1rem;
+}
+
+.accordion-cvss-3P1 {
+    /* default */
+}
+
+.accordion-cvss-4P0 {
+    --bs-accordion-btn-color: var(--bs-dark);
+    /* --bs-accordion-btn-bg: var(--bs-warning-bg-subtle); */
+    --bs-accordion-active-color: var(--bs-dark);
+    --bs-accordion-active-bg: var(--bs-warning-bg-subtle);
+}
+
+.accordion-cvss-4P0 .badge.bg-primary {
+    background-color: var(--bs-warning) !important;
+    color: var(--bs-dark);
+}
+
+.accordion-cvss-4P0 .btn.btn-primary {
+    background-color: var(--bs-warning) !important;
+    color: var(--bs-gray-700);
+    border-color: var(--bs-warning) !important;
+}
+
+.accordion-cvss-2P0 {
+    --bs-accordion-btn-color: var(--bs-dark);
+    /* --bs-accordion-btn-bg: #ffccd7; */
+    --bs-accordion-active-color: var(--bs-dark);
+    --bs-accordion-active-bg: #ffccd7;
+}
+
+.accordion-cvss-2P0 .badge.bg-primary {
+    background-color: var(--cvss-2-color) !important;
+}
+
+.accordion-cvss-2P0 .btn.btn-primary {
+    background-color: var(--cvss-2-color) !important;
+    border-color: var(--cvss-2-color) !important;
 }

@@ -32,7 +32,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
             crossorigin="anonymous"></script>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"
             integrity="sha512-ElRFoEQdI5Ht6kZvyzXhYG9NqjtkmlkfYk0wr6wHxU9JEHakS7UJZNeml5ALk+8IKlU6jDgMabC3vkumRokgJA=="
@@ -41,7 +41,7 @@
     <!-- development version -->
     <script src="../ae-cvss-calculator/dist/ae-cvss-calculator.js"></script>
     <!-- production version -->
-    <!--<script src="js/ae-cvss-calculator.js"></script>-->
+    <script src="js/ae-cvss-calculator.js"></script>
 
     <link rel="stylesheet" href="styles.css">
     <script src="js/nvd-api-fetcher.js" defer></script>
@@ -121,38 +121,40 @@
             <div class="accordion mt-5" id="cvss-component-details"></div>
         </div>
 
-        <div id="additionalRadarChartContainer" class="col-lg-4 col-md-8 col-12">
-            <div class="card mb-3" id="defaultSeverityRadarContainer">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <span>Severity Radar</span>
-                    <!-- input toggle switch between displaying them all in one chart or in separate charts -->
-                    <div class="d-flex align-items-center" id="severityRadarToggleContainer">
-                        <span class="me-2 text-secondary">combined</span>
-                        <div class="form-check form-switch" style="margin-right: -10px">
-                            <label class="form-check-label text-secondary" for="severityRadarToggle"
-                                   style="display: none">
-                                combined
-                            </label>
-                            <input class="form-check-input" type="checkbox" id="severityRadarToggle" checked>
+        <div class="col-lg-4 col-md-8 col-12 mb-4">
+            <div id="additionalRadarChartContainer" class="position-sticky" style="top:10px;">
+                <div class="card mb-3" id="defaultSeverityRadarContainer">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <span>Severity Radar</span>
+                        <!-- input toggle switch between displaying them all in one chart or in separate charts -->
+                        <div class="d-flex align-items-center" id="severityRadarToggleContainer">
+                            <span class="me-2 text-secondary">combined</span>
+                            <div class="form-check form-switch" style="margin-right: -10px">
+                                <label class="form-check-label text-secondary" for="severityRadarToggle"
+                                       style="display: none">
+                                    combined
+                                </label>
+                                <input class="form-check-input" type="checkbox" id="severityRadarToggle" checked>
+                            </div>
                         </div>
                     </div>
+                    <div class="card-body">
+                        <canvas id="defaultSeverityRadar"></canvas>
+                    </div>
                 </div>
-                <div class="card-body">
-                    <canvas id="defaultSeverityRadar"></canvas>
-                </div>
-            </div>
 
-            <!-- additional radar charts per version will be appended here -->
+                <!-- additional radar charts per version will be appended here -->
 
-            <div id="cvss4MacroVectorExplanationCard" class="card mb-3">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <span>CVSS:4.0 MacroVector</span>
-                    <i class="bi bi-question-circle-fill" data-bs-toggle="popover" data-bs-placement="top"
-                       data-bs-content="The MacroVector is a representation of a CVSS:4.0 vector with a reduced amount of dimensions, used as an intermediate step in the calculation of a CVSS:4.0 score."
-                       data-bs-trigger="hover"></i>
-                </div>
-                <div id="cvss4MacroVectorExplanation" class="card-body">
-                    Test
+                <div id="cvss4MacroVectorExplanationCard" class="card mb-3">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <span>CVSS:4.0 MacroVector</span>
+                        <i class="bi bi-question-circle-fill" data-bs-toggle="popover" data-bs-placement="top"
+                           data-bs-content="The MacroVector is a representation of a CVSS:4.0 vector with a reduced amount of dimensions, used as an intermediate step in the calculation of a CVSS:4.0 score."
+                           data-bs-trigger="hover"></i>
+                    </div>
+                    <div id="cvss4MacroVectorExplanation" class="card-body">
+                        Test
+                    </div>
                 </div>
             </div>
         </div>
@@ -174,10 +176,16 @@
                     Project Licenses
                 </a>
             </div>
-            <div class="col-lg-2 mb-4">
+            <div class="col-lg-2">
                 <i class="bi bi-book-fill me-1"></i>
                 <a data-bs-toggle="modal" data-bs-target="#explanationModal" href="#" class="footer-link">
                     How to use
+                </a>
+            </div>
+            <div class="col-lg-2 mb-2">
+                <i class="bi bi-braces-asterisk me-1"></i>
+                <a data-bs-toggle="modal" data-bs-target="#changelogModal" href="#" class="footer-link">
+                    v1.0.0
                 </a>
             </div>
         </div>
@@ -313,6 +321,23 @@
                     <li><a href="https://www.first.org/cvss/v4.0/specification-document" target="_blank">
                         CVSS:4.0 documentation
                     </a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="changelogModal" tabindex="-1" aria-labelledby="changelogModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="changelogModalLabel">Changelog</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h5>Version 1.0.0 <span class="fs-6 text-secondary ms-2">2024-01-10</span></h5>
+                <ul>
+                    <li>Initial release</li>
                 </ul>
             </div>
         </div>

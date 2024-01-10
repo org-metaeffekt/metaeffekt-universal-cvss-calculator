@@ -72,6 +72,7 @@ class CvssVectorRepresentation {
             }
             updateScores();
             storeInGet();
+            unregisterAllTooltips(this.domElement);
         });
 
         this.visibilityToggleButton.addEventListener('click', () => {
@@ -132,6 +133,10 @@ class CvssVectorRepresentation {
         {
             visibilityToggleButton.type = 'button';
             visibilityToggleButton.classList.add('btn', 'btn-outline-secondary', 'cvss-vector-button-toggle-visibility');
+            visibilityToggleButton.setAttribute('data-bs-toggle', 'popover');
+            visibilityToggleButton.setAttribute('data-bs-placement', 'top');
+            visibilityToggleButton.setAttribute('data-bs-content', 'Show/Hide vector');
+            visibilityToggleButton.setAttribute('data-bs-trigger', 'hover');
             const visibilityIcon = document.createElement('i');
             visibilityIcon.classList.add('bi', 'bi-eye');
             visibilityToggleButton.appendChild(visibilityIcon);
@@ -142,11 +147,17 @@ class CvssVectorRepresentation {
         {
             removeButton.type = 'button';
             removeButton.classList.add('btn', 'btn-outline-danger', 'cvss-vector-button-remove');
+            removeButton.setAttribute('data-bs-toggle', 'popover');
+            removeButton.setAttribute('data-bs-placement', 'top');
+            removeButton.setAttribute('data-bs-content', 'Remove vector');
+            removeButton.setAttribute('data-bs-trigger', 'hover');
             const removeIcon = document.createElement('i');
             removeIcon.classList.add('bi', 'bi-dash-circle');
             removeButton.appendChild(removeIcon);
             domElement.appendChild(removeButton);
         }
+
+        updateTooltip(domElement);
 
         return [domElement, nameElement, vectorStringElement, visibilityToggleButton, removeButton];
     }
@@ -328,7 +339,8 @@ function appendVectorByVulnerability(vulnerability) {
         return;
     }
 
-    document.getElementById('inputAddVectorByVulnerability').value = '';
+    const inputElement = document.getElementById('inputAddVectorByVulnerability');
+    inputElement.setAttribute('disabled', 'disabled')
 
     isCurrentlyFetchingFromVulnerability = true;
     const inputAddVectorByVulnerabilityLabel = document.getElementById('inputAddVectorByVulnerabilityLabel');
@@ -336,10 +348,11 @@ function appendVectorByVulnerability(vulnerability) {
     inputAddVectorByVulnerabilityLabel.classList.add('btn-secondary');
 
     const inputLabelPreviousContent = inputAddVectorByVulnerabilityLabel.innerHTML;
-    inputAddVectorByVulnerabilityLabel.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> &nbsp;CVSS';
+    inputAddVectorByVulnerabilityLabel.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> &nbsp;NVD';
 
     fetchVulnerabilityData(vulnerability)
         .then(json => {
+            inputElement.removeAttribute('disabled');
             isCurrentlyFetchingFromVulnerability = false;
             const cvssVectors = extractCvssVectors(json);
 
@@ -354,6 +367,8 @@ function appendVectorByVulnerability(vulnerability) {
             }
             inputAddVectorByVulnerabilityLabel.classList.remove('btn-danger');
             inputAddVectorByVulnerabilityLabel.classList.add('btn-success');
+
+            inputElement.value = '';
 
             for (let cvssVector of cvssVectors) {
                 let name = vulnerability;
@@ -370,6 +385,7 @@ function appendVectorByVulnerability(vulnerability) {
         })
         .catch(error => {
             isCurrentlyFetchingFromVulnerability = false;
+            inputElement.removeAttribute('disabled');
             inputAddVectorByVulnerabilityLabel.classList.remove('btn-secondary');
             inputAddVectorByVulnerabilityLabel.classList.remove('btn-success');
             inputAddVectorByVulnerabilityLabel.classList.add('btn-danger');
@@ -386,15 +402,19 @@ function capitalizeFirstLetter(string) {
 }
 
 function interpolateChartScores(scores) {
-    if (!scores.environmental && scores.base && scores.exploitability) {
+    if (isNotDefined(scores.environmental) && scores.base && scores.exploitability) {
         scores.environmental = createInterpolationPoint(scores.base, scores.exploitability);
     }
-    if (!scores.modifiedImpact && scores.base && scores.impact) {
+    if (isNotDefined(scores.modifiedImpact) && scores.base && scores.impact) {
         scores.modifiedImpact = createInterpolationPoint(scores.base, scores.impact);
     }
-    if (!scores.temporal && scores.exploitability && scores.impact) {
+    if (isNotDefined(scores.temporal) && scores.exploitability && scores.impact) {
         scores.temporal = createInterpolationPoint(scores.exploitability, scores.impact);
     }
+}
+
+function isNotDefined(value) {
+    return value === undefined || value === null || isNaN(value);
 }
 
 function createInterpolationPoint(leftScore, rightScore) {
@@ -472,6 +492,7 @@ function updateScores() {
 
     for (let vector of cvssVectors) {
         const scores = vector.cvssInstance.calculateScores(true);
+        const vectorName = vector.cvssInstance.getVectorName();
 
         if (vector.cvssInstance instanceof CvssCalculator.Cvss4P0) {
             scores.base = scores.overall;
@@ -487,11 +508,11 @@ function updateScores() {
         interpolateChartScores(scores);
 
         let color = [180, 48, 52];
-        if (vector.cvssInstance.getVectorName() === 'CVSS:2.0') {
+        if (vectorName === 'CVSS:2.0') {
             color = [347, 100, 69];
-        } else if (vector.cvssInstance.getVectorName() === 'CVSS:3.1') {
+        } else if (vectorName === 'CVSS:3.1') {
             color = [204, 82, 57];
-        } else if (vector.cvssInstance.getVectorName() === 'CVSS:4.0') {
+        } else if (vectorName === 'CVSS:4.0') {
             color = [57, 72, 54];
         }
 
@@ -511,7 +532,10 @@ function updateScores() {
             hidden: !vector.shown
         };
         datasets['default'].push(dataset);
-        datasets[vector.cvssInstance.getVectorName()].push(dataset);
+        if (!datasets[vectorName]) {
+            datasets[vectorName] = [];
+        }
+        datasets[vectorName].push(dataset);
     }
     defaultSeverityRadarChart.data.datasets = datasets['default'];
     defaultSeverityRadarChart.update();
@@ -748,6 +772,14 @@ function setSelectedVector(vectorInstance) {
         const accordionItem = document.createElement('div');
 
         accordionItem.classList.add('accordion-item');
+        if (selectedVector.constructor === CvssCalculator.Cvss4P0) {
+            accordionItem.classList.add('accordion-cvss-4P0');
+        } else if (selectedVector.constructor === CvssCalculator.Cvss3P1) {
+            accordionItem.classList.add('accordion-cvss-3P1');
+        } else if (selectedVector.constructor === CvssCalculator.Cvss2) {
+            accordionItem.classList.add('accordion-cvss-2P0');
+        }
+
         const accordionHeader = document.createElement('h2');
 
         accordionHeader.classList.add('accordion-header');
