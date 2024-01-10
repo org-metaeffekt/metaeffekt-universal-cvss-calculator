@@ -27,7 +27,7 @@ export class Cvss4P0 extends CvssVector<SingleScoreResult> {
     }
 
     fillAverageVector(): void {
-        this.applyVector("AV:A/AC:L/AT:N/PR:N/UI:N/VC:L/VI:L/VA:L/SC:S/SI:S/SA:S");
+        this.applyVector("AV:A/AC:L/AT:N/PR:N/UI:N/VC:L/VI:L/VA:L/SC:L/SI:L/SA:L");
     }
 
     calculateScores(normalize: boolean = false): SingleScoreResult {

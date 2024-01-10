@@ -21,8 +21,9 @@ class CvssVectorRepresentation {
         this.shown = shown === undefined ? true : shown;
         this.hasBeenDestroyed = false;
 
-        const [domElement, nameElement, vectorStringElement, visibilityToggleButton, removeButton] = this.createDomElement();
+        const [domElement, scoreDisplayButton, nameElement, vectorStringElement, visibilityToggleButton, removeButton] = this.createDomElement();
         this.domElement = domElement;
+        this.scoreDisplayButton = scoreDisplayButton;
         this.nameElement = nameElement;
         this.vectorStringElement = vectorStringElement;
         this.visibilityToggleButton = visibilityToggleButton;
@@ -119,6 +120,14 @@ class CvssVectorRepresentation {
         domElement.classList.add('btn-group', 'w-100', 'd-flex');
         domElement.setAttribute('role', 'group');
 
+        const scoreDisplayButton = document.createElement('button');
+        {
+            scoreDisplayButton.type = 'button';
+            scoreDisplayButton.classList.add('btn');
+            scoreDisplayButton.style.width = '4rem';
+            domElement.appendChild(scoreDisplayButton);
+        }
+
         const nameElement = document.createElement('input');
         {
             nameElement.type = 'text';
@@ -149,8 +158,8 @@ class CvssVectorRepresentation {
             visibilityToggleButton.type = 'button';
             visibilityToggleButton.classList.add('btn', 'btn-outline-secondary', 'cvss-vector-button-toggle-visibility');
             visibilityToggleButton.setAttribute('data-bs-toggle', 'popover');
-            visibilityToggleButton.setAttribute('data-bs-placement', 'top');
-            visibilityToggleButton.setAttribute('data-bs-content', 'Show/Hide vector');
+            visibilityToggleButton.setAttribute('data-bs-placement', 'left');
+            visibilityToggleButton.setAttribute('data-bs-content', 'Toggle visibility');
             visibilityToggleButton.setAttribute('data-bs-trigger', 'hover');
             const visibilityIcon = document.createElement('i');
             visibilityIcon.classList.add('bi', 'bi-eye');
@@ -163,7 +172,7 @@ class CvssVectorRepresentation {
             removeButton.type = 'button';
             removeButton.classList.add('btn', 'btn-outline-danger', 'cvss-vector-button-remove');
             removeButton.setAttribute('data-bs-toggle', 'popover');
-            removeButton.setAttribute('data-bs-placement', 'top');
+            removeButton.setAttribute('data-bs-placement', 'right');
             removeButton.setAttribute('data-bs-content', 'Remove vector');
             removeButton.setAttribute('data-bs-trigger', 'hover');
             const removeIcon = document.createElement('i');
@@ -174,17 +183,47 @@ class CvssVectorRepresentation {
 
         updateTooltip(domElement);
 
-        return [domElement, nameElement, vectorStringElement, visibilityToggleButton, removeButton];
+        return [domElement, scoreDisplayButton, nameElement, vectorStringElement, visibilityToggleButton, removeButton];
+    }
+
+    findRealRenderedTextWidthWithFontOfElement(referenceElement, text) {
+        const tempElement = document.createElement('span');
+        tempElement.style.visibility = 'hidden';
+        tempElement.style.position = 'absolute';
+        tempElement.style.whiteSpace = 'nowrap';
+
+        // copy font styles from the reference element
+        const computedStyle = window.getComputedStyle(referenceElement);
+        tempElement.style.fontSize = computedStyle.fontSize;
+        tempElement.style.fontFamily = computedStyle.fontFamily;
+        tempElement.style.fontWeight = computedStyle.fontWeight;
+        tempElement.style.fontStyle = computedStyle.fontStyle;
+        tempElement.style.letterSpacing = computedStyle.letterSpacing;
+
+        tempElement.textContent = text;
+        document.body.appendChild(tempElement);
+
+        const width = tempElement.offsetWidth;
+
+        document.body.removeChild(tempElement);
+
+        return width;
     }
 
     adjustNameColumnSize() {
         let maxNameLength = 0;
+        let maxLengthName = '';
         for (let vector of cvssVectors) {
-            maxNameLength = Math.max(maxNameLength, vector.name.length);
+            if (maxNameLength < vector.name.length) {
+                maxNameLength = vector.name.length;
+                maxLengthName = vector.name;
+            }
         }
-        maxNameLength *= (maxNameLength < 12 ? 1.1 : (maxNameLength < 20 ? 1.4 : 1.8));
+
+        const actualWidth = this.findRealRenderedTextWidthWithFontOfElement(this.nameElement, maxLengthName);
+        const targetSize = actualWidth / (actualWidth < 165 ? 6 : (actualWidth < 270 ? 5 : (actualWidth < 320 ? 4.4 : (actualWidth < 380 ? 4 : (3)))));
         for (let vector of cvssVectors) {
-            vector.nameElement.size = maxNameLength;
+            vector.nameElement.size = targetSize;
         }
     }
 }
@@ -311,6 +350,9 @@ function createInstanceForVector(vectorInput, forceVersion = undefined) {
 function appendNewVector(vectorInput, name, shown = true, version = undefined) {
     const cvssInstance = createInstanceForVector(vectorInput, version);
     if (cvssInstance) {
+        if (!name) {
+            name = cvssInstance.getVectorName().replace('CVSS:', '');
+        }
         const vectorRepresentation = new CvssVectorRepresentation(name, cvssInstance, shown);
         vectorRepresentation.appendTo(cvssVectorListContainerElement);
         cvssVectors.push(vectorRepresentation);
@@ -386,7 +428,7 @@ function appendVectorByVulnerability(vulnerability) {
             inputElement.value = '';
 
             for (let cvssVector of cvssVectors) {
-                let name = vulnerability;
+                let name = vulnerability.replace('CVE-', '');
                 if (cvssVector.source) {
                     // security-advisories@github.com --> github.com
                     let source = cvssVector.source.replace(/.*@/, '');
@@ -518,7 +560,44 @@ function updateScores() {
             scores.environmental = scores.overall;
         }
 
-        const isPointDefined = [scores.base, scores.modifiedImpact, scores.impact, scores.temporal, scores.exploitability, scores.environmental].map(v => isNaN(v) ? 0 : 3)
+        if (!isNotDefined(scores.overall)) {
+            const severityRangeColorFinder = value => {
+                if (value === 0) {
+                    return {color: 'pastel-gray', severity: 'None'};
+                } else if (value < 4) {
+                    return {color: 'strong-yellow', severity: 'Low'};
+                } else if (value < 7) {
+                    return {color: 'strong-light-orange', severity: 'Medium'};
+                } else if (value < 9) {
+                    return {color: 'strong-dark-orange', severity: 'High'};
+                } else {
+                    return {color: 'strong-red', severity: 'Critical'};
+                }
+            }
+
+            const severityRange = severityRangeColorFinder(scores.overall);
+            vector.scoreDisplayButton.classList.remove('bg-pastel-gray', 'bg-strong-yellow', 'bg-strong-light-orange', 'bg-strong-dark-orange', 'bg-strong-red');
+            vector.scoreDisplayButton.classList.add('bg-' + severityRange.color);
+            vector.scoreDisplayButton.setAttribute('data-bs-toggle', 'popover');
+            vector.scoreDisplayButton.setAttribute('data-bs-placement', 'right');
+            vector.scoreDisplayButton.setAttribute('data-bs-content', severityRange.severity);
+            vector.scoreDisplayButton.setAttribute('data-bs-trigger', 'hover');
+
+            if (scores.overall === 0 && !vector.cvssInstance.isBaseFullyDefined()) {
+                vector.scoreDisplayButton.innerHTML = '<i class="bi bi-exclamation-triangle-fill"></i>';
+                vector.scoreDisplayButton.setAttribute('data-bs-content', 'All base metrics must be defined to calculate CVSS scores.');
+            } else if (scores.overall !== 10) {
+                vector.scoreDisplayButton.innerText = scores.overall.toFixed(1);
+            } else {
+                vector.scoreDisplayButton.innerText = '10';
+            }
+
+            unregisterAllTooltips(vector.scoreDisplayButton.parentElement);
+            updateTooltip(vector.scoreDisplayButton.parentElement);
+        }
+
+        // chart
+        const isPointDefined = [scores.base, scores.modifiedImpact, scores.impact, scores.temporal, scores.exploitability, scores.environmental].map(v => isNaN(v) ? 0 : 3);
 
         interpolateChartScores(scores);
 
@@ -546,6 +625,11 @@ function updateScores() {
             /* hide when not shown */
             hidden: !vector.shown
         };
+        if (selectedVector === vector.cvssInstance) {
+            // dataset.borderWidth = 4;
+            // dataset.pointStyle = 'triangle';
+            dataset.borderDash = [20, 3];
+        }
         datasets['default'].push(dataset);
         if (!datasets[vectorName]) {
             datasets[vectorName] = [];
@@ -705,7 +789,18 @@ Security requirements: ${securityRequirements}`;
         const row = document.createElement('tr');
         tbody.appendChild(row);
 
-        appendContentCellIfPresent(row, vector.name, true);
+        const nameElement = document.createElement('span');
+        nameElement.innerText = vector.name;
+        nameElement.classList.add('fw-bold');
+        if (vector.cvssInstance instanceof CvssCalculator.Cvss2) {
+            nameElement.classList.add('text-cvss-2');
+        } else if (vector.cvssInstance instanceof CvssCalculator.Cvss3P1) {
+            nameElement.classList.add('text-cvss-3P1');
+        } else if (vector.cvssInstance instanceof CvssCalculator.Cvss4P0) {
+            nameElement.classList.add('text-cvss-4P0');
+        }
+
+        appendContentCellIfPresent(row, nameElement, true);
         appendContentCellIfPresent(row, createScoreEntry(scores.overall, normalizedScores.overall), scores.overall !== undefined);
         appendContentCellIfPresent(row, createScoreEntry(scores.base, normalizedScores.base), scores.base !== undefined);
         appendContentCellIfPresent(row, createScoreEntry(scores.impact, normalizedScores.impact), scores.impact !== undefined);

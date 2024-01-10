@@ -223,7 +223,7 @@ body {
 }
 
 .bg-cvss-2 {
-    background-color: var(--cvss-2-color) !important;;
+    background-color: var(--cvss-2-color) !important;
     color: var(--bs-white) !important;
 }
 
@@ -235,6 +235,18 @@ body {
 .bg-cvss-4P0 {
     background-color: var(--cvss-4P0-color) !important;
     color: #40464a !important;
+}
+
+.text-cvss-2 {
+    color: var(--cvss-2-color) !important;
+}
+
+.text-cvss-3P1 {
+    color: var(--cvss-3P1-color) !important;
+}
+
+.text-cvss-4P0 {
+    color: var(--cvss-4P0-color) !important;
 }
 
 .scrollable-content {
@@ -372,4 +384,41 @@ body {
 .accordion-cvss-2P0 .btn.btn-primary {
     background-color: var(--cvss-2-color) !important;
     border-color: var(--cvss-2-color) !important;
+}
+
+.bg-pastel-gray {
+    background-color: var(--pastel-gray) !important;
+    color: var(--bs-dark) !important;
+}
+
+.bg-strong-yellow {
+    background-color: var(--strong-yellow) !important;
+    color: var(--bs-dark) !important;
+}
+
+.bg-strong-light-orange {
+    background-color: var(--strong-light-orange) !important;
+    color: var(--bs-dark) !important;
+}
+
+.bg-strong-dark-orange {
+    background-color: var(--strong-dark-orange) !important;
+    color: var(--bs-light) !important;
+}
+
+.bg-strong-red {
+    background-color: var(--strong-red) !important;
+    color: var(--bs-light) !important;
+}
+
+.form-control::placeholder {
+    opacity: 0.4;
+}
+
+.btn {
+    padding-bottom: 3px;
+}
+
+input.btn {
+    padding-bottom: 4px;
 }

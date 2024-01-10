@@ -75,8 +75,8 @@ limitations under the License.
             <div class="d-flex gap-4 cvss-creation-utils-container">
                 <div class="input-group mb-3" style="width: fit-content;">
                     <button type="button" class="btn btn-success"
-                            data-bs-toggle="popover" data-bs-placement="top"
-                            data-bs-content="Use the buttons on the right to add a new vector." data-bs-trigger="hover">
+                            data-bs-toggle="popover" data-bs-placement="top"  data-bs-trigger="hover"
+                            data-bs-content="Use the buttons on the right to add a new vector or enter any vector in the text field.">
                         <i class="bi bi-plus-circle-fill"></i> &nbsp;CVSS
                     </button>
                     <button type="button" class="btn btn-outline-success" onclick="appendNewEmptyVector('2.0','2.0');"
@@ -94,17 +94,25 @@ limitations under the License.
                             data-bs-content="Append a new CVSS 4.0 Vector" data-bs-trigger="hover">
                         4.0
                     </button>
+                    <input type="text" class="form-control" placeholder="CVSS:3.1/AV:N/..." aria-label="Vulnerability"
+                           id="inputAddVectorByString"
+                           size="10"
+                           data-bs-toggle="popover" data-bs-placement="top" data-bs-trigger="hover"
+                           data-bs-content="Enter any CVSS Vector and press enter to add it."
+                           onkeydown="if (event.keyCode === 13) { appendNewVector(this.value, undefined, true); this.value = '';}">
                 </div>
                 <div class="input-group mb-3" style="flex-grow: 0; max-width: 270px;">
                     <button type="button" class="btn btn-success" id="inputAddVectorByVulnerabilityLabel"
                             onclick="appendVectorByVulnerability(document.getElementById('inputAddVectorByVulnerability').value);"
-                            data-bs-toggle="popover" data-bs-placement="top"
-                            data-bs-content="Enter a CVE to fetch it's vectors." data-bs-trigger="hover">
+                            data-bs-toggle="popover" data-bs-placement="top" data-bs-trigger="hover"
+                            data-bs-content="Enter a CVE to fetch it's vectors.">
                         <i class="bi bi-plus-circle-fill"></i> &nbsp;NVD
                     </button>
                     <input type="text" class="form-control" placeholder="CVE-2022-21703" aria-label="Vulnerability"
                            id="inputAddVectorByVulnerability"
                            aria-describedby="inputAddVectorByVulnerabilityLabel"
+                           data-bs-toggle="popover" data-bs-placement="top" data-bs-trigger="hover"
+                           data-bs-content="Enter a CVE and press enter to fetch it's vectors."
                            onkeydown="if (event.keyCode === 13) { appendVectorByVulnerability(this.value); }">
                 </div>
 
