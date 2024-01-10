@@ -1,3 +1,18 @@
+<!--
+Copyright 2024 the original author or authors.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -39,7 +54,7 @@
             crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <!-- development version -->
-    <script src="../ae-cvss-calculator/dist/ae-cvss-calculator.js"></script>
+    <!--<script src="../ae-cvss-calculator/dist/ae-cvss-calculator.js"></script>-->
     <!-- production version -->
     <script src="js/ae-cvss-calculator.js"></script>
 
@@ -173,7 +188,7 @@
             <div class="col-lg-2">
                 <i class="bi bi-info-circle-fill me-1"></i>
                 <a data-bs-toggle="modal" data-bs-target="#licenseModal" href="#" class="footer-link">
-                    Project Licenses
+                    Licensing
                 </a>
             </div>
             <div class="col-lg-2">
@@ -185,23 +200,23 @@
             <div class="col-lg-2 mb-2">
                 <i class="bi bi-braces-asterisk me-1"></i>
                 <a data-bs-toggle="modal" data-bs-target="#changelogModal" href="#" class="footer-link">
-                    v1.0.0
+                    1.0.0
                 </a>
             </div>
         </div>
     </div>
 </footer>
 
-<div class="modal fade" id="licenseModal" tabindex="-1" aria-labelledby="licenseModalLabel" aria-hidden="true">
+<div class="modal modal-lg fade" id="licenseModal" tabindex="-1" aria-labelledby="licenseModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="licenseModalLabel">Project Licenses</h1>
+                <h1 class="modal-title fs-5" id="licenseModalLabel">Licensing</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <p>
-                    The "CVSS Calculator" by {metæffekt} is licensed under the Apache License, Version 2.0
+                    The "Universal CVSS Calculator" by {metæffekt} is licensed under the Apache License, Version 2.0
                     (the "License"). A copy of the License is available at
                     <a href="http://www.apache.org/licenses/LICENSE-2.0" target="_blank">
                         http://www.apache.org/licenses/LICENSE-2.0</a>.
@@ -210,25 +225,12 @@
                 <hr>
 
                 <p>
-                    Portions of this project incorporate software and services:
+                    Portions of this project incorporate third-party software and services:
                 </p>
 
                 <p>
-                    <b>Chart.js</b>: Copyright [year of Chart.js release] by [Chart.js authors/contributors].
-                    Chart.js is open source software released under the MIT License. The license details can be found at
-                    <a href="https://github.com/chartjs/Chart.js/blob/master/LICENSE.md" target="_blank">
-                        Chart.js License</a>.
-                </p>
-
-                <p>
-                    <b>Bootstrap</b>: Copyright 2023 by the Bootstrap authors and contributors.
-                    Bootstrap is released under the MIT License. The license details are available at
-                    <a href="https://getbootstrap.com/docs/5.3/about/license/" target="_blank">
-                        Bootstrap License</a>.
-                </p>
-
-                <p>
-                    <b>NIST NVD</b>: This product uses data from the NVD API but is not endorsed or certified by the NVD.
+                    <b>NIST NVD</b>: This product uses data from the NVD API but is not endorsed or certified by the
+                    NVD.
                     <a href="https://nvd.nist.gov/developers/start-here" target="_blank">
                         https://nvd.nist.gov/developers/start-here</a>.
                 </p>
@@ -237,6 +239,96 @@
                     <b>CVSS by FIRST</b>: CVSS is owned by FIRST and used by permission. CVSS is free for use by anyone.
                     <a href="https://www.first.org/cvss/specification-document" target="_blank">
                         https://www.first.org/cvss/specification-document</a>.
+                </p>
+
+                <p>
+                    <b>Chart.js</b>:
+                    <a href="https://github.com/chartjs/Chart.js/blob/v3.9.1/LICENSE.md" target="_blank">
+                        Chart.js License
+                    </a>
+                <pre>
+The MIT License (MIT)
+
+Copyright (c) 2014-2022 Chart.js Contributors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+            </pre>
+                </p>
+
+                <p>
+                    <b>Bootstrap</b>:
+                    <a href="https://getbootstrap.com/docs/5.3/about/license/" target="_blank">
+                        Bootstrap License
+                    </a>
+                    <pre>
+The MIT License (MIT)
+
+Copyright (c) 2011-2023 The Bootstrap Authors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+            </pre>
+                </p>
+
+                <p>
+                    <b>Bootstrap Icons</b>:
+                    <a href="https://github.com/twbs/icons/blob/v1.11.3/LICENSE" target="_blank">
+                        Bootstrap Icons License
+                    </a>
+                    <pre>
+The MIT License (MIT)
+
+Copyright (c) 2019-2024 The Bootstrap Authors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+            </pre>
                 </p>
             </div>
         </div>
