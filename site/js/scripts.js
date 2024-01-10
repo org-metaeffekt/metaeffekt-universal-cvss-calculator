@@ -1187,5 +1187,6 @@ if (cvssVectors.length === 0) {
     // appendNewVector(defaultVector.toString(), '3.1');
     // setSelectedVector(cvssVectors[0].cvssInstance);
     // appendVectorByVulnerability('CVE-2020-3453');
+    expandedComponentCategories.push('base');
     updateScores();
 }
