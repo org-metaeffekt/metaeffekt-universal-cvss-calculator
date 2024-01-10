@@ -387,7 +387,11 @@ function appendNewEmptyVector(vectorInput, name) {
 let isCurrentlyFetchingFromVulnerability = false;
 
 function appendVectorByVulnerability(vulnerability) {
-    if (!vulnerability || vulnerability.length === 0 || !vulnerability.startsWith('CVE-')) {
+    if (!vulnerability) {
+        return;
+    }
+    vulnerability = vulnerability.toUpperCase();
+    if (vulnerability.length === 0 || !vulnerability.startsWith('CVE-')) {
         createBootstrapToast('Invalid input', 'Please enter a valid CVE identifier', 'warning');
         return;
     }
