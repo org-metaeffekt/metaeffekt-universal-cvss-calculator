@@ -8,6 +8,7 @@ import {
     VectorComponent,
     VectorComponentValue
 } from "../CvssVector";
+import {Cvss4P0Components} from "../cvss4p0/Cvss4P0Components";
 
 export class Cvss3P1 extends CvssVector<MultiScoreResult> {
 
@@ -34,6 +35,21 @@ export class Cvss3P1 extends CvssVector<MultiScoreResult> {
 
     fillAverageVector(): void {
         this.applyVector("AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:L/A:L");
+    }
+
+    fillRandomBaseVector(): void {
+        const baseCategoryComponents = Cvss3P1.BASE_CATEGORY_VALUES;
+        for (let i = 0; i < baseCategoryComponents.length; i++) {
+            const component = baseCategoryComponents[i];
+            const value = super.pickRandomDefinedComponentValue(component);
+            if (value) {
+                this.applyComponent(component, value);
+            } else {
+                console.warn('Failed to pick random vector component for', component);
+                this.fillAverageVector();
+                return;
+            }
+        }
     }
 
     calculateScores(normalize: boolean = false): MultiScoreResult {

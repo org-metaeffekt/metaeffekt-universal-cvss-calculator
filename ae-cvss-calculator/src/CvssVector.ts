@@ -86,6 +86,8 @@ export abstract class CvssVector<R extends BaseScoreResult> {
 
     public abstract fillAverageVector(): void;
 
+    public abstract fillRandomBaseVector(): void;
+
     public clearComponents() {
         this.getRegisteredComponents().forEach((components, category) => {
             components.forEach(component => this.components.set(component, component.values[0]));
@@ -237,5 +239,18 @@ export abstract class CvssVector<R extends BaseScoreResult> {
 
     protected mapRange(value: number, min: number, max: number, newMin: number, newMax: number): number {
         return (value - min) / (max - min) * (newMax - newMin) + newMin;
+    }
+
+    protected pickRandomDefinedComponentValue(component: VectorComponent<VectorComponentValue>): VectorComponentValue | undefined {
+        for (let i = 0; i < 999999; i++) {
+            const pick = component.values[Math.floor(Math.random() * component.values.length)];
+            if (pick.shortName === 'X' || pick.shortName === 'ND') {
+                console.log('Skipping', pick)
+                continue;
+            }
+            return pick;
+        }
+
+        return undefined;
     }
 }

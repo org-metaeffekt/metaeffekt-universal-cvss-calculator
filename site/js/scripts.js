@@ -372,7 +372,7 @@ function appendNewEmptyVector(vectorInput, name) {
         return;
     }
     if (cvssInstance) {
-        cvssInstance.fillAverageVector();
+        cvssInstance.fillRandomBaseVector();
         const vectorRepresentation = new CvssVectorRepresentation(name, cvssInstance);
         vectorRepresentation.appendTo(cvssVectorListContainerElement);
         cvssVectors.push(vectorRepresentation);

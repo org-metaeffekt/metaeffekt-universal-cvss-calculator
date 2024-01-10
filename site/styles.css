@@ -188,7 +188,7 @@
     --cvss-2-color: rgb(255, 79, 116);
     --cvss-3P1-color: rgb(45, 156, 231);
     --cvss-4P0-color: rgb(255, 197, 62);
-    --selected-vector-indicator-size: 8px;
+    --selected-vector-indicator-size: 10px;
     --footer-height: 70px;
 }
 
@@ -277,11 +277,22 @@ body {
     position: absolute;
     top: 45%;
     left: -20px;
-    margin-top: -5px;
+    margin-top: -8px;
     border-width: var(--selected-vector-indicator-size) 0 var(--selected-vector-indicator-size) var(--selected-vector-indicator-size);
     border-style: solid;
-    border-color: transparent transparent transparent rgba(108, 117, 125, 0.7);
+    border-color: transparent transparent transparent rgba(60, 65, 70, 0.8);
 }
+
+.cvss-active-selection .btn:first-child {
+    box-shadow: 10px 0 10px -3px #ffffff57 inset;
+    border-left: none;
+
+}
+
+/*.cvss-active-selection .btn:nth-child(2) {
+    border-top-width: 4px;
+    border-bottom-width: 4px;
+}*/
 
 @media (min-width: 1400px) {
     .container, .container-lg, .container-md, .container-sm, .container-xl, .container-xxl {

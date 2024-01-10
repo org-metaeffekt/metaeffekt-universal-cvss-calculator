@@ -29,6 +29,21 @@ export class Cvss2 extends CvssVector<MultiScoreResult> {
         this.applyVector("AV:A/AC:M/Au:N/C:P/I:P/A:P");
     }
 
+    fillRandomBaseVector(): void {
+        const baseCategoryComponents = Cvss2.BASE_CATEGORY_VALUES;
+        for (let i = 0; i < baseCategoryComponents.length; i++) {
+            const component = baseCategoryComponents[i];
+            const value = super.pickRandomDefinedComponentValue(component);
+            if (value) {
+                this.applyComponent(component, value);
+            } else {
+                console.warn('Failed to pick random vector component for', component);
+                this.fillAverageVector();
+                return;
+            }
+        }
+    }
+
     calculateScores(normalize: boolean = false): MultiScoreResult {
         const baseFullyDefined = this.isBaseFullyDefined();
         const temporalAnyDefined = this.isAnyTemporalDefined();

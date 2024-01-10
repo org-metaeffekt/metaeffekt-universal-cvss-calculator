@@ -30,6 +30,21 @@ export class Cvss4P0 extends CvssVector<SingleScoreResult> {
         this.applyVector("AV:A/AC:L/AT:N/PR:N/UI:N/VC:L/VI:L/VA:L/SC:L/SI:L/SA:L");
     }
 
+    fillRandomBaseVector(): void {
+        const baseCategoryComponents = Cvss4P0Components.BASE_CATEGORY_VALUES;
+        for (let i = 0; i < baseCategoryComponents.length; i++) {
+            const component = baseCategoryComponents[i];
+            const value = super.pickRandomDefinedComponentValue(component);
+            if (value) {
+                this.applyComponent(component, value);
+            } else {
+                console.warn('Failed to pick random vector component for', component);
+                this.fillAverageVector();
+                return;
+            }
+        }
+    }
+
     calculateScores(normalize: boolean = false): SingleScoreResult {
         return {
             overall: this.calculateOverallScore(),
