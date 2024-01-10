@@ -3,8 +3,7 @@ const path = require('path');
 module.exports = {
     mode: 'production',
     entry: './src/index.ts',
-    optimization: {
-    },
+    optimization: {},
     module: {
         rules: [
             {

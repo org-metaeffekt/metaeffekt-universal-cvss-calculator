@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "webpack",
+    "postbuild": "node add-license.js",
     "test": "jest"
   },
   "keywords": [
