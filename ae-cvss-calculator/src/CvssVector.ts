@@ -244,8 +244,7 @@ export abstract class CvssVector<R extends BaseScoreResult> {
     protected pickRandomDefinedComponentValue(component: VectorComponent<VectorComponentValue>): VectorComponentValue | undefined {
         for (let i = 0; i < 999999; i++) {
             const pick = component.values[Math.floor(Math.random() * component.values.length)];
-            if (pick.shortName === 'X' || pick.shortName === 'ND') {
-                console.log('Skipping', pick)
+            if (pick.shortName === 'X' || pick.shortName === 'ND' || pick.hide) {
                 continue;
             }
             return pick;

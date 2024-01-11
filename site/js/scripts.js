@@ -265,7 +265,7 @@ function appendRadarChartToContainer(container, name) {
     card.classList.add('mb-3');
     card.id = name + 'SeverityRadarContainer';
 
-    container.insertBefore(card, container.children[container.children.length - 1]);
+    container.insertBefore(card, insertAdditionalRadarChartsBeforeThis);
 
     const cardHeader = document.createElement('div');
     cardHeader.classList.add('card-header', 'd-flex', 'justify-content-between', 'align-items-center');
@@ -297,6 +297,11 @@ const additionalRadarChartContainer = document.getElementById('additionalRadarCh
 const severityRadarToggleContainer = document.getElementById('severityRadarToggleContainer');
 const cvss4MacroVectorExplanationCard = document.getElementById('cvss4MacroVectorExplanationCard');
 const cvss4MacroVectorExplanation = document.getElementById('cvss4MacroVectorExplanation');
+const cveDetailsDisplay = document.getElementById('cveDetailsDisplay');
+const cveDetailsDisplayCard = document.getElementById('cveDetailsDisplayCard');
+const cveDetailsDisplayTitle = document.getElementById('cveDetailsDisplayTitle');
+const selectedCvssDuplicatedSection = document.getElementById('selected-cvss-duplicated-section');
+const insertAdditionalRadarChartsBeforeThis = document.getElementById('insert-additional-radar-charts-before-this');
 cvssComponentsContainerElement.innerText = '';
 cvssScoreDetailsContainerElement.innerText = '';
 
@@ -351,7 +356,11 @@ function appendNewVector(vectorInput, name, shown = true, version = undefined) {
     const cvssInstance = createInstanceForVector(vectorInput, version);
     if (cvssInstance) {
         if (!name) {
-            name = cvssInstance.getVectorName().replace('CVSS:', '');
+            name = cvssInstance.getVectorName()
+            const screenWidth = window.innerWidth;
+            if (screenWidth < 992) {
+                name = name.replace('CVSS:', '');
+            }
         }
         const vectorRepresentation = new CvssVectorRepresentation(name, cvssInstance, shown);
         vectorRepresentation.appendTo(cvssVectorListContainerElement);
@@ -363,7 +372,12 @@ function appendNewVector(vectorInput, name, shown = true, version = undefined) {
     }
 }
 
-function appendNewEmptyVector(vectorInput, name) {
+function appendNewEmptyVector(vectorInput, name, prependCvssOnLargeScreens = false) {
+    const screenWidth = window.innerWidth;
+    if (screenWidth >= 992 && prependCvssOnLargeScreens) {
+        name = 'CVSS:' + name;
+    }
+
     let cvssInstance;
     try {
         cvssInstance = createInstanceForVector(vectorInput);
@@ -390,7 +404,7 @@ function appendVectorByVulnerability(vulnerability) {
     if (!vulnerability) {
         return;
     }
-    vulnerability = vulnerability.toUpperCase();
+    vulnerability = extractAndFormatCVE(vulnerability.toUpperCase());
     if (vulnerability.length === 0 || !vulnerability.startsWith('CVE-')) {
         createBootstrapToast('Invalid input', 'Please enter a valid CVE identifier', 'warning');
         return;
@@ -416,6 +430,7 @@ function appendVectorByVulnerability(vulnerability) {
             inputElement.removeAttribute('disabled');
             isCurrentlyFetchingFromVulnerability = false;
             const cvssVectors = extractCvssVectors(json);
+            const englishDescription = extractEnglishDescription(vulnerability, json);
 
             inputAddVectorByVulnerabilityLabel.classList.remove('btn-secondary');
             inputAddVectorByVulnerabilityLabel.innerHTML = inputLabelPreviousContent;
@@ -527,6 +542,7 @@ function distance(point1, point2) {
 function updateScores() {
     const shownVectors = cvssVectors.filter(vector => vector.shown);
     const hiddenVectors = cvssVectors.filter(vector => !vector.shown);
+    const selectedVectorContainerInstance = cvssVectors.find(vector => vector.cvssInstance === selectedVector);
 
     for (let vector of hiddenVectors) {
         vector.visibilityToggleButton.classList.remove('btn-outline-secondary');
@@ -537,6 +553,7 @@ function updateScores() {
         vector.visibilityToggleButton.classList.add('btn-outline-secondary');
     }
 
+    // tutorial elements
     const showOnlyIfNoVectorPresent = document.getElementsByClassName('only-if-no-vectors-present');
     if (cvssVectors.length > 0) {
         for (let element of showOnlyIfNoVectorPresent) {
@@ -546,6 +563,38 @@ function updateScores() {
         for (let element of showOnlyIfNoVectorPresent) {
             element.classList.remove('d-none');
         }
+    }
+
+    // cve description display
+    if (selectedVectorContainerInstance) {
+        const vulnerabilityName = extractAndFormatCVE(selectedVectorContainerInstance.name);
+        let description = getCachedDescription(vulnerabilityName);
+
+        if (!description) {
+            fetchVulnerabilityData(vulnerabilityName)
+                .then(json => {
+                    description = extractEnglishDescription(vulnerabilityName, json);
+                    if (description) {
+                        cveDetailsDisplayTitle.innerText = vulnerabilityName;
+                        cveDetailsDisplay.innerText = description;
+                        cveDetailsDisplayTitle.href = 'https://nvd.nist.gov/vuln/detail/' + vulnerabilityName;
+                        cveDetailsDisplayCard.classList.remove('d-none');
+                    } else {
+                        cveDetailsDisplayCard.classList.add('d-none');
+                    }
+                })
+        }
+
+        if (description) {
+            cveDetailsDisplayTitle.innerText = vulnerabilityName;
+            cveDetailsDisplay.innerText = description;
+            cveDetailsDisplayTitle.href = 'https://nvd.nist.gov/vuln/detail/' + vulnerabilityName;
+            cveDetailsDisplayCard.classList.remove('d-none');
+        } else {
+            cveDetailsDisplayCard.classList.add('d-none');
+        }
+    } else {
+        cveDetailsDisplayCard.classList.add('d-none');
     }
 
     const datasets = {'default': [], 'CVSS:2.0': [], 'CVSS:3.1': [], 'CVSS:4.0': []};
@@ -616,6 +665,7 @@ function updateScores() {
 
         // modify the color a bit randomly seeded based on the vector.getName() to make it more distinguishable
         let seed = vector.name.split('').reduce((acc, cur) => acc + cur.charCodeAt(0), 0);
+        seed += 1;
         seed = seed % 30;
         if (seed % 2 === 0) seed *= -1;
         color[0] = (color[0] + seed) % 360;
@@ -630,7 +680,7 @@ function updateScores() {
             hidden: !vector.shown
         };
         if (selectedVector === vector.cvssInstance) {
-            // dataset.borderWidth = 4;
+            dataset.borderWidth = 4;
             // dataset.pointStyle = 'triangle';
             dataset.borderDash = [20, 3];
         }
@@ -848,6 +898,37 @@ Security requirements: ${securityRequirements}`;
         } else {
             return `<span style="color: var(--strong-purple)">${singleDigitScore}</span>`;
         }
+    }
+
+    // copy the vector container html content to the duplicated section
+    if (selectedVectorContainerInstance) {
+        selectedCvssDuplicatedSection.innerHTML = selectedVectorContainerInstance.domElement.outerHTML;
+        selectedCvssDuplicatedSection.getElementsByClassName('cvss-vector-name')[0].value = selectedVectorContainerInstance.name;
+        selectedCvssDuplicatedSection.getElementsByClassName('cvss-vector-string')[0].value = selectedVectorContainerInstance.cvssInstance.toString();
+        selectedCvssDuplicatedSection.firstChild.classList.remove('cvss-active-selection');
+
+        Array.from(selectedCvssDuplicatedSection.getElementsByTagName('input')).forEach(input => {
+            input.setAttribute('readonly', 'readonly');
+        });
+
+        Array.from(selectedCvssDuplicatedSection.getElementsByClassName('cvss-vector-button-toggle-visibility')).forEach(button => {
+            button.remove();
+        });
+        Array.from(selectedCvssDuplicatedSection.getElementsByClassName('cvss-vector-button-remove')).forEach(button => {
+            button.remove();
+        });
+
+        for (let vectorElement of cvssVectors) {
+            if (vectorElement === selectedVectorContainerInstance) {
+                selectedVectorContainerInstance.domElement.classList.add('upper-vector-selected');
+            } else {
+                vectorElement.domElement.classList.remove('upper-vector-selected');
+            }
+        }
+
+        updateTooltip(selectedCvssDuplicatedSection);
+    } else {
+        selectedCvssDuplicatedSection.innerHTML = '';
     }
 }
 
@@ -1160,25 +1241,41 @@ function storeInGet() {
         for (let vector of cvssVectors) {
             vectorData.push([vector.name, vector.shown, vector.cvssInstance.toString(), vector.cvssInstance.getVectorName()]);
         }
-
-        let urlParams = new URLSearchParams();
-        urlParams.set('vector', JSON.stringify(vectorData));
-
         const openAccordions = expandedComponentCategories.join(',');
-        if (openAccordions.length > 0) {
-            urlParams.set('open', openAccordions);
-        }
 
-        if (selectedVector) {
-            for (let vector of cvssVectors) {
-                if (vector.cvssInstance === selectedVector) {
-                    urlParams.set('selected', vector.name);
-                    break;
-                }
+        let urlParams = new URLSearchParams(window.location.search);
+
+        if (vectorData.length === 0) {
+            urlParams.delete('vector');
+            urlParams.delete('open');
+        } else {
+            urlParams.set('vector', JSON.stringify(vectorData));
+            if (openAccordions.length > 0) {
+                urlParams.set('open', openAccordions);
             }
         }
 
-        window.history.replaceState({}, '', '?' + urlParams.toString());
+        if (selectedVector) {
+            let found = false;
+            for (let vector of cvssVectors) {
+                if (vector.cvssInstance === selectedVector) {
+                    urlParams.set('selected', vector.name);
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                urlParams.delete('selected');
+            }
+        } else {
+            urlParams.delete('selected');
+        }
+
+        if (urlParams.toString().length === 0) {
+            window.history.replaceState({}, '', window.location.pathname);
+        } else {
+            window.history.replaceState({}, '', '?' + urlParams.toString());
+        }
     }, 200);
 }
 
@@ -1193,4 +1290,11 @@ if (cvssVectors.length === 0) {
     // appendVectorByVulnerability('CVE-2020-3453');
     expandedComponentCategories.push('base');
     updateScores();
+}
+
+function loadDemo() {
+    const demoString = 'vector=%5B%5B%22CVSS%3A4.0%22%2Ctrue%2C%22CVSS%3A4.0%2FAV%3AP%2FAC%3AL%2FAT%3AN%2FPR%3AN%2FUI%3AN%2FVC%3AH%2FVI%3AL%2FVA%3AL%2FSC%3AH%2FSI%3AH%2FSA%3AH%22%2C%22CVSS%3A4.0%22%5D%2C%5B%223.1+2020-5934+%28nist.gov%29%22%2Ctrue%2C%22CVSS%3A3.1%2FAV%3AN%2FAC%3AL%2FPR%3AL%2FUI%3AN%2FS%3AC%2FC%3AH%2FI%3AL%2FA%3AH%2FE%3AF%2FRL%3AU%2FRC%3AR%22%2C%22CVSS%3A3.1%22%5D%2C%5B%222.0+2020-5934+%28nist.gov%29%22%2Ctrue%2C%22AV%3AL%2FAC%3AH%2FAu%3AS%2FC%3AC%2FI%3AP%2FA%3AN%2FE%3AU%2FRL%3AU%2FRC%3AC%2FCDP%3ALM%2FTD%3AM%2FCR%3AH%2FIR%3AH%2FAR%3AH%22%2C%22CVSS%3A2.0%22%5D%5D&open=temporal&selected=3.1+2020-5934+%28nist.gov%29';
+    const baseUrl = window.location.href.split('?')[0];
+    const decodedDemoString = decodeURIComponent(demoString);
+    window.location.href = baseUrl + '?' + decodedDemoString;
 }

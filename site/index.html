@@ -31,14 +31,14 @@ limitations under the License.
     <meta property="og:site_name" content="CVSS Calculator by {metæffekt}">
     <meta property="og:description"
           content="An online CVSS Calculator for all currently released CVSS versions by {metæffekt}">
-    <meta property="og:image" content="https://www.metaeffekt.com/security/cvss/calculator/img/calculator-preview.png">
+    <meta property="og:image" content="https://metaeffekt.com/security/cvss/calculator/img/calculator-preview.png">
     <meta property="og:type" content="website">
 
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="CVSS Calculator by {metæffekt}">
     <meta name="twitter:description"
           content="An online CVSS Calculator for all currently released CVSS versions by {metæffekt}">
-    <meta name="twitter:image" content="https://www.metaeffekt.com/security/cvss/calculator/img/calculator-preview.png">
+    <meta name="twitter:image" content="https://metaeffekt.com/security/cvss/calculator/img/calculator-preview.png">
 
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
@@ -75,21 +75,25 @@ limitations under the License.
             <div class="d-flex gap-4 cvss-creation-utils-container">
                 <div class="input-group mb-3" style="width: fit-content;">
                     <button type="button" class="btn btn-success"
-                            data-bs-toggle="popover" data-bs-placement="top"  data-bs-trigger="hover"
+                            onclick="appendNewVector(document.getElementById('inputAddVectorByString').value, undefined, true); document.getElementById('inputAddVectorByString').value = '';"
+                            data-bs-toggle="popover" data-bs-placement="top" data-bs-trigger="hover"
                             data-bs-content="Use the buttons on the right to add a new vector or enter any vector in the text field.">
                         <i class="bi bi-plus-circle-fill"></i> &nbsp;CVSS
                     </button>
-                    <button type="button" class="btn btn-outline-success" onclick="appendNewEmptyVector('2.0','2.0');"
+                    <button type="button" class="btn btn-outline-success"
+                            onclick="appendNewEmptyVector('2.0','2.0',true);"
                             data-bs-toggle="popover" data-bs-placement="top"
                             data-bs-content="Append a new CVSS 2.0 Vector" data-bs-trigger="hover">
                         2.0
                     </button>
-                    <button type="button" class="btn btn-outline-success" onclick="appendNewEmptyVector('3.1','3.1');"
+                    <button type="button" class="btn btn-outline-success"
+                            onclick="appendNewEmptyVector('3.1','3.1',true);"
                             data-bs-toggle="popover" data-bs-placement="top"
                             data-bs-content="Append a new CVSS 3.1 Vector" data-bs-trigger="hover">
                         3.1
                     </button>
-                    <button type="button" class="btn btn-outline-success" onclick="appendNewEmptyVector('4.0','4.0');"
+                    <button type="button" class="btn btn-outline-success"
+                            onclick="appendNewEmptyVector('4.0','4.0',true);"
                             data-bs-toggle="popover" data-bs-placement="top"
                             data-bs-content="Append a new CVSS 4.0 Vector" data-bs-trigger="hover">
                         4.0
@@ -118,7 +122,7 @@ limitations under the License.
 
                 <div class="mt-2 only-if-no-vectors-present hide-on-small-screens">
                     <i class="bi bi-arrow-left me-2"></i>
-                    <span class="text-secondary">Enter a CVE to fetch it's CVSS vectors.</span>
+                    <span class="text-secondary">Enter a CVE to fetch its vectors.</span>
                 </div>
             </div>
 
@@ -141,7 +145,7 @@ limitations under the License.
             <div class="mt-4" id="cvss-score-details"></div>
 
             <!-- a section where CVSS vector parts are explained and can be modified -->
-            <div class="accordion mt-5" id="cvss-component-details"></div>
+            <div class="accordion mt-4P5" id="cvss-component-details"></div>
         </div>
 
         <div class="col-lg-4 col-md-8 col-12 mb-4">
@@ -167,6 +171,10 @@ limitations under the License.
                 </div>
 
                 <!-- additional radar charts per version will be appended here -->
+                <span id="insert-additional-radar-charts-before-this"></span>
+
+                <!-- a section where the selected vector from the above list is duplicated into -->
+                <div class="d-flex flex-column gap-2 my-4" id="selected-cvss-duplicated-section"></div>
 
                 <div id="cvss4MacroVectorExplanationCard" class="card mb-3">
                     <div class="card-header d-flex justify-content-between align-items-center">
@@ -175,9 +183,19 @@ limitations under the License.
                            data-bs-content="The MacroVector is a representation of a CVSS:4.0 vector with a reduced amount of dimensions, used as an intermediate step in the calculation of a CVSS:4.0 score."
                            data-bs-trigger="hover"></i>
                     </div>
-                    <div id="cvss4MacroVectorExplanation" class="card-body">
-                        Test
+                    <div id="cvss4MacroVectorExplanation" class="card-body"></div>
+                </div>
+
+                <div id="cveDetailsDisplayCard" class="card mb-3">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <a id="cveDetailsDisplayTitle" href="#" target="_blank" class="footer-link">
+                            CVE Description
+                        </a>
+                        <i class="bi bi-question-circle-fill" data-bs-toggle="popover" data-bs-placement="top"
+                           data-bs-content="The description provided by the NVD for the selected vulnerability (CVE)."
+                           data-bs-trigger="hover"></i>
                     </div>
+                    <div id="cveDetailsDisplay" class="card-body"></div>
                 </div>
             </div>
         </div>
@@ -208,7 +226,7 @@ limitations under the License.
             <div class="col-lg-2 mb-2">
                 <i class="bi bi-braces-asterisk me-1"></i>
                 <a data-bs-toggle="modal" data-bs-target="#changelogModal" href="#" class="footer-link">
-                    1.0.0
+                    1.0.1
                 </a>
             </div>
         </div>
@@ -355,7 +373,8 @@ THE SOFTWARE.
                 <h5>Creating new CVSS vectors</h5>
                 To add a new vector, select your desired CVSS version by clicking one of the buttons in the left
                 button group.
-                For importing multiple vectors from a CVE, enter the CVE ID into the right-hand input field and click
+                You can also enter any CVSS vector into the text field on the right and press enter to add it.<br>
+                For importing multiple vectors from a CVE, enter the CVE ID into the right-most input field and click
                 the adjacent button or press enter.<br>
                 <img src="img/how-to-cvss-creation-buttons.webp" alt="CVSS creation buttons"
                      style="width:70%" class="img-fluid">
@@ -385,6 +404,8 @@ THE SOFTWARE.
                 The radar chart on the right visualizes these scores.
                 Vectors can be excluded from this chart using the <i class="bi bi-eye-fill"></i> eye icon in the vector
                 list.
+                A thicker and dotted line means that the vector is currently selected.
+                The selected vector will also be displayed below the radar chart.
                 <img src="img/how-to-severity-radar-combined.webp" alt="Severity radar (Combined)"
                      style="width:50%" class="img-fluid">
                 Toggle the switch at the top of the radar chart to split it into multiple charts for each CVSS version,
@@ -429,7 +450,7 @@ THE SOFTWARE.
     </div>
 </div>
 
-<div class="modal fade" id="changelogModal" tabindex="-1" aria-labelledby="changelogModalLabel" aria-hidden="true">
+<div class="modal modal-lg fade" id="changelogModal" tabindex="-1" aria-labelledby="changelogModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -437,10 +458,33 @@ THE SOFTWARE.
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
+                <h5>Version 1.0.1 <span class="fs-6 text-secondary ms-2">2024-01-11</span></h5>
+                <ul>
+                    <li>Scores are now visible in the vector list and added warnings for invalid vectors.</li>
+                    <li>Added additional explanatory popovers.</li>
+                    <li>Introduced a text field for adding custom vectors without the need for buttons.</li>
+                    <li>The selected vector is now highlighted in the radar chart.</li>
+                    <li>Adjusted vertically centered button alignment.</li>
+                    <li>Standardized color coding for vector versions across the application.</li>
+                    <li>Updated input placeholders to a lighter shade of gray to minimize user confusion.</li>
+                    <li>New CVSS vectors will now use random base component values instead of average ones.</li>
+                    <li>Set the base category accordions to expand by default.</li>
+                    <li>Updated the CVE input field to more reliably detect even malformed CVE inputs.</li>
+                    <li>
+                        Added a 'CVSS:' prefix to new vector names on desktop views when appending a new CVSS vector.
+                    </li>
+                    <li>Increased the thickness of the selected vector entry for better visibility.</li>
+                    <li>
+                        Added the CVE descriptions below the severity radar charts for vectors sourced from the NVD.
+                    </li>
+                </ul>
+                <hr>
                 <h5>Version 1.0.0 <span class="fs-6 text-secondary ms-2">2024-01-10</span></h5>
                 <ul>
                     <li>Initial release</li>
                 </ul>
+                <hr>
+                <button onclick="loadDemo()" class="btn btn-primary">Load Demo Vectors</button>
             </div>
         </div>
     </div>

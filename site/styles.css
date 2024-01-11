@@ -289,10 +289,10 @@ body {
 
 }
 
-/*.cvss-active-selection .btn:nth-child(2) {
+.cvss-active-selection .btn:nth-child(2) {
     border-top-width: 4px;
     border-bottom-width: 4px;
-}*/
+}
 
 @media (min-width: 1400px) {
     .container, .container-lg, .container-md, .container-sm, .container-xl, .container-xxl {
@@ -432,4 +432,15 @@ body {
 
 input.btn {
     padding-bottom: 4px;
+}
+
+.mt-4P5 {
+    margin-top: 2.2rem !important;
+}
+
+.grayed-out {
+    opacity: 0.7;
+}
+
+.upper-vector-selected {
 }

@@ -38,7 +38,7 @@ export class Cvss4P0 extends CvssVector<SingleScoreResult> {
             if (value) {
                 this.applyComponent(component, value);
             } else {
-                console.warn('Failed to pick random vector component for', component);
+                console.warn('Failed to pick random vector component for', component, ', filling average vector instead');
                 this.fillAverageVector();
                 return;
             }
