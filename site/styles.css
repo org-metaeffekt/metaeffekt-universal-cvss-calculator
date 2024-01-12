@@ -381,6 +381,17 @@ body {
     border-color: var(--bs-warning) !important;
 }
 
+.accordion-cvss-4P0 .btn.btn-outline-primary {
+    color: var(--bs-warning) !important;
+    border-color: var(--bs-warning) !important;
+    --bs-btn-hover-bg: var(--bs-warning) !important;
+}
+
+.accordion-cvss-4P0 .btn.btn-outline-primary:hover, .accordion-cvss-4P0 .btn.btn-outline-primary:active {
+    color: white !important;
+    background-color: var(--bs-warning) !important;
+}
+
 .accordion-cvss-2P0 {
     --bs-accordion-btn-color: var(--bs-dark);
     /* --bs-accordion-btn-bg: #ffccd7; */
@@ -395,6 +406,17 @@ body {
 .accordion-cvss-2P0 .btn.btn-primary {
     background-color: var(--cvss-2-color) !important;
     border-color: var(--cvss-2-color) !important;
+}
+
+.accordion-cvss-2P0 .btn.btn-outline-primary {
+    color: var(--cvss-2-color) !important;
+    border-color: var(--cvss-2-color) !important;
+    --bs-btn-hover-bg: var(--cvss-2-color) !important;
+}
+
+.accordion-cvss-2P0 .btn.btn-outline-primary:hover, .accordion-cvss-2P0 .btn.btn-outline-primary:active {
+    color: white !important;
+    background-color: var(--cvss-2-color) !important;
 }
 
 .bg-pastel-gray {
@@ -448,6 +470,7 @@ input.btn {
 .cvss-component-button {
     position: relative;
     height: 1.7rem;
+
 }
 
 .cvss-component-button .button-text {
@@ -458,4 +481,8 @@ input.btn {
     white-space: nowrap;
     overflow-x: hidden;
     width: 100%;
+}
+
+.btn-outline-secondary.cvss-component-button {
+    --bs-btn-color: #2b2b2b;
 }

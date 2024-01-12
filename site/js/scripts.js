@@ -990,6 +990,10 @@ function updateAbbreaviatableComponentElements() {
         const element = abbr.element;
 
         const availableWidth = element.clientWidth;
+        if (availableWidth === 0) {
+            // console.warn('availableWidth is 0, skipping abbreviation');
+            continue;
+        }
 
         // now try to find the first that fits
         for (let textVariant of textVariants) {
@@ -1189,7 +1193,7 @@ function setSelectedVector(vectorInstance) {
                     componentButton.appendChild(buttonText);
 
                     if (componentValue === currentValue) {
-                        let type = (componentValue.shortName === 'X' || componentValue.shortName === 'ND') ? 'secondary' : 'primary';
+                        let type = (componentValue.shortName === 'X' || componentValue.shortName === 'ND') ? 'outline-primary' : 'primary';
                         componentButton.classList.add('btn-' + type);
                     } else {
                         componentButton.classList.add('btn-outline-secondary');
@@ -1212,6 +1216,7 @@ function setSelectedVector(vectorInstance) {
 
         // add listener to register whether the accordion is expanded or collapsed to add or remove it from the list of expanded categories
         accordionButton.addEventListener('click', () => {
+            setTimeout(updateAbbreaviatableComponentElements, 30);
             if (shouldBeCollapsed) {
                 expandedComponentCategories.push(componentCategoryName);
             } else {
