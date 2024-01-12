@@ -444,3 +444,18 @@ input.btn {
 
 .upper-vector-selected {
 }
+
+.cvss-component-button {
+    position: relative;
+    height: 1.7rem;
+}
+
+.cvss-component-button .button-text {
+    position: absolute;
+    left: 50%;
+    top: 10%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    overflow-x: hidden;
+    width: 100%;
+}

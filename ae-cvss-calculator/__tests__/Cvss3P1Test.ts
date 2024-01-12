@@ -32,7 +32,6 @@ describe('Cvss3P1', () => {
         });
     });
 
-    // CVSS:3.1/AV:A/AC:L/PR:N/UI:N/S:C/C:N/I:L/A:L/E:H/RC:R/MAV:N/MPR:L/MC:N/MI:H/MA:H/CR:L/IR:H/AR:H 9.6 6.1 2.7 2.8 5.9 9.6 6.1
     it('should evaluate vector correctly to: CVSS:3.1/AV:A/AC:L/PR:N/UI:N/S:C/C:N/I:L/A:L/E:H/RC:R/MAV:N/MPR:L/MC:N/MI:H/MA:H/CR:L/IR:H/AR:H 9.6 6.1 2.7 2.8 5.9 9.6 6.1', () => {
         const cvss = new Cvss3P1("CVSS:3.1/AV:A/AC:L/PR:N/UI:N/S:C/C:N/I:L/A:L/E:H/RC:R/MAV:N/MPR:L/MC:N/MI:H/MA:H/CR:L/IR:H/AR:H");
         const result = cvss.calculateScores();
@@ -45,7 +44,6 @@ describe('Cvss3P1', () => {
         expect(makeNanFromUndefined(result.overall)).toEqual(9.6);
     });
 
-    // CVSS:3.1/AV:L/AC:L/PR:H/UI:N/S:C/C:L/I:H/A:L/E:H/MAC:H/MPR:N/MUI:N/MC:N/MI:N/MA:N/IR:M 0.0 7.3 5.3 1.5 7.3 0.0 0.0
     it('should evaluate vector correctly to: CVSS:3.1/AV:L/AC:L/PR:H/UI:N/S:C/C:L/I:H/A:L/E:H/MAC:H/MPR:N/MUI:N/MC:N/MI:N/MA:N/IR:M 0.0 7.3 5.3 1.5 7.3 0.0 0.0', () => {
         const cvss = new Cvss3P1("CVSS:3.1/AV:L/AC:L/PR:H/UI:N/S:C/C:L/I:H/A:L/E:H/MAC:H/MPR:N/MUI:N/MC:N/MI:N/MA:N/IR:M");
         const result = cvss.calculateScores();
@@ -58,5 +56,15 @@ describe('Cvss3P1', () => {
         expect(makeNanFromUndefined(result.overall)).toEqual(0.0);
     });
 
-    console.log(new Cvss3P1("CVSS:3.1/AV:A/AC:H/PR:N/UI:N/S:U/C:H/I:L/A:L/MAV:X/MAC:X/MPR:X/MUI:X/MS:X/MC:N/MI:N/MA:N/CR:X/IR:X/AR:X").calculateScores());
+    it('should evaluate vector correctly to: CVSS:3.1/AV:P/AC:H/PR:H/UI:N/S:C/C:N/I:N/A:N', () => {
+        const cvss = new Cvss3P1("CVSS:3.1/AV:P/AC:H/PR:H/UI:N/S:C/C:N/I:N/A:N");
+        const result = cvss.calculateScores();
+        expect(makeNanFromUndefined(result.base)).toEqual(0.0);
+        expect(makeNanFromUndefined(result.impact)).toEqual(0.0);
+        expect(makeNanFromUndefined(result.exploitability)).toEqual(0.3);
+        expect(makeNanFromUndefined(result.temporal)).toEqual(NaN);
+        expect(makeNanFromUndefined(result.environmental)).toEqual(NaN);
+        expect(makeNanFromUndefined(result.modifiedImpact)).toEqual(NaN);
+        expect(makeNanFromUndefined(result.overall)).toEqual(0.0);
+    });
 });

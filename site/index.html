@@ -54,9 +54,9 @@ limitations under the License.
             crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <!-- development version -->
-    <!--<script src="../ae-cvss-calculator/dist/ae-cvss-calculator.js"></script>-->
+    <script src="../ae-cvss-calculator/dist/ae-cvss-calculator.js"></script>
     <!-- production version -->
-    <script src="js/ae-cvss-calculator.js"></script>
+    <!--<script src="js/ae-cvss-calculator.js"></script>-->
 
     <link rel="stylesheet" href="styles.css">
     <script src="js/nvd-api-fetcher.js" defer></script>
@@ -75,7 +75,7 @@ limitations under the License.
             <div class="d-flex gap-4 cvss-creation-utils-container">
                 <div class="input-group mb-3" style="width: fit-content;">
                     <button type="button" class="btn btn-success"
-                            onclick="appendNewVector(document.getElementById('inputAddVectorByString').value, undefined, true); document.getElementById('inputAddVectorByString').value = '';"
+                            onclick="const inputElement=document.getElementById('inputAddVectorByString');if(!inputElement||!inputElement.value)return;if(appendNewVector(inputElement.value,undefined,true))inputElement.value='';"
                             data-bs-toggle="popover" data-bs-placement="top" data-bs-trigger="hover"
                             data-bs-content="Use the buttons on the right to add a new vector or enter any vector in the text field.">
                         <i class="bi bi-plus-circle-fill"></i> &nbsp;CVSS
@@ -103,7 +103,7 @@ limitations under the License.
                            size="10"
                            data-bs-toggle="popover" data-bs-placement="top" data-bs-trigger="hover"
                            data-bs-content="Enter any CVSS Vector and press enter to add it."
-                           onkeydown="if (event.keyCode === 13) { appendNewVector(this.value, undefined, true); this.value = '';}">
+                           onkeydown="if(event.keyCode===13){if(appendNewVector(this.value,undefined,true))this.value='';}">
                 </div>
                 <div class="input-group mb-3" style="flex-grow: 0; max-width: 270px;">
                     <button type="button" class="btn btn-success" id="inputAddVectorByVulnerabilityLabel"
@@ -226,7 +226,7 @@ limitations under the License.
             <div class="col-lg-2 mb-2">
                 <i class="bi bi-braces-asterisk me-1"></i>
                 <a data-bs-toggle="modal" data-bs-target="#changelogModal" href="#" class="footer-link">
-                    1.0.1
+                    1.0.2
                 </a>
             </div>
         </div>
@@ -366,7 +366,10 @@ THE SOFTWARE.
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="explanationModalLabel">Usage Guide</h1>
+                <h1 class="modal-title fs-5" id="explanationModalLabel">
+                    Usage Guide
+                    <button onclick="loadDemo()" class="btn btn-sm btn-primary ms-3">Load Demo Vectors</button>
+                </h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -450,7 +453,8 @@ THE SOFTWARE.
     </div>
 </div>
 
-<div class="modal modal-lg fade" id="changelogModal" tabindex="-1" aria-labelledby="changelogModalLabel" aria-hidden="true">
+<div class="modal modal-lg fade" id="changelogModal" tabindex="-1" aria-labelledby="changelogModalLabel"
+     aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -458,6 +462,26 @@ THE SOFTWARE.
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
+                <h5>Version 1.0.2 <span class="fs-6 text-secondary ms-2">2024-01-12</span></h5>
+                <ul>
+                    <li>
+                        Improved URL parameter interpretation code, preventing invalid vectors from causing unexpected
+                        behavior after loading the vectors from a URL.
+                    </li>
+                    <li>
+                        Fixed CVSS:2.0 improperly using negative values for the impact score, especially regarding the
+                        radar chart.
+                    </li>
+                    <li>
+                        Component button labels will now adapt to available space and potentially use abbreviations or
+                        only use the short name if not enough space is available.
+                    </li>
+                    <li>
+                        Added a <code>cve</code> URL parameter that allows for loading CVSS from NVD when opening the
+                        page.
+                    </li>
+                </ul>
+                <hr>
                 <h5>Version 1.0.1 <span class="fs-6 text-secondary ms-2">2024-01-11</span></h5>
                 <ul>
                     <li>Scores are now visible in the vector list and added warnings for invalid vectors.</li>
@@ -483,8 +507,6 @@ THE SOFTWARE.
                 <ul>
                     <li>Initial release</li>
                 </ul>
-                <hr>
-                <button onclick="loadDemo()" class="btn btn-primary">Load Demo Vectors</button>
             </div>
         </div>
     </div>

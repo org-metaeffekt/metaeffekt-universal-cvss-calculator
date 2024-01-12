@@ -367,8 +367,10 @@ function appendNewVector(vectorInput, name, shown = true, version = undefined) {
         cvssVectors.push(vectorRepresentation);
         vectorRepresentation.adjustNameColumnSize();
         updateScores();
+        return true;
     } else {
-        createBootstrapToast('Invalid CVSS vector', vectorInput + ' is not a valid CVSS vector for ' + name, 'error');
+        invalidVectorToast(vectorInput, name);
+        return false;
     }
 }
 
@@ -382,7 +384,7 @@ function appendNewEmptyVector(vectorInput, name, prependCvssOnLargeScreens = fal
     try {
         cvssInstance = createInstanceForVector(vectorInput);
     } catch (e) {
-        createBootstrapToast('Invalid CVSS vector', vectorInput + ' is not a valid CVSS vector for ' + name, 'error');
+        invalidVectorToast(vectorInput, name);
         return;
     }
     if (cvssInstance) {
@@ -394,13 +396,21 @@ function appendNewEmptyVector(vectorInput, name, prependCvssOnLargeScreens = fal
         updateScores();
         setSelectedVector(cvssInstance);
     } else {
+        invalidVectorToast(vectorInput, name);
+    }
+}
+
+function invalidVectorToast(vectorInput, name) {
+    if (name) {
         createBootstrapToast('Invalid CVSS vector', vectorInput + ' is not a valid CVSS vector for ' + name, 'error');
+    } else {
+        createBootstrapToast('Invalid CVSS vector', vectorInput + ' is not a valid CVSS vector', 'error');
     }
 }
 
 let isCurrentlyFetchingFromVulnerability = false;
 
-function appendVectorByVulnerability(vulnerability) {
+function appendVectorByVulnerability(vulnerability, completionCallback = undefined) {
     if (!vulnerability) {
         return;
     }
@@ -458,6 +468,8 @@ function appendVectorByVulnerability(vulnerability) {
                 }
                 appendNewVector(cvssVector.vector, name, true, cvssVector.version);
             }
+
+            completionCallback && completionCallback();
         })
         .catch(error => {
             isCurrentlyFetchingFromVulnerability = false;
@@ -467,6 +479,7 @@ function appendVectorByVulnerability(vulnerability) {
             inputAddVectorByVulnerabilityLabel.classList.add('btn-danger');
             inputAddVectorByVulnerabilityLabel.innerHTML = inputLabelPreviousContent;
             createBootstrapToast('Error fetching from NVD', 'Error fetching data: ' + error, 'error');
+            completionCallback && completionCallback();
         });
 }
 
@@ -935,11 +948,81 @@ Security requirements: ${securityRequirements}`;
 let selectedVector = null;
 let expandedComponentCategories = [];
 
+/**
+ * Uses canvas.measureText to compute and return the width of the given text of given font in pixels.
+ *
+ * @param {String} text The text to be rendered.
+ * @param {String} font The css font descriptor that text is to be rendered with (e.g. "bold 14px verdana").
+ *
+ * @see https://stackoverflow.com/questions/118241/calculate-text-width-with-javascript/21015393#21015393
+ */
+function getTextWidth(text, font) {
+    // re-use canvas object for better performance
+    const canvas = getTextWidth.canvas || (getTextWidth.canvas = document.createElement("canvas"));
+    const context = canvas.getContext("2d");
+    context.font = font;
+    const metrics = context.measureText(text);
+    return metrics.width;
+}
+
+function getCssStyle(element, prop) {
+    return window.getComputedStyle(element, null).getPropertyValue(prop);
+}
+
+function getCanvasFont(el = document.body) {
+    const fontWeight = getCssStyle(el, 'font-weight') || 'normal';
+    const fontSize = getCssStyle(el, 'font-size') || '16px';
+    const fontFamily = getCssStyle(el, 'font-family') || 'Times New Roman';
+
+    return `${fontWeight} ${fontSize} ${fontFamily}`;
+}
+
+let abbreviatableComponentElements = [];
+
+/*{
+    element: element,
+    textVariants: ['long', 'medium', 'short', ...]
+}*/
+
+function updateAbbreaviatableComponentElements() {
+    for (let abbr of abbreviatableComponentElements) {
+        const textVariants = abbr.textVariants;
+        const element = abbr.element;
+
+        const availableWidth = element.clientWidth;
+
+        // now try to find the first that fits
+        for (let textVariant of textVariants) {
+            if (textVariant === undefined) {
+                continue;
+            }
+            const usedWidth = getTextWidth(textVariant, getCanvasFont(element));
+            if (usedWidth <= availableWidth) {
+                element.innerText = textVariant;
+                break;
+            }
+        }
+
+        // if none fits, use the last one
+        if (element.innerText === '') {
+            element.innerText = textVariants[textVariants.length - 1];
+        }
+    }
+}
+
+// listen for page width changes, set a timeout for debouncing to 500ms
+let abbreviationResizeTimeout = null;
+window.addEventListener('resize', () => {
+    clearTimeout(abbreviationResizeTimeout);
+    abbreviationResizeTimeout = setTimeout(updateAbbreaviatableComponentElements, 500);
+});
+
 function setSelectedVector(vectorInstance) {
     selectedVector = vectorInstance;
     // now build the accordion
     unregisterAllTooltips(cvssComponentsContainerElement);
     cvssComponentsContainerElement.innerText = '';
+    abbreviatableComponentElements = [];
 
     if (!vectorInstance) {
         return;
@@ -1073,23 +1156,37 @@ function setSelectedVector(vectorInstance) {
                     }
 
                     const componentButton = document.createElement('button');
+                    componentButtonGroup.appendChild(componentButton);
                     componentButton.classList.add('btn', 'btn-sm', 'cvss-component-button');
                     if (component.values.length > 5) {
                         componentButton.classList.add('col-2');
                     } else {
                         componentButton.classList.add('col-2-5');
                     }
-                    componentButton.style.overflowX = 'hidden';
-                    componentButton.style.whiteSpace = 'nowrap';
+
                     componentButton.type = 'button';
+
                     // componentValue.description as popover tooltip
                     componentButton.setAttribute('data-bs-toggle', 'popover');
                     componentButton.setAttribute('data-bs-placement', 'top');
                     componentButton.setAttribute('data-bs-content', componentValue.description);
+                    componentButton.setAttribute('title', componentValue.shortName + ' - ' + componentValue.name);
                     componentButton.setAttribute('data-bs-trigger', 'hover focus');
 
-                    componentButton.innerText = componentValue.shortName + ' (' + componentValue.name + ')';
-                    componentButtonGroup.appendChild(componentButton);
+                    const buttonText = document.createElement('span');
+                    buttonText.classList.add('button-text');
+                    buttonText.innerText = componentValue.shortName + ': ' + componentValue.name;
+                    abbreviatableComponentElements.push({
+                        element: buttonText,
+                        textVariants: [
+                            componentValue.shortName + ': ' + componentValue.name,
+                            componentValue.abbreviatedName ? componentValue.shortName + ': ' + componentValue.abbreviatedName : undefined,
+                            componentValue.name,
+                            componentValue.abbreviatedName,
+                            componentValue.shortName
+                        ]
+                    });
+                    componentButton.appendChild(buttonText);
 
                     if (componentValue === currentValue) {
                         let type = (componentValue.shortName === 'X' || componentValue.shortName === 'ND') ? 'secondary' : 'primary';
@@ -1129,6 +1226,8 @@ function setSelectedVector(vectorInstance) {
 
         updateTooltip(accordionCollapse);
     }
+
+    updateAbbreaviatableComponentElements();
 
     storeInGet();
     updateScores();
@@ -1227,6 +1326,21 @@ function loadFromGet() {
             }
         }
     }
+
+    const cve = urlParams.get('cve');
+    if (cve) {
+        const cves = cve.split(',');
+        let currentIndex = 0;
+        const loadNext = () => {
+            if (currentIndex < cves.length) {
+                appendVectorByVulnerability(cves[currentIndex], () => {
+                    currentIndex++;
+                    loadNext();
+                });
+            }
+        }
+        loadNext();
+    }
 }
 
 let storeInGetTimeout = null;
@@ -1270,6 +1384,8 @@ function storeInGet() {
         } else {
             urlParams.delete('selected');
         }
+
+        urlParams.delete('cve');
 
         if (urlParams.toString().length === 0) {
             window.history.replaceState({}, '', window.location.pathname);

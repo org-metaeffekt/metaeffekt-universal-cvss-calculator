@@ -1,5 +1,6 @@
 export interface VectorComponentValue {
     name: string;
+    abbreviatedName?: string;
     shortName: string;
     description: string;
     hide?: boolean;
@@ -125,7 +126,14 @@ export abstract class CvssVector<R extends BaseScoreResult> {
         const normalizedVector = this.normalizeVector(vector);
         const components = normalizedVector.split('/');
         components.forEach(component => {
+            if (component.length === 0) {
+                return;
+            }
             const [identifier, value] = component.split(':');
+            if (identifier.length === 0 || value.length === 0) {
+                console.warn('Invalid component/value pair', component);
+                return;
+            }
             this.applyComponentString(identifier, value, false);
         });
         this.vectorChangedListeners.forEach(listener => listener(this));

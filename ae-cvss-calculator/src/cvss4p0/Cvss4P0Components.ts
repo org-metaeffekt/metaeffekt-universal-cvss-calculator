@@ -3,7 +3,7 @@ import {ComponentCategory, VectorComponent, VectorComponentValue} from "../CvssV
 export class Cvss4P0Components {
 
     public static readonly TEMPLATE_CIA_BASE_VALUES = {
-        X: {shortName: 'X', name: 'Not Defined', description: 'Component is not defined.'},
+        X: {shortName: 'X', name: 'Not Defined', abbreviatedName: 'Not Def.', description: 'Component is not defined.'},
         H: {shortName: 'H', name: 'High', description: ''},
         L: {shortName: 'L', name: 'Low', description: ''},
         N: {shortName: 'N', name: 'None', description: ''}
@@ -17,7 +17,7 @@ export class Cvss4P0Components {
     ] as VectorComponentValue[];
 
     public static readonly TEMPLATE_CIA_SUBSEQUENT_BASE_VALUES = {
-        X: {shortName: 'X', name: 'Not Defined', description: 'Component is not defined.'},
+        X: {shortName: 'X', name: 'Not Defined', abbreviatedName: 'Not Def.', description: 'Component is not defined.'},
         S: {
             shortName: 'S',
             name: 'Safety',
@@ -38,25 +38,25 @@ export class Cvss4P0Components {
     ] as VectorComponentValue[];
 
     private static readonly TEMPLATE_CIA_SUBSEQUENT_MODIFIED = [
-        {shortName: 'X', name: 'Not Defined', description: 'Component is not defined.'},
+        {shortName: 'X', name: 'Not Defined', abbreviatedName: 'Not Def.', description: 'Component is not defined.'},
         {shortName: 'H', name: 'High', description: ''},
         {shortName: 'L', name: 'Low', description: ''},
-        {shortName: 'N', name: 'Negligible', description: ''}
+        {shortName: 'N', name: 'Negligible', abbreviatedName: 'Negl.', description: ''}
     ] as VectorComponentValue[];
 
     public static readonly TEMPLATE_CIA_SUBSEQUENT_MODIFIED_VALUES = {
-        X: {shortName: 'X', name: 'Not Defined', description: 'Component is not defined.'},
+        X: {shortName: 'X', name: 'Not Defined', abbreviatedName: 'Not Def.', description: 'Component is not defined.'},
         H: {shortName: 'H', name: 'High', description: ''},
         L: {shortName: 'L', name: 'Low', description: ''},
-        N: {shortName: 'N', name: 'Negligible', description: ''}
+        N: {shortName: 'N', name: 'Negligible', abbreviatedName: 'Negl.', description: ''}
     };
 
     public static readonly TEMPLATE_CIA_SUBSEQUENT_SAFETY_MODIFIED_VALUES = {
-        X: {shortName: 'X', name: 'Not Defined', description: 'Component is not defined.'},
+        X: {shortName: 'X', name: 'Not Defined', abbreviatedName: 'Not Def.', description: 'Component is not defined.'},
         S: {shortName: 'S', name: 'Safety', description: ''},
         H: {shortName: 'H', name: 'High', description: ''},
         L: {shortName: 'L', name: 'Low', description: ''},
-        N: {shortName: 'N', name: 'Negligible', description: ''}
+        N: {shortName: 'N', name: 'Negligible', abbreviatedName: 'Negl.', description: ''}
     };
 
     public static readonly TEMPLATE_CIA_SUBSEQUENT_SAFETY_MODIFIED = [
@@ -69,7 +69,7 @@ export class Cvss4P0Components {
 
 
     public static readonly TEMPLATE_CIA_REQUIREMENT_MODIFIED_VALUES = {
-        X: {shortName: 'X', name: 'Not Defined', description: 'Component is not defined.'},
+        X: {shortName: 'X', name: 'Not Defined', abbreviatedName: 'Not Def.', description: 'Component is not defined.'},
         H: {shortName: 'H', name: 'High', description: ''},
         M: {shortName: 'M', name: 'Medium', description: ''},
         L: {shortName: 'L', name: 'Low', description: ''}
@@ -86,11 +86,11 @@ export class Cvss4P0Components {
     /* base metrics */
 
     public static readonly AV_VALUES = {
-        X: {shortName: 'X', name: 'Not Defined', description: 'Not Defined'},
+        X: {shortName: 'X', name: 'Not Defined', abbreviatedName: 'Not Def.', description: 'Not Defined'},
         N: {shortName: 'N', name: 'Network', description: ''},
-        A: {shortName: 'A', name: 'Adjacent Network', description: ''},
+        A: {shortName: 'A', name: 'Adjacent Network', abbreviatedName: 'Adj. Network', description: ''},
         L: {shortName: 'L', name: 'Local', description: ''},
-        P: {shortName: 'P', name: 'Physical', description: ''}
+        P: {shortName: 'P', name: 'Physical', abbreviatedName: 'Phys.', description: ''}
     };
 
     public static readonly AV = {
@@ -109,7 +109,7 @@ export class Cvss4P0Components {
     };
 
     public static readonly AC_VALUES = {
-        X: {shortName: 'X', name: 'Not Defined', description: 'Not Defined'},
+        X: {shortName: 'X', name: 'Not Defined', abbreviatedName: 'Not Def.', description: 'Not Defined'},
         L: {shortName: 'L', name: 'Low', description: ''},
         H: {shortName: 'H', name: 'High', description: ''}
     };
@@ -128,7 +128,7 @@ export class Cvss4P0Components {
     };
 
     public static readonly AT_VALUES = {
-        X: {shortName: 'X', name: 'Not Defined', description: 'Not Defined'},
+        X: {shortName: 'X', name: 'Not Defined', abbreviatedName: 'Not Def.', description: 'Not Defined'},
         N: {shortName: 'N', name: 'None', description: ''},
         P: {shortName: 'P', name: 'Present', description: ''}
     };
@@ -147,7 +147,7 @@ export class Cvss4P0Components {
     };
 
     public static readonly PR_VALUES = {
-        X: {shortName: 'X', name: 'Not Defined', description: 'Not Defined'},
+        X: {shortName: 'X', name: 'Not Defined', abbreviatedName: 'Not Def.', description: 'Not Defined'},
         N: {shortName: 'N', name: 'None', description: ''},
         L: {shortName: 'L', name: 'Low', description: ''},
         H: {shortName: 'H', name: 'High', description: ''}
@@ -168,7 +168,7 @@ export class Cvss4P0Components {
     };
 
     public static readonly UI_VALUES = {
-        X: {shortName: 'X', name: 'Not Defined', description: 'Not Defined'},
+        X: {shortName: 'X', name: 'Not Defined', abbreviatedName: 'Not Def.', description: 'Not Defined'},
         N: {shortName: 'N', name: 'None', description: ''},
         P: {shortName: 'P', name: 'Passive', description: ''},
         A: {shortName: 'A', name: 'Active', description: ''}
@@ -245,8 +245,8 @@ export class Cvss4P0Components {
     /* supplemental metrics */
 
     public static readonly S_VALUES = {
-        X: {shortName: 'X', name: 'Not Defined', description: 'Not Defined'},
-        N: {shortName: 'N', name: 'Negligible', description: ''},
+        X: {shortName: 'X', name: 'Not Defined', abbreviatedName: 'Not Def.', description: 'Not Defined'},
+        N: {shortName: 'N', name: 'Negligible', abbreviatedName: 'Negl.', description: ''},
         P: {shortName: 'P', name: 'Present', description: ''}
     };
 
@@ -263,7 +263,7 @@ export class Cvss4P0Components {
     };
 
     public static readonly AU_VALUES = {
-        X: {shortName: 'X', name: 'Not Defined', description: 'Not Defined'},
+        X: {shortName: 'X', name: 'Not Defined', abbreviatedName: 'Not Def.', description: 'Not Defined'},
         N: {shortName: 'N', name: 'No', description: ''},
         Y: {shortName: 'Y', name: 'Yes', description: ''}
     };
@@ -281,10 +281,10 @@ export class Cvss4P0Components {
     };
 
     public static readonly R_VALUES = {
-        X: {shortName: 'X', name: 'Not Defined', description: 'Not Defined'},
-        A: {shortName: 'A', name: 'Automatic', description: ''},
+        X: {shortName: 'X', name: 'Not Defined', abbreviatedName: 'Not Def.', description: 'Not Defined'},
+        A: {shortName: 'A', name: 'Automatic', abbreviatedName: 'Automat.', description: ''},
         U: {shortName: 'U', name: 'User', description: ''},
-        I: {shortName: 'I', name: 'Irrecoverable', description: ''}
+        I: {shortName: 'I', name: 'Irrecoverable', abbreviatedName: 'Irrecov.', description: ''}
     };
 
     public static readonly R = {
@@ -301,9 +301,9 @@ export class Cvss4P0Components {
     };
 
     public static readonly V_VALUES = {
-        X: {shortName: 'X', name: 'Not Defined', description: 'Not Defined'},
+        X: {shortName: 'X', name: 'Not Defined', abbreviatedName: 'Not Def.', description: 'Not Defined'},
         D: {shortName: 'D', name: 'Diffuse', description: ''},
-        C: {shortName: 'C', name: 'Concentrated', description: ''}
+        C: {shortName: 'C', name: 'Concentrated', abbreviatedName: 'Concentr.', description: ''}
     };
 
     public static readonly V = {
@@ -319,9 +319,9 @@ export class Cvss4P0Components {
     };
 
     public static readonly RE_VALUES = {
-        X: {shortName: 'X', name: 'Not Defined', description: 'Not Defined'},
+        X: {shortName: 'X', name: 'Not Defined', abbreviatedName: 'Not Def.', description: 'Not Defined'},
         L: {shortName: 'L', name: 'Low', description: ''},
-        M: {shortName: 'M', name: 'Moderate', description: ''},
+        M: {shortName: 'M', name: 'Moderate', abbreviatedName: 'Moder.', description: ''},
         H: {shortName: 'H', name: 'High', description: ''}
     };
 
@@ -339,7 +339,7 @@ export class Cvss4P0Components {
     };
 
     public static readonly U_VALUES = {
-        X: {shortName: 'X', name: 'Not Defined', description: 'Not Defined'},
+        X: {shortName: 'X', name: 'Not Defined', abbreviatedName: 'Not Def.', description: 'Not Defined'},
         Clear: {shortName: 'Clear', name: 'Clear', description: ''},
         Green: {shortName: 'Green', name: 'Green', description: ''},
         Amber: {shortName: 'Amber', name: 'Amber', description: ''},
@@ -486,7 +486,7 @@ export class Cvss4P0Components {
     };
 
     public static readonly E_VALUES = {
-        X: {shortName: 'X', name: 'Not Defined', description: 'Not Defined'},
+        X: {shortName: 'X', name: 'Not Defined', abbreviatedName: 'Not Def.', description: 'Not Defined'},
         A: {shortName: 'A', name: 'Attacked', description: ''},
         P: {shortName: 'P', name: 'POC', description: ''},
         U: {shortName: 'U', name: 'Unreported', description: ''}
