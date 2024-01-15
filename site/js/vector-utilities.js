@@ -22,10 +22,10 @@ function extractPossibleNameFromFreeText(inputString, version, shortVersion) {
 
     const inMatcher = /in ([A-Za-z.:-]+(?: [A-Za-z.:-]+)?)/i;
     if (inMatcher.test(inputString)) {
-        return shortVersion + ' ' + inMatcher.exec(inputString)[1];
+        return shortVersion + ' ' + inMatcher.exec(inputString)[1].trim();
     }
 
-    const scoreNameMatcher = /\d+\.\d+ ((?:CVSS ?:? ?)?\d+\.\d+)(.*)/i;
+    const scoreNameMatcher = /\d+\.\d+ +((?:CVSS ?:? ?)?\d+\.\d+)(.*)/i;
     if (scoreNameMatcher.test(inputString)) {
         const result = scoreNameMatcher.exec(inputString);
         if (result.length === 3 && result[2].length > 0  && result[2].trim().length <= 25) {
@@ -34,8 +34,8 @@ function extractPossibleNameFromFreeText(inputString, version, shortVersion) {
         return result[1];
     }
 
-    if (inputString.length < 25) {
-        return version + ' ' + inputString;
+    if (inputString.trim().length < 25) {
+        return version + ' ' + inputString.trim();
     }
 
     return version;
