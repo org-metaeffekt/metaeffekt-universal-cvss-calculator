@@ -315,15 +315,21 @@ body {
     }
 }
 
-@media (max-width: 1400px) {
+@media (max-width: 800px) {
     .cvss-creation-utils-container {
         flex-direction: column;
         gap: 0.3rem !important;
     }
+}
 
+@media (max-width: 1400px) {
     .hide-on-small-screens {
         display: none !important;
     }
+}
+
+.cvss-creation-utils-container {
+    justify-content: space-between;
 }
 
 .by-metaeffekt-header {
@@ -446,14 +452,6 @@ body {
 
 .form-control::placeholder {
     opacity: 0.4;
-}
-
-.btn {
-    padding-bottom: 3px;
-}
-
-input.btn {
-    padding-bottom: 4px;
 }
 
 .mt-4P5 {

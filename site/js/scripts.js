@@ -410,6 +410,20 @@ function invalidVectorToast(vectorInput, name) {
 
 let isCurrentlyFetchingFromVulnerability = false;
 
+function appendVectorByVulnerabilityOrVector(vulnOrVector, completionCallback = undefined) {
+    if (!vulnOrVector) {
+        return;
+    }
+    const vulnerability = extractAndFormatCVE(vulnOrVector.toUpperCase());
+    if (!vulnerability || vulnerability.length === 0 || !vulnerability.startsWith('CVE-')) {
+        appendNewVector(vulnOrVector, undefined, true);
+        const inputElement = document.getElementById('inputAddVectorByVulnerability');
+        inputElement.value = '';
+    } else {
+        appendVectorByVulnerability(vulnerability, completionCallback);
+    }
+}
+
 function appendVectorByVulnerability(vulnerability, completionCallback = undefined) {
     if (!vulnerability) {
         return;
@@ -428,12 +442,12 @@ function appendVectorByVulnerability(vulnerability, completionCallback = undefin
     inputElement.setAttribute('disabled', 'disabled')
 
     isCurrentlyFetchingFromVulnerability = true;
-    const inputAddVectorByVulnerabilityLabel = document.getElementById('inputAddVectorByVulnerabilityLabel');
-    inputAddVectorByVulnerabilityLabel.classList.remove('btn-success');
-    inputAddVectorByVulnerabilityLabel.classList.add('btn-secondary');
+    const inputAddVectorByString = document.getElementById('inputAddVectorByString');
+    inputAddVectorByString.classList.remove('btn-success');
+    inputAddVectorByString.classList.add('btn-secondary');
 
-    const inputLabelPreviousContent = inputAddVectorByVulnerabilityLabel.innerHTML;
-    inputAddVectorByVulnerabilityLabel.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> &nbsp;NVD';
+    const inputLabelPreviousContent = inputAddVectorByString.innerHTML;
+    inputAddVectorByString.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> &nbsp;NVD';
 
     fetchVulnerabilityData(vulnerability)
         .then(json => {
@@ -442,17 +456,17 @@ function appendVectorByVulnerability(vulnerability, completionCallback = undefin
             const cvssVectors = extractCvssVectors(json);
             const englishDescription = extractEnglishDescription(vulnerability, json);
 
-            inputAddVectorByVulnerabilityLabel.classList.remove('btn-secondary');
-            inputAddVectorByVulnerabilityLabel.innerHTML = inputLabelPreviousContent;
+            inputAddVectorByString.classList.remove('btn-secondary');
+            inputAddVectorByString.innerHTML = inputLabelPreviousContent;
 
             if (cvssVectors.length === 0) {
                 createBootstrapToast('Error fetching from NVD', 'No CVSS vector found for ' + vulnerability, 'error');
-                inputAddVectorByVulnerabilityLabel.classList.remove('btn-success');
-                inputAddVectorByVulnerabilityLabel.classList.add('btn-danger');
+                inputAddVectorByString.classList.remove('btn-success');
+                inputAddVectorByString.classList.add('btn-danger');
                 return;
             }
-            inputAddVectorByVulnerabilityLabel.classList.remove('btn-danger');
-            inputAddVectorByVulnerabilityLabel.classList.add('btn-success');
+            inputAddVectorByString.classList.remove('btn-danger');
+            inputAddVectorByString.classList.add('btn-success');
 
             inputElement.value = '';
 
@@ -474,10 +488,10 @@ function appendVectorByVulnerability(vulnerability, completionCallback = undefin
         .catch(error => {
             isCurrentlyFetchingFromVulnerability = false;
             inputElement.removeAttribute('disabled');
-            inputAddVectorByVulnerabilityLabel.classList.remove('btn-secondary');
-            inputAddVectorByVulnerabilityLabel.classList.remove('btn-success');
-            inputAddVectorByVulnerabilityLabel.classList.add('btn-danger');
-            inputAddVectorByVulnerabilityLabel.innerHTML = inputLabelPreviousContent;
+            inputAddVectorByString.classList.remove('btn-secondary');
+            inputAddVectorByString.classList.remove('btn-success');
+            inputAddVectorByString.classList.add('btn-danger');
+            inputAddVectorByString.innerHTML = inputLabelPreviousContent;
             createBootstrapToast('Error fetching from NVD', 'Error fetching data: ' + error, 'error');
             completionCallback && completionCallback();
         });
@@ -568,15 +582,23 @@ function updateScores() {
 
     // tutorial elements
     const showOnlyIfNoVectorPresent = document.getElementsByClassName('only-if-no-vectors-present');
+    const showOnlyIfVectorPresent = document.getElementsByClassName('only-if-vectors-present');
     if (cvssVectors.length > 0) {
         for (let element of showOnlyIfNoVectorPresent) {
             element.classList.add('d-none');
+        }
+        for (let element of showOnlyIfVectorPresent) {
+            element.classList.remove('d-none');
         }
     } else {
         for (let element of showOnlyIfNoVectorPresent) {
             element.classList.remove('d-none');
         }
+        for (let element of showOnlyIfVectorPresent) {
+            element.classList.add('d-none');
+        }
     }
+
 
     // cve description display
     if (selectedVectorContainerInstance) {
@@ -627,20 +649,6 @@ function updateScores() {
         }
 
         if (!isNotDefined(scores.overall)) {
-            const severityRangeColorFinder = value => {
-                if (value === 0) {
-                    return {color: 'pastel-gray', severity: 'None'};
-                } else if (value < 4) {
-                    return {color: 'strong-yellow', severity: 'Low'};
-                } else if (value < 7) {
-                    return {color: 'strong-light-orange', severity: 'Medium'};
-                } else if (value < 9) {
-                    return {color: 'strong-dark-orange', severity: 'High'};
-                } else {
-                    return {color: 'strong-red', severity: 'Critical'};
-                }
-            }
-
             const severityRange = severityRangeColorFinder(scores.overall);
             vector.scoreDisplayButton.classList.remove('bg-pastel-gray', 'bg-strong-yellow', 'bg-strong-light-orange', 'bg-strong-dark-orange', 'bg-strong-red');
             vector.scoreDisplayButton.classList.add('bg-' + severityRange.color);
@@ -1238,6 +1246,127 @@ function setSelectedVector(vectorInstance) {
     updateScores();
 }
 
+function freeTextInputParseIntermediate() {
+    const input = document.getElementById('inputAddVectorByMultipleStrings').value;
+    const previewOlListElement = document.getElementById('appendVectorsFromStringModalPreview');
+    previewOlListElement.innerText = '';
+
+    const vectors = extractVectorsFromFreeText(input);
+    for (let i = 0; i < vectors.length; i++) {
+        const vector = vectors[i].vector;
+
+        const cvssInstance = createInstanceForVector(vector);
+        if (!cvssInstance) {
+            const content = `
+<div class="btn-group w-100 d-flex" role="group">
+    <button type="button" class="btn bg-strong-red" style="width: 4rem;" data-bs-toggle="popover" data-bs-placement="right" data-bs-content="Low" data-bs-trigger="hover" readonly>?</button>
+    <input type="text" class="btn button-no-break cvss-vector-name bg-pastel-gray" size="20" value="Invalid vector">
+    <input type="text" class="btn btn-outline-secondary w-100 font-monospace text-start scrollable-content cvss-vector-string" value="${vector}" readonly>
+</div>
+`;
+            const parentContentSpan = document.createElement('span');
+            parentContentSpan.innerHTML = content;
+            previewOlListElement.appendChild(parentContentSpan);
+            continue;
+        }
+
+        let vectorName = cvssInstance.getVectorName();
+        const screenWidth = window.innerWidth;
+        if (screenWidth < 992) {
+            vectorName = vectorName.replace('CVSS:', '');
+        }
+        let shortName = vectorName.replace('CVSS:', '');
+
+
+        const prefix = vectors[i].prefix;
+        const displayName = extractPossibleNameFromFreeText(prefix, vectorName, shortName);
+
+        let overallScore = '?';
+        let severityRange = {color: 'pastel-gray', severity: 'N/A'};
+        try {
+            overallScore = cvssInstance.calculateScores().overall.toFixed(1);
+            severityRange = severityRangeColorFinder(overallScore);
+        } catch (e) {
+        }
+
+        let vectorCssClass = 'bg-cvss-3P1';
+        if (cvssInstance instanceof CvssCalculator.Cvss2) {
+            vectorCssClass = 'bg-cvss-2';
+        } else if (cvssInstance instanceof CvssCalculator.Cvss4P0) {
+            vectorCssClass = 'bg-cvss-4P0';
+        }
+
+        const content = `
+<div class="btn-group w-100 d-flex" role="group">
+    <button type="button" class="btn bg-${severityRange.color}" style="width: 4rem;" data-bs-toggle="popover" data-bs-placement="right" data-bs-content="Low" data-bs-trigger="hover" readonly>${overallScore}</button>
+    <input type="text" class="btn button-no-break cvss-vector-name ${vectorCssClass}" size="20" value="${displayName}">
+    <input type="text" class="btn btn-outline-secondary w-100 font-monospace text-start scrollable-content cvss-vector-string" value="${vector}" readonly>
+</div>
+`;
+        const parentContentSpan = document.createElement('span');
+        parentContentSpan.innerHTML = content;
+        previewOlListElement.appendChild(parentContentSpan);
+    }
+
+    const setVisibilityIfNotEmpty = document.getElementsByClassName('only-if-append-vectors-available');
+    if (previewOlListElement.innerText !== '') {
+        for (let i = 0; i < setVisibilityIfNotEmpty.length; i++) {
+            setVisibilityIfNotEmpty[i].classList.remove('d-none');
+        }
+    } else {
+        for (let i = 0; i < setVisibilityIfNotEmpty.length; i++) {
+            setVisibilityIfNotEmpty[i].classList.add('d-none');
+        }
+
+    }
+}
+
+function appendNewVectorsFromFreeTextInput() {
+    const previewParent = document.getElementById('appendVectorsFromStringModalPreview');
+    const previewChildren = previewParent.children;
+    for (let i = 0; i < previewChildren.length; i++) {
+        const child = previewChildren[i];
+        const name = child.getElementsByClassName('cvss-vector-name')[0].value;
+        const vector = child.getElementsByClassName('cvss-vector-string')[0].value;
+        appendNewVector(vector, name);
+    }
+
+    document.getElementById('inputAddVectorByMultipleStrings').value = '';
+    freeTextInputParseIntermediate();
+}
+
+function copyVectors() {
+    const vectors = [];
+    for (let vector of cvssVectors) {
+        vectors.push([vector.cvssInstance.calculateScores().overall, vector.name, vector.cvssInstance.toString()]);
+    }
+    const longestNameLength = vectors.reduce((acc, cur) => Math.max(acc, cur[1].length), 0);
+
+    let formattedText = '';
+    for (let vector of vectors) {
+        formattedText += `${('' + vector[0].toFixed(1)).padEnd(4, ' ')} ${vector[1].padEnd(longestNameLength, ' ')} ${vector[2]}`;
+        formattedText += '\n';
+    }
+
+    try {
+        navigator.clipboard.writeText(formattedText);
+        createBootstrapToast('Copied vectors', 'Copied all vectors to clipboard.', 'success');
+    } catch (e) {
+        console.error(e);
+        alert('Copy the following text by highlighting it and using ctrl/cmd + c:\n' +formattedText);
+    }
+}
+
+function copyLink() {
+    try {
+        navigator.clipboard.writeText(window.location.href);
+        createBootstrapToast('Copied link', 'Copied link to clipboard.', 'success');
+    } catch (e) {
+        console.error(e);
+        alert('Copy the following text by highlighting it and using ctrl/cmd + c:\n' + window.location.href);
+    }
+}
+
 function updateTooltip(element) {
     const tooltipTriggerList = [].slice.call(element.querySelectorAll('[data-bs-toggle="popover"]'));
     tooltipTriggerList.map(function (tooltipTriggerEl) {
@@ -1261,7 +1390,7 @@ function createBootstrapToast(title, message, type = 'info') {
     if (!toastContainer) {
         toastContainer = document.createElement('div');
         toastContainer.id = 'toast-container';
-        toastContainer.className = 'toast-container position-fixed bottom-0 end-0 p-3';
+        toastContainer.className = 'toast-container position-fixed top-0 end-0 p-3';
         document.body.appendChild(toastContainer);
     }
 
@@ -1402,6 +1531,10 @@ function storeInGet() {
 
 updateTooltip(document.body);
 loadFromGet();
+try {
+    freeTextInputParseIntermediate();
+} catch (e) {
+}
 
 if (cvssVectors.length === 0) {
     // const defaultVector = new CvssCalculator.Cvss3P1();

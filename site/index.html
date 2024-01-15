@@ -60,6 +60,7 @@ limitations under the License.
 
     <link rel="stylesheet" href="styles.css">
     <script src="js/nvd-api-fetcher.js" defer></script>
+    <script src="js/vector-utilities.js" defer></script>
     <script src="js/scripts.js" defer></script>
 </head>
 
@@ -73,56 +74,62 @@ limitations under the License.
         <div class="col-lg-8 col-md-12 col-12 mb-3">
 
             <div class="d-flex gap-4 cvss-creation-utils-container">
-                <div class="input-group mb-3" style="width: fit-content;">
-                    <button type="button" class="btn btn-success"
-                            onclick="const inputElement=document.getElementById('inputAddVectorByString');if(!inputElement||!inputElement.value)return;if(appendNewVector(inputElement.value,undefined,true))inputElement.value='';"
-                            data-bs-toggle="popover" data-bs-placement="top" data-bs-trigger="hover"
-                            data-bs-content="Use the buttons on the right to add a new vector or enter any vector in the text field.">
-                        <i class="bi bi-plus-circle-fill"></i> &nbsp;CVSS
-                    </button>
-                    <button type="button" class="btn btn-outline-success"
-                            onclick="appendNewEmptyVector('2.0','2.0',true);"
-                            data-bs-toggle="popover" data-bs-placement="top"
-                            data-bs-content="Append a new CVSS 2.0 Vector" data-bs-trigger="hover">
-                        2.0
-                    </button>
-                    <button type="button" class="btn btn-outline-success"
-                            onclick="appendNewEmptyVector('3.1','3.1',true);"
-                            data-bs-toggle="popover" data-bs-placement="top"
-                            data-bs-content="Append a new CVSS 3.1 Vector" data-bs-trigger="hover">
-                        3.1
-                    </button>
-                    <button type="button" class="btn btn-outline-success"
-                            onclick="appendNewEmptyVector('4.0','4.0',true);"
-                            data-bs-toggle="popover" data-bs-placement="top"
-                            data-bs-content="Append a new CVSS 4.0 Vector" data-bs-trigger="hover">
-                        4.0
-                    </button>
-                    <input type="text" class="form-control" placeholder="CVSS:3.1/AV:N/..." aria-label="Vulnerability"
-                           id="inputAddVectorByString"
-                           size="10"
-                           data-bs-toggle="popover" data-bs-placement="top" data-bs-trigger="hover"
-                           data-bs-content="Enter any CVSS Vector and press enter to add it."
-                           onkeydown="if(event.keyCode===13){if(appendNewVector(this.value,undefined,true))this.value='';}">
-                </div>
-                <div class="input-group mb-3" style="flex-grow: 0; max-width: 270px;">
-                    <button type="button" class="btn btn-success" id="inputAddVectorByVulnerabilityLabel"
-                            onclick="appendVectorByVulnerability(document.getElementById('inputAddVectorByVulnerability').value);"
-                            data-bs-toggle="popover" data-bs-placement="top" data-bs-trigger="hover"
-                            data-bs-content="Enter a CVE to fetch it's vectors.">
-                        <i class="bi bi-plus-circle-fill"></i> &nbsp;NVD
-                    </button>
-                    <input type="text" class="form-control" placeholder="CVE-2022-21703" aria-label="Vulnerability"
-                           id="inputAddVectorByVulnerability"
-                           aria-describedby="inputAddVectorByVulnerabilityLabel"
-                           data-bs-toggle="popover" data-bs-placement="top" data-bs-trigger="hover"
-                           data-bs-content="Enter a CVE and press enter to fetch it's vectors."
-                           onkeydown="if (event.keyCode === 13) { appendVectorByVulnerability(this.value); }">
+                <div class="d-flex flex-row gap-2">
+                    <div class="input-group mb-3" style="width: fit-content;">
+                        <button type="button" class="btn btn-success"
+                                id="inputAddVectorByString"
+                                data-bs-toggle="modal" data-bs-target="#appendVectorsFromStringModal">
+                        <span class="bi bi-clipboard-plus-fill"
+                              data-bs-toggle="popover" data-bs-placement="top" data-bs-trigger="hover"
+                              data-bs-content="Click to add multiple vectors at once or use the elements on the right to add individual vectors."> &nbsp;CVSS</span>
+                        </button>
+
+                        <button type="button" class="btn btn-outline-success"
+                                onclick="appendNewEmptyVector('2.0','2.0',true);"
+                                data-bs-toggle="popover" data-bs-placement="top"
+                                data-bs-content="Append a new CVSS 2.0 Vector" data-bs-trigger="hover">
+                            2.0
+                        </button>
+                        <button type="button" class="btn btn-outline-success"
+                                onclick="appendNewEmptyVector('3.1','3.1',true);"
+                                data-bs-toggle="popover" data-bs-placement="top"
+                                data-bs-content="Append a new CVSS 3.1 Vector" data-bs-trigger="hover">
+                            3.1
+                        </button>
+                        <button type="button" class="btn btn-outline-success"
+                                onclick="appendNewEmptyVector('4.0','4.0',true);"
+                                data-bs-toggle="popover" data-bs-placement="top"
+                                data-bs-content="Append a new CVSS 4.0 Vector" data-bs-trigger="hover">
+                            4.0
+                        </button>
+
+                        <input type="text" class="form-control" placeholder="Enter CVSS / CVE..." aria-label="Vulnerability"
+                               id="inputAddVectorByVulnerability"
+                               aria-describedby="inputAddVectorByString"
+                               data-bs-toggle="popover" data-bs-placement="top" data-bs-trigger="hover"
+                               data-bs-content="Enter any vector and press enter to append it or a CVE to fetch it's vectors."
+                               onkeydown="if (event.keyCode === 13) { appendVectorByVulnerabilityOrVector(this.value); }">
+                    </div>
+
+                    <div class="mt-2 ms-4 only-if-no-vectors-present hide-on-small-screens">
+                        <i class="bi bi-arrow-left me-2"></i>
+                        <span class="text-secondary">Enter a CVE to fetch its vectors.</span>
+                    </div>
                 </div>
 
-                <div class="mt-2 only-if-no-vectors-present hide-on-small-screens">
-                    <i class="bi bi-arrow-left me-2"></i>
-                    <span class="text-secondary">Enter a CVE to fetch its vectors.</span>
+                <div class="input-group mb-3 only-if-vectors-present" style="width: fit-content;">
+                    <button type="button" class="btn btn-outline-success"
+                            onclick="copyVectors();"
+                            data-bs-toggle="popover" data-bs-placement="top"
+                            data-bs-content="Click to copy vectors and scores to clipboard." data-bs-trigger="hover">
+                        <i class="bi bi-clipboard"></i>
+                    </button>
+                    <button type="button" class="btn btn-outline-success"
+                            onclick="copyLink();"
+                            data-bs-toggle="popover" data-bs-placement="top"
+                            data-bs-content="Click to copy a link for these vectors to clipboard." data-bs-trigger="hover">
+                        <i class="bi bi-link-45deg"></i>
+                    </button>
                 </div>
             </div>
 
@@ -226,12 +233,55 @@ limitations under the License.
             <div class="col-lg-2 mb-2">
                 <i class="bi bi-braces-asterisk me-1"></i>
                 <a data-bs-toggle="modal" data-bs-target="#changelogModal" href="#" class="footer-link">
-                    1.0.2
+                    1.0.3
                 </a>
             </div>
         </div>
     </div>
 </footer>
+
+
+<div class="modal modal-lg fade" id="appendVectorsFromStringModal" tabindex="-1"
+     aria-labelledby="appendVectorsFromStringModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="appendVectorsFromStringModalLabel">Append multiple vectors</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>
+                    Enter multiple CVSS vectors into the text field below. The format does not matter, as long as each
+                    vector is separated by at least one space character. If possible, the system will try to assign
+                    fitting names to the vectors.
+                </p>
+
+                <textarea class="form-control" id="inputAddVectorByMultipleStrings" rows="10"
+                          placeholder="CVSS:3.1/AV:N/..." aria-label="Vulnerability"
+                          size="10"
+                          onchange="freeTextInputParseIntermediate()"
+                          onkeyup="freeTextInputParseIntermediate()">
+                </textarea>
+
+                <div id="appendVectorsFromStringModalPreview" class="d-flex mt-3 flex-column gap-2"></div>
+
+                <div class="mt-3 only-if-append-vectors-available" style="margin-left:80px;">
+                    <i class="bi bi-arrow-90deg-up me-2"></i>
+                    <span class="text-secondary">If you've added all your vectors, click a name to edit it!</span>
+                </div>
+
+                <div class="d-flex justify-content-end mt-3">
+                    <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal"
+                            onclick="appendNewVectorsFromFreeTextInput();">
+                        Append
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div class="modal modal-lg fade" id="licenseModal" tabindex="-1" aria-labelledby="licenseModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -374,18 +424,23 @@ THE SOFTWARE.
             </div>
             <div class="modal-body">
                 <h5>Creating new CVSS vectors</h5>
-                To add a new vector, select your desired CVSS version by clicking one of the buttons in the left
-                button group.
-                You can also enter any CVSS vector into the text field on the right and press enter to add it.<br>
-                For importing multiple vectors from a CVE, enter the CVE ID into the right-most input field and click
-                the adjacent button or press enter.<br>
-                <img src="img/how-to-cvss-creation-buttons.webp" alt="CVSS creation buttons"
-                     style="width:70%" class="img-fluid">
+                Using the buttons and input field at the top, you can:
+                <ul>
+                    <li>
+                        Click on the first button that says <code><i class="bi bi-clipboard-plus-fill"></i> CVSS</code> to
+                        import multiple vectors at once.
+                    </li>
+                    <li>Click on of the buttons next to it to add a vector of that CVSS version.</li>
+                    <li>Input a CVSS vector of any version in the input field and press enter.</li>
+                    <li>Input a CVE-ID and press enter to fetch the vectors of this CVE from the NVD.</li>
+                </ul>
+                <img src="img/how-to-cvss-creation-buttons.webp" class="img-fluid" alt="CVSS creation buttons"
+                     style="width:90%">
                 <hr>
                 <h5>Editing CVSS vectors</h5>
                 Click on a vector in the list to select it.
                 A small arrow will appear to the left of the selected vector.
-                <img src="img/how-to-select-vectors.webp" alt="CVSS list" class="img-fluid">
+                <img src="img/how-to-select-vectors.webp" class="img-fluid" alt="CVSS list">
                 You can directly edit the vector in the above text field, but below, you'll find a series of accordion
                 elements, each representing a different segment of the CVSS vector, which allow for more convenient
                 editing.
@@ -462,6 +517,25 @@ THE SOFTWARE.
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
+                <h5>Version 1.0.3 <span class="fs-6 text-secondary ms-2">2024-01-15</span></h5>
+                <ul>
+                    <li>
+                        Vector input fields have been reworked:
+                        <ul>
+                            <li>
+                                Added a multi-CVSS input modal where multiple vectors can be pasted to bulk import
+                                them.
+                            </li>
+                            <li>
+                                The CVSS and CVE input fields have been merged, they will now decide automatically what
+                                the input type is and act accordingly.
+                            </li>
+                        </ul>
+                    </li>
+                    <li>Added button to copy all active vectors into the clipboard.</li>
+                    <li>Added button to copy current vector configuration as link into the clipboard.</li>
+                </ul>
+                <hr>
                 <h5>Version 1.0.2 <span class="fs-6 text-secondary ms-2">2024-01-12</span></h5>
                 <ul>
                     <li>
