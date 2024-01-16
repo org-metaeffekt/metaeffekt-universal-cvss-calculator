@@ -566,391 +566,406 @@ function distance(point1, point2) {
     return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
 }
 
+let updateScoreDebounceTimeout = null;
+
 function updateScores() {
-    const shownVectors = cvssVectors.filter(vector => vector.shown);
-    const hiddenVectors = cvssVectors.filter(vector => !vector.shown);
-    const selectedVectorContainerInstance = cvssVectors.find(vector => vector.cvssInstance === selectedVector);
-
-    for (let vector of hiddenVectors) {
-        vector.visibilityToggleButton.classList.remove('btn-outline-secondary');
-        vector.visibilityToggleButton.classList.add('btn-secondary');
+    if (updateScoreDebounceTimeout) {
+        clearTimeout(updateScoreDebounceTimeout);
     }
-    for (let vector of shownVectors) {
-        vector.visibilityToggleButton.classList.remove('btn-secondary');
-        vector.visibilityToggleButton.classList.add('btn-outline-secondary');
-    }
-
-    // tutorial elements
-    const showOnlyIfNoVectorPresent = document.getElementsByClassName('only-if-no-vectors-present');
-    const showOnlyIfVectorPresent = document.getElementsByClassName('only-if-vectors-present');
-    if (cvssVectors.length > 0) {
-        for (let element of showOnlyIfNoVectorPresent) {
-            element.classList.add('d-none');
-        }
-        for (let element of showOnlyIfVectorPresent) {
-            element.classList.remove('d-none');
-        }
-    } else {
-        for (let element of showOnlyIfNoVectorPresent) {
-            element.classList.remove('d-none');
-        }
-        for (let element of showOnlyIfVectorPresent) {
-            element.classList.add('d-none');
-        }
-    }
-
-
-    // cve description display
-    if (selectedVectorContainerInstance) {
-        const vulnerabilityName = extractAndFormatCVE(selectedVectorContainerInstance.name);
-        let description = getCachedDescription(vulnerabilityName);
-
-        if (!description) {
-            fetchVulnerabilityData(vulnerabilityName)
-                .then(json => {
-                    description = extractEnglishDescription(vulnerabilityName, json);
-                    if (description) {
-                        cveDetailsDisplayTitle.innerText = vulnerabilityName;
-                        cveDetailsDisplay.innerText = description;
-                        cveDetailsDisplayTitle.href = 'https://nvd.nist.gov/vuln/detail/' + vulnerabilityName;
-                        cveDetailsDisplayCard.classList.remove('d-none');
-                    } else {
-                        cveDetailsDisplayCard.classList.add('d-none');
-                    }
-                })
+    updateScoreDebounceTimeout = setTimeout(() => {
+        if (cvssVectors.length > 25) {
+            const removeCount = cvssVectors.length - 25;
+            while (cvssVectors.length > 25) {
+                cvssVectors.pop().removeButton.click();
+            }
+            createBootstrapToast('Too many vectors', removeCount + ' ' + (removeCount === 1 ? 'vector has' : 'vectors have') + ' been removed from your list.', 'warning');
         }
 
-        if (description) {
-            cveDetailsDisplayTitle.innerText = vulnerabilityName;
-            cveDetailsDisplay.innerText = description;
-            cveDetailsDisplayTitle.href = 'https://nvd.nist.gov/vuln/detail/' + vulnerabilityName;
-            cveDetailsDisplayCard.classList.remove('d-none');
+        const shownVectors = cvssVectors.filter(vector => vector.shown);
+        const hiddenVectors = cvssVectors.filter(vector => !vector.shown);
+        const selectedVectorContainerInstance = cvssVectors.find(vector => vector.cvssInstance === selectedVector);
+
+        for (let vector of hiddenVectors) {
+            vector.visibilityToggleButton.classList.remove('btn-outline-secondary');
+            vector.visibilityToggleButton.classList.add('btn-secondary');
+        }
+        for (let vector of shownVectors) {
+            vector.visibilityToggleButton.classList.remove('btn-secondary');
+            vector.visibilityToggleButton.classList.add('btn-outline-secondary');
+        }
+
+        // tutorial elements
+        const showOnlyIfNoVectorPresent = document.getElementsByClassName('only-if-no-vectors-present');
+        const showOnlyIfVectorPresent = document.getElementsByClassName('only-if-vectors-present');
+        if (cvssVectors.length > 0) {
+            for (let element of showOnlyIfNoVectorPresent) {
+                element.classList.add('d-none');
+            }
+            for (let element of showOnlyIfVectorPresent) {
+                element.classList.remove('d-none');
+            }
+        } else {
+            for (let element of showOnlyIfNoVectorPresent) {
+                element.classList.remove('d-none');
+            }
+            for (let element of showOnlyIfVectorPresent) {
+                element.classList.add('d-none');
+            }
+        }
+
+
+        // cve description display
+        if (selectedVectorContainerInstance) {
+            const vulnerabilityName = extractAndFormatCVE(selectedVectorContainerInstance.name);
+            let description = getCachedDescription(vulnerabilityName);
+
+            if (!description) {
+                fetchVulnerabilityData(vulnerabilityName)
+                    .then(json => {
+                        description = extractEnglishDescription(vulnerabilityName, json);
+                        if (description) {
+                            cveDetailsDisplayTitle.innerText = vulnerabilityName;
+                            cveDetailsDisplay.innerText = description;
+                            cveDetailsDisplayTitle.href = 'https://nvd.nist.gov/vuln/detail/' + vulnerabilityName;
+                            cveDetailsDisplayCard.classList.remove('d-none');
+                        } else {
+                            cveDetailsDisplayCard.classList.add('d-none');
+                        }
+                    })
+            }
+
+            if (description) {
+                cveDetailsDisplayTitle.innerText = vulnerabilityName;
+                cveDetailsDisplay.innerText = description;
+                cveDetailsDisplayTitle.href = 'https://nvd.nist.gov/vuln/detail/' + vulnerabilityName;
+                cveDetailsDisplayCard.classList.remove('d-none');
+            } else {
+                cveDetailsDisplayCard.classList.add('d-none');
+            }
         } else {
             cveDetailsDisplayCard.classList.add('d-none');
         }
-    } else {
-        cveDetailsDisplayCard.classList.add('d-none');
-    }
 
-    const datasets = {'default': [], 'CVSS:2.0': [], 'CVSS:3.1': [], 'CVSS:4.0': []};
-    const useVersionedCharts = !document.getElementById('severityRadarToggle').checked;
+        const datasets = {'default': [], 'CVSS:2.0': [], 'CVSS:3.1': [], 'CVSS:4.0': []};
+        const useVersionedCharts = !document.getElementById('severityRadarToggle').checked;
 
-    for (let vector of cvssVectors) {
-        const scores = vector.cvssInstance.calculateScores(true);
-        const vectorName = vector.cvssInstance.getVectorName();
+        for (let vector of cvssVectors) {
+            const scores = vector.cvssInstance.calculateScores(true);
+            const vectorName = vector.cvssInstance.getVectorName();
 
-        if (vector.cvssInstance instanceof CvssCalculator.Cvss4P0) {
-            scores.base = scores.overall;
-            scores.impact = scores.overall;
-            scores.exploitability = scores.overall;
-            scores.modifiedImpact = scores.overall;
-            scores.temporal = scores.overall;
-            scores.environmental = scores.overall;
-        }
-
-        if (!isNotDefined(scores.overall)) {
-            const severityRange = severityRangeColorFinder(scores.overall);
-            vector.scoreDisplayButton.classList.remove('bg-pastel-gray', 'bg-strong-yellow', 'bg-strong-light-orange', 'bg-strong-dark-orange', 'bg-strong-red');
-            vector.scoreDisplayButton.classList.add('bg-' + severityRange.color);
-            vector.scoreDisplayButton.setAttribute('data-bs-toggle', 'popover');
-            vector.scoreDisplayButton.setAttribute('data-bs-placement', 'right');
-            vector.scoreDisplayButton.setAttribute('data-bs-content', severityRange.severity);
-            vector.scoreDisplayButton.setAttribute('data-bs-trigger', 'hover');
-
-            if (scores.overall === 0 && !vector.cvssInstance.isBaseFullyDefined()) {
-                vector.scoreDisplayButton.innerHTML = '<i class="bi bi-exclamation-triangle-fill"></i>';
-                vector.scoreDisplayButton.setAttribute('data-bs-content', 'All base metrics must be defined to calculate CVSS scores.');
-            } else if (scores.overall !== 10) {
-                vector.scoreDisplayButton.innerText = scores.overall.toFixed(1);
-            } else {
-                vector.scoreDisplayButton.innerText = '10';
+            if (vector.cvssInstance instanceof CvssCalculator.Cvss4P0) {
+                scores.base = scores.overall;
+                scores.impact = scores.overall;
+                scores.exploitability = scores.overall;
+                scores.modifiedImpact = scores.overall;
+                scores.temporal = scores.overall;
+                scores.environmental = scores.overall;
             }
 
-            unregisterAllTooltips(vector.scoreDisplayButton.parentElement);
-            updateTooltip(vector.scoreDisplayButton.parentElement);
-        }
+            if (!isNotDefined(scores.overall)) {
+                const severityRange = severityRangeColorFinder(scores.overall);
+                vector.scoreDisplayButton.classList.remove('bg-pastel-gray', 'bg-strong-yellow', 'bg-strong-light-orange', 'bg-strong-dark-orange', 'bg-strong-red');
+                vector.scoreDisplayButton.classList.add('bg-' + severityRange.color);
+                vector.scoreDisplayButton.setAttribute('data-bs-toggle', 'popover');
+                vector.scoreDisplayButton.setAttribute('data-bs-placement', 'right');
+                vector.scoreDisplayButton.setAttribute('data-bs-content', severityRange.severity);
+                vector.scoreDisplayButton.setAttribute('data-bs-trigger', 'hover');
 
-        // chart
-        const isPointDefined = [scores.base, scores.modifiedImpact, scores.impact, scores.temporal, scores.exploitability, scores.environmental].map(v => isNaN(v) ? 0 : 3);
+                if (scores.overall === 0 && !vector.cvssInstance.isBaseFullyDefined()) {
+                    vector.scoreDisplayButton.innerHTML = '<i class="bi bi-exclamation-triangle-fill"></i>';
+                    vector.scoreDisplayButton.setAttribute('data-bs-content', 'All base metrics must be defined to calculate CVSS scores.');
+                } else if (scores.overall !== 10) {
+                    vector.scoreDisplayButton.innerText = scores.overall.toFixed(1);
+                } else {
+                    vector.scoreDisplayButton.innerText = '10';
+                }
 
-        interpolateChartScores(scores);
-
-        let color = [180, 48, 52];
-        if (vectorName === 'CVSS:2.0') {
-            color = [347, 100, 69];
-        } else if (vectorName === 'CVSS:3.1') {
-            color = [204, 82, 57];
-        } else if (vectorName === 'CVSS:4.0') {
-            color = [57, 72, 54];
-        }
-
-        // modify the color a bit randomly seeded based on the vector.getName() to make it more distinguishable
-        let seed = vector.name.split('').reduce((acc, cur) => acc + cur.charCodeAt(0), 0);
-        seed += 1;
-        seed = seed % 30;
-        if (seed % 2 === 0) seed *= -1;
-        color[0] = (color[0] + seed) % 360;
-
-        const dataset = {
-            label: vector.name,
-            data: [scores.base, scores.modifiedImpact, scores.impact, scores.temporal, scores.exploitability, scores.environmental],
-            backgroundColor: `hsla(${color[0]},${color[1]}%,${color[2]}%,0.1)`,
-            borderColor: `hsl(${color[0]},${color[1]}%,${color[2]}%)`,
-            pointRadius: isPointDefined,
-            /* hide when not shown */
-            hidden: !vector.shown
-        };
-        if (selectedVector === vector.cvssInstance) {
-            dataset.borderWidth = 4;
-            // dataset.pointStyle = 'triangle';
-            dataset.borderDash = [20, 3];
-        }
-        datasets['default'].push(dataset);
-        if (!datasets[vectorName]) {
-            datasets[vectorName] = [];
-        }
-        datasets[vectorName].push(dataset);
-    }
-    defaultSeverityRadarChart.data.datasets = datasets['default'];
-    defaultSeverityRadarChart.update();
-    cvss2P0SeverityRadarChart.data.datasets = datasets['CVSS:2.0'];
-    cvss2P0SeverityRadarChart.update();
-    cvss3P1SeverityRadarChart.data.datasets = datasets['CVSS:3.1'];
-    cvss3P1SeverityRadarChart.update();
-    cvss4P0SeverityRadarChart.data.datasets = datasets['CVSS:4.0'];
-    cvss4P0SeverityRadarChart.update();
-
-    const showCharts = {};
-    showCharts['CVSS:2.0'] = useVersionedCharts && datasets['CVSS:2.0'].length > 0;
-    showCharts['CVSS:3.1'] = useVersionedCharts && datasets['CVSS:3.1'].length > 0;
-    showCharts['CVSS:4.0'] = useVersionedCharts && datasets['CVSS:4.0'].length > 0;
-    showCharts['default'] = !showCharts['CVSS:2.0'] && !showCharts['CVSS:3.1'] && !showCharts['CVSS:4.0'];
-
-    defaultSeverityRadarContainer.classList.add('d-none');
-    cvss2P0SeverityRadarContainer.classList.add('d-none');
-    cvss3P1SeverityRadarContainer.classList.add('d-none');
-    cvss4P0SeverityRadarContainer.classList.add('d-none');
-
-    if (cvssVectors.length > 0) {
-        if (showCharts['default']) {
-            defaultSeverityRadarContainer.classList.remove('d-none');
-        }
-        if (showCharts['CVSS:2.0']) {
-            cvss2P0SeverityRadarContainer.classList.remove('d-none');
-        }
-        if (showCharts['CVSS:3.1']) {
-            cvss3P1SeverityRadarContainer.classList.remove('d-none');
-        }
-        if (showCharts['CVSS:4.0']) {
-            cvss4P0SeverityRadarContainer.classList.remove('d-none');
-        }
-
-        let firstShownChart = Array.from(additionalRadarChartContainer.getElementsByClassName('card')).find(card => !card.classList.contains('d-none'));
-        // move toggle into card header
-        try {
-            severityRadarToggleContainer.remove();
-        } catch (e) {
-        }
-        firstShownChart.getElementsByClassName('card-header')[0].appendChild(severityRadarToggleContainer);
-    }
-
-    // only show cvss4MacroVectorExplanationCard if a CVSS:4.0 vector is selected (selectedVector)
-    // and show macro vector in cvss4MacroVectorExplanation
-    if (cvssVectors.length > 0 && selectedVector && selectedVector.getVectorName() === 'CVSS:4.0') {
-        cvss4MacroVectorExplanationCard.classList.remove('d-none');
-        const macroVector = selectedVector.getMacroVector();
-
-        function levelToText(level) {
-            if (level === '0') {
-                return 'High';
-            } else if (level === '1') {
-                return 'Medium';
-            } else if (level === '2') {
-                return 'Low';
-            } else {
-                return 'Unknown';
+                unregisterAllTooltips(vector.scoreDisplayButton.parentElement);
+                updateTooltip(vector.scoreDisplayButton.parentElement);
             }
+
+            // chart
+            const isPointDefined = [scores.base, scores.modifiedImpact, scores.impact, scores.temporal, scores.exploitability, scores.environmental].map(v => isNaN(v) ? 0 : 3);
+
+            interpolateChartScores(scores);
+
+            let color = [180, 48, 52];
+            if (vectorName === 'CVSS:2.0') {
+                color = [347, 100, 69];
+            } else if (vectorName === 'CVSS:3.1') {
+                color = [204, 82, 57];
+            } else if (vectorName === 'CVSS:4.0') {
+                color = [57, 72, 54];
+            }
+
+            // modify the color a bit randomly seeded based on the vector.getName() to make it more distinguishable
+            let seed = vector.name.split('').reduce((acc, cur) => acc + cur.charCodeAt(0), 0);
+            seed += 1;
+            seed = seed % 30;
+            if (seed % 2 === 0) seed *= -1;
+            color[0] = (color[0] + seed) % 360;
+
+            const dataset = {
+                label: vector.name,
+                data: [scores.base, scores.modifiedImpact, scores.impact, scores.temporal, scores.exploitability, scores.environmental],
+                backgroundColor: `hsla(${color[0]},${color[1]}%,${color[2]}%,0.1)`,
+                borderColor: `hsl(${color[0]},${color[1]}%,${color[2]}%)`,
+                pointRadius: isPointDefined,
+                /* hide when not shown */
+                hidden: !vector.shown
+            };
+            if (selectedVector === vector.cvssInstance) {
+                dataset.borderWidth = 4;
+                // dataset.pointStyle = 'triangle';
+                dataset.borderDash = [20, 3];
+            }
+            datasets['default'].push(dataset);
+            if (!datasets[vectorName]) {
+                datasets[vectorName] = [];
+            }
+            datasets[vectorName].push(dataset);
+        }
+        defaultSeverityRadarChart.data.datasets = datasets['default'];
+        defaultSeverityRadarChart.update();
+        cvss2P0SeverityRadarChart.data.datasets = datasets['CVSS:2.0'];
+        cvss2P0SeverityRadarChart.update();
+        cvss3P1SeverityRadarChart.data.datasets = datasets['CVSS:3.1'];
+        cvss3P1SeverityRadarChart.update();
+        cvss4P0SeverityRadarChart.data.datasets = datasets['CVSS:4.0'];
+        cvss4P0SeverityRadarChart.update();
+
+        const showCharts = {};
+        showCharts['CVSS:2.0'] = useVersionedCharts && datasets['CVSS:2.0'].length > 0;
+        showCharts['CVSS:3.1'] = useVersionedCharts && datasets['CVSS:3.1'].length > 0;
+        showCharts['CVSS:4.0'] = useVersionedCharts && datasets['CVSS:4.0'].length > 0;
+        showCharts['default'] = !showCharts['CVSS:2.0'] && !showCharts['CVSS:3.1'] && !showCharts['CVSS:4.0'];
+
+        defaultSeverityRadarContainer.classList.add('d-none');
+        cvss2P0SeverityRadarContainer.classList.add('d-none');
+        cvss3P1SeverityRadarContainer.classList.add('d-none');
+        cvss4P0SeverityRadarContainer.classList.add('d-none');
+
+        if (cvssVectors.length > 0) {
+            if (showCharts['default']) {
+                defaultSeverityRadarContainer.classList.remove('d-none');
+            }
+            if (showCharts['CVSS:2.0']) {
+                cvss2P0SeverityRadarContainer.classList.remove('d-none');
+            }
+            if (showCharts['CVSS:3.1']) {
+                cvss3P1SeverityRadarContainer.classList.remove('d-none');
+            }
+            if (showCharts['CVSS:4.0']) {
+                cvss4P0SeverityRadarContainer.classList.remove('d-none');
+            }
+
+            let firstShownChart = Array.from(additionalRadarChartContainer.getElementsByClassName('card')).find(card => !card.classList.contains('d-none'));
+            // move toggle into card header
+            try {
+                severityRadarToggleContainer.remove();
+            } catch (e) {
+            }
+            firstShownChart.getElementsByClassName('card-header')[0].appendChild(severityRadarToggleContainer);
         }
 
-        const exploitability = levelToText(macroVector.getEq1().getLevel());
-        const complexity = levelToText(macroVector.getEq2().getLevel());
-        const vulnerableSystem = levelToText(macroVector.getEq3().getLevel());
-        const subsequentSystem = levelToText(macroVector.getEq4().getLevel());
-        const exploitation = levelToText(macroVector.getEq5().getLevel());
-        const securityRequirements = levelToText(macroVector.getEq6().getLevel());
-        const macroVectorString = macroVector.toString();
-        cvss4MacroVectorExplanation.innerText = `Macro vector: ${macroVectorString}
+        // only show cvss4MacroVectorExplanationCard if a CVSS:4.0 vector is selected (selectedVector)
+        // and show macro vector in cvss4MacroVectorExplanation
+        if (cvssVectors.length > 0 && selectedVector && selectedVector.getVectorName() === 'CVSS:4.0') {
+            cvss4MacroVectorExplanationCard.classList.remove('d-none');
+            const macroVector = selectedVector.getMacroVector();
+
+            function levelToText(level) {
+                if (level === '0') {
+                    return 'High';
+                } else if (level === '1') {
+                    return 'Medium';
+                } else if (level === '2') {
+                    return 'Low';
+                } else {
+                    return 'Unknown';
+                }
+            }
+
+            const exploitability = levelToText(macroVector.getEq1().getLevel());
+            const complexity = levelToText(macroVector.getEq2().getLevel());
+            const vulnerableSystem = levelToText(macroVector.getEq3().getLevel());
+            const subsequentSystem = levelToText(macroVector.getEq4().getLevel());
+            const exploitation = levelToText(macroVector.getEq5().getLevel());
+            const securityRequirements = levelToText(macroVector.getEq6().getLevel());
+            const macroVectorString = macroVector.toString();
+            cvss4MacroVectorExplanation.innerText = `Macro vector: ${macroVectorString}
 Exploitability: ${exploitability}
 Complexity: ${complexity}
 Vulnerable system: ${vulnerableSystem}
 Subsequent system: ${subsequentSystem}
 Exploitation: ${exploitation}
 Security requirements: ${securityRequirements}`;
-    } else {
-        cvss4MacroVectorExplanationCard.classList.add('d-none');
-        cvss4MacroVectorExplanation.innerText = '';
-    }
-
-
-    // update the score details, append a table with headers for all scores that are present in any vector
-    let hasOverall = false;
-    let hasBase = false;
-    let hasImpact = false;
-    let hasExploitability = false;
-    let hasTemporal = false;
-    let hasEnvironmental = false;
-    let hasModifiedImpact = false;
-    for (let vector of cvssVectors) {
-        const scores = vector.cvssInstance.calculateScores();
-        if (!hasOverall && scores.overall !== undefined) hasOverall = true;
-        if (!hasBase && scores.base !== undefined) hasBase = true;
-        if (!hasImpact && scores.impact !== undefined) hasImpact = true;
-        if (!hasExploitability && scores.exploitability !== undefined) hasExploitability = true;
-        if (!hasTemporal && scores.temporal !== undefined) hasTemporal = true;
-        if (!hasEnvironmental && scores.environmental !== undefined) hasEnvironmental = true;
-        if (!hasModifiedImpact && scores.modifiedImpact !== undefined) hasModifiedImpact = true;
-    }
-
-    const table = document.createElement('table');
-    table.classList.add('table', 'table-sm', 'table-striped', 'table-hover');
-    const thead = document.createElement('thead');
-    const tbody = document.createElement('tbody');
-    table.appendChild(thead);
-    table.appendChild(tbody);
-
-    const headerRow = document.createElement('tr');
-    thead.appendChild(headerRow);
-
-    function appendHeaderCellIfPresent(headerName, present, elseValue = "") {
-        if (present) {
-            const cell = document.createElement('th');
-            cell.innerText = headerName;
-            headerRow.appendChild(cell);
         } else {
-            const cell = document.createElement('th');
-            cell.innerText = elseValue;
-            headerRow.appendChild(cell);
+            cvss4MacroVectorExplanationCard.classList.add('d-none');
+            cvss4MacroVectorExplanation.innerText = '';
         }
-    }
 
-    function appendContentCellIfPresent(row, headerName, present, elseValue = "") {
-        if (present) {
-            const cell = document.createElement('td');
-            if (headerName instanceof HTMLElement) {
-                cell.appendChild(headerName);
-            } else {
+
+        // update the score details, append a table with headers for all scores that are present in any vector
+        let hasOverall = false;
+        let hasBase = false;
+        let hasImpact = false;
+        let hasExploitability = false;
+        let hasTemporal = false;
+        let hasEnvironmental = false;
+        let hasModifiedImpact = false;
+        for (let vector of cvssVectors) {
+            const scores = vector.cvssInstance.calculateScores();
+            if (!hasOverall && scores.overall !== undefined) hasOverall = true;
+            if (!hasBase && scores.base !== undefined) hasBase = true;
+            if (!hasImpact && scores.impact !== undefined) hasImpact = true;
+            if (!hasExploitability && scores.exploitability !== undefined) hasExploitability = true;
+            if (!hasTemporal && scores.temporal !== undefined) hasTemporal = true;
+            if (!hasEnvironmental && scores.environmental !== undefined) hasEnvironmental = true;
+            if (!hasModifiedImpact && scores.modifiedImpact !== undefined) hasModifiedImpact = true;
+        }
+
+        const table = document.createElement('table');
+        table.classList.add('table', 'table-sm', 'table-striped', 'table-hover');
+        const thead = document.createElement('thead');
+        const tbody = document.createElement('tbody');
+        table.appendChild(thead);
+        table.appendChild(tbody);
+
+        const headerRow = document.createElement('tr');
+        thead.appendChild(headerRow);
+
+        function appendHeaderCellIfPresent(headerName, present, elseValue = "") {
+            if (present) {
+                const cell = document.createElement('th');
                 cell.innerText = headerName;
-            }
-            row.appendChild(cell);
-        } else {
-            const cell = document.createElement('td');
-            cell.innerText = elseValue;
-            row.appendChild(cell);
-        }
-    }
-
-    appendHeaderCellIfPresent('Name', true);
-    appendHeaderCellIfPresent('Overall', hasOverall);
-    appendHeaderCellIfPresent('Base', hasBase);
-    appendHeaderCellIfPresent('Impact', hasImpact);
-    appendHeaderCellIfPresent('Exploitability', hasExploitability);
-    appendHeaderCellIfPresent('Temporal', hasTemporal);
-    appendHeaderCellIfPresent('Environmental', hasEnvironmental);
-    appendHeaderCellIfPresent('Adj. Impact', hasModifiedImpact);
-
-    for (let vector of cvssVectors) {
-        const scores = vector.cvssInstance.calculateScores(false);
-        const normalizedScores = vector.cvssInstance.calculateScores(true);
-        const row = document.createElement('tr');
-        tbody.appendChild(row);
-
-        const nameElement = document.createElement('span');
-        nameElement.innerText = vector.name;
-        nameElement.classList.add('fw-bold');
-        if (vector.cvssInstance instanceof CvssCalculator.Cvss2) {
-            nameElement.classList.add('text-cvss-2');
-        } else if (vector.cvssInstance instanceof CvssCalculator.Cvss3P1) {
-            nameElement.classList.add('text-cvss-3P1');
-        } else if (vector.cvssInstance instanceof CvssCalculator.Cvss4P0) {
-            nameElement.classList.add('text-cvss-4P0');
-        }
-
-        appendContentCellIfPresent(row, nameElement, true);
-        appendContentCellIfPresent(row, createScoreEntry(scores.overall, normalizedScores.overall), scores.overall !== undefined);
-        appendContentCellIfPresent(row, createScoreEntry(scores.base, normalizedScores.base), scores.base !== undefined);
-        appendContentCellIfPresent(row, createScoreEntry(scores.impact, normalizedScores.impact), scores.impact !== undefined);
-        appendContentCellIfPresent(row, createScoreEntry(scores.exploitability, normalizedScores.exploitability), scores.exploitability !== undefined);
-        appendContentCellIfPresent(row, createScoreEntry(scores.temporal, normalizedScores.temporal), scores.temporal !== undefined);
-        appendContentCellIfPresent(row, createScoreEntry(scores.environmental, normalizedScores.environmental), scores.environmental !== undefined);
-        appendContentCellIfPresent(row, createScoreEntry(scores.modifiedImpact, normalizedScores.modifiedImpact), scores.modifiedImpact !== undefined);
-    }
-
-    unregisterAllTooltips(cvssScoreDetailsContainerElement);
-    cvssScoreDetailsContainerElement.innerText = '';
-    // if there are no scores, don't show the table
-    if (cvssVectors.length > 0) {
-        cvssScoreDetailsContainerElement.appendChild(table);
-    }
-
-    function createScoreEntry(baseScore, normalizedScore) {
-        const container = document.createElement('span');
-        if (baseScore === normalizedScore) {
-            container.innerHTML = coloredElementForSeverity(baseScore);
-        } else {
-            container.innerHTML = coloredElementForSeverity(baseScore) + ' → ' + coloredElementForSeverity(normalizedScore);
-        }
-        return container;
-    }
-
-    function coloredElementForSeverity(score) {
-        const singleDigitScore = score === undefined ? undefined : score.toFixed(1);
-        if (score === undefined) {
-            return `<span style="color: var(--pastel-gray)">N/A</span>`;
-        } else if (score <= 0.0) {
-            return `<span style="color: var(--pastel-gray)">0.0</span>`;
-        } else if (score < 4.0) {
-            return `<span style="color: var(--strong-yellow)">${singleDigitScore}</span>`;
-        } else if (score < 7.0) {
-            return `<span style="color: var(--strong-light-orange)">${singleDigitScore}</span>`;
-        } else if (score < 9.0) {
-            return `<span style="color: var(--strong-dark-orange)">${singleDigitScore}</span>`;
-        } else if (score <= 10.0) {
-            return `<span style="color: var(--strong-red)">${singleDigitScore}</span>`;
-        } else {
-            return `<span style="color: var(--strong-purple)">${singleDigitScore}</span>`;
-        }
-    }
-
-    // copy the vector container html content to the duplicated section
-    if (selectedVectorContainerInstance) {
-        selectedCvssDuplicatedSection.innerHTML = selectedVectorContainerInstance.domElement.outerHTML;
-        selectedCvssDuplicatedSection.getElementsByClassName('cvss-vector-name')[0].value = selectedVectorContainerInstance.name;
-        selectedCvssDuplicatedSection.getElementsByClassName('cvss-vector-string')[0].value = selectedVectorContainerInstance.cvssInstance.toString();
-        selectedCvssDuplicatedSection.firstChild.classList.remove('cvss-active-selection');
-
-        Array.from(selectedCvssDuplicatedSection.getElementsByTagName('input')).forEach(input => {
-            input.setAttribute('readonly', 'readonly');
-        });
-
-        Array.from(selectedCvssDuplicatedSection.getElementsByClassName('cvss-vector-button-toggle-visibility')).forEach(button => {
-            button.remove();
-        });
-        Array.from(selectedCvssDuplicatedSection.getElementsByClassName('cvss-vector-button-remove')).forEach(button => {
-            button.remove();
-        });
-
-        for (let vectorElement of cvssVectors) {
-            if (vectorElement === selectedVectorContainerInstance) {
-                selectedVectorContainerInstance.domElement.classList.add('upper-vector-selected');
+                headerRow.appendChild(cell);
             } else {
-                vectorElement.domElement.classList.remove('upper-vector-selected');
+                const cell = document.createElement('th');
+                cell.innerText = elseValue;
+                headerRow.appendChild(cell);
             }
         }
 
-        updateTooltip(selectedCvssDuplicatedSection);
-    } else {
-        selectedCvssDuplicatedSection.innerHTML = '';
-    }
+        function appendContentCellIfPresent(row, headerName, present, elseValue = "") {
+            if (present) {
+                const cell = document.createElement('td');
+                if (headerName instanceof HTMLElement) {
+                    cell.appendChild(headerName);
+                } else {
+                    cell.innerText = headerName;
+                }
+                row.appendChild(cell);
+            } else {
+                const cell = document.createElement('td');
+                cell.innerText = elseValue;
+                row.appendChild(cell);
+            }
+        }
+
+        appendHeaderCellIfPresent('Name', true);
+        appendHeaderCellIfPresent('Overall', hasOverall);
+        appendHeaderCellIfPresent('Base', hasBase);
+        appendHeaderCellIfPresent('Impact', hasImpact);
+        appendHeaderCellIfPresent('Exploitability', hasExploitability);
+        appendHeaderCellIfPresent('Temporal', hasTemporal);
+        appendHeaderCellIfPresent('Environmental', hasEnvironmental);
+        appendHeaderCellIfPresent('Adj. Impact', hasModifiedImpact);
+
+        for (let vector of cvssVectors) {
+            const scores = vector.cvssInstance.calculateScores(false);
+            const normalizedScores = vector.cvssInstance.calculateScores(true);
+            const row = document.createElement('tr');
+            tbody.appendChild(row);
+
+            const nameElement = document.createElement('span');
+            nameElement.innerText = vector.name;
+            nameElement.classList.add('fw-bold');
+            if (vector.cvssInstance instanceof CvssCalculator.Cvss2) {
+                nameElement.classList.add('text-cvss-2');
+            } else if (vector.cvssInstance instanceof CvssCalculator.Cvss3P1) {
+                nameElement.classList.add('text-cvss-3P1');
+            } else if (vector.cvssInstance instanceof CvssCalculator.Cvss4P0) {
+                nameElement.classList.add('text-cvss-4P0');
+            }
+
+            appendContentCellIfPresent(row, nameElement, true);
+            appendContentCellIfPresent(row, createScoreEntry(scores.overall, normalizedScores.overall), scores.overall !== undefined);
+            appendContentCellIfPresent(row, createScoreEntry(scores.base, normalizedScores.base), scores.base !== undefined);
+            appendContentCellIfPresent(row, createScoreEntry(scores.impact, normalizedScores.impact), scores.impact !== undefined);
+            appendContentCellIfPresent(row, createScoreEntry(scores.exploitability, normalizedScores.exploitability), scores.exploitability !== undefined);
+            appendContentCellIfPresent(row, createScoreEntry(scores.temporal, normalizedScores.temporal), scores.temporal !== undefined);
+            appendContentCellIfPresent(row, createScoreEntry(scores.environmental, normalizedScores.environmental), scores.environmental !== undefined);
+            appendContentCellIfPresent(row, createScoreEntry(scores.modifiedImpact, normalizedScores.modifiedImpact), scores.modifiedImpact !== undefined);
+        }
+
+        unregisterAllTooltips(cvssScoreDetailsContainerElement);
+        cvssScoreDetailsContainerElement.innerText = '';
+        // if there are no scores, don't show the table
+        if (cvssVectors.length > 0) {
+            cvssScoreDetailsContainerElement.appendChild(table);
+        }
+
+        function createScoreEntry(baseScore, normalizedScore) {
+            const container = document.createElement('span');
+            if (baseScore === normalizedScore) {
+                container.innerHTML = coloredElementForSeverity(baseScore);
+            } else {
+                container.innerHTML = coloredElementForSeverity(baseScore) + ' → ' + coloredElementForSeverity(normalizedScore);
+            }
+            return container;
+        }
+
+        function coloredElementForSeverity(score) {
+            const singleDigitScore = score === undefined ? undefined : score.toFixed(1);
+            if (score === undefined) {
+                return `<span style="color: var(--pastel-gray)">N/A</span>`;
+            } else if (score <= 0.0) {
+                return `<span style="color: var(--pastel-gray)">0.0</span>`;
+            } else if (score < 4.0) {
+                return `<span style="color: var(--strong-yellow)">${singleDigitScore}</span>`;
+            } else if (score < 7.0) {
+                return `<span style="color: var(--strong-light-orange)">${singleDigitScore}</span>`;
+            } else if (score < 9.0) {
+                return `<span style="color: var(--strong-dark-orange)">${singleDigitScore}</span>`;
+            } else if (score <= 10.0) {
+                return `<span style="color: var(--strong-red)">${singleDigitScore}</span>`;
+            } else {
+                return `<span style="color: var(--strong-purple)">${singleDigitScore}</span>`;
+            }
+        }
+
+        // copy the vector container html content to the duplicated section
+        if (selectedVectorContainerInstance) {
+            selectedCvssDuplicatedSection.innerHTML = selectedVectorContainerInstance.domElement.outerHTML;
+            selectedCvssDuplicatedSection.getElementsByClassName('cvss-vector-name')[0].value = selectedVectorContainerInstance.name;
+            selectedCvssDuplicatedSection.getElementsByClassName('cvss-vector-string')[0].value = selectedVectorContainerInstance.cvssInstance.toString();
+            selectedCvssDuplicatedSection.firstChild.classList.remove('cvss-active-selection');
+
+            Array.from(selectedCvssDuplicatedSection.getElementsByTagName('input')).forEach(input => {
+                input.setAttribute('readonly', 'readonly');
+            });
+
+            Array.from(selectedCvssDuplicatedSection.getElementsByClassName('cvss-vector-button-toggle-visibility')).forEach(button => {
+                button.remove();
+            });
+            Array.from(selectedCvssDuplicatedSection.getElementsByClassName('cvss-vector-button-remove')).forEach(button => {
+                button.remove();
+            });
+
+            for (let vectorElement of cvssVectors) {
+                if (vectorElement === selectedVectorContainerInstance) {
+                    selectedVectorContainerInstance.domElement.classList.add('upper-vector-selected');
+                } else {
+                    vectorElement.domElement.classList.remove('upper-vector-selected');
+                }
+            }
+
+            updateTooltip(selectedCvssDuplicatedSection);
+        } else {
+            selectedCvssDuplicatedSection.innerHTML = '';
+        }
+    }, 10);
 }
 
 let selectedVector = null;
@@ -1353,7 +1368,7 @@ function copyVectors() {
         createBootstrapToast('Copied vectors', 'Copied all vectors to clipboard.', 'success');
     } catch (e) {
         console.error(e);
-        alert('Copy the following text by highlighting it and using ctrl/cmd + c:\n' +formattedText);
+        alert('Copy the following text by highlighting it and using ctrl/cmd + c:\n' + formattedText);
     }
 }
 
