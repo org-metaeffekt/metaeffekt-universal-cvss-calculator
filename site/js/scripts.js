@@ -1116,6 +1116,7 @@ function setSelectedVector(vectorInstance) {
 
         const accordionVectorString = document.createElement('span');
         accordionVectorString.classList.add('font-monospace');
+        accordionVectorString.style.wordWrap = 'anywhere';
         accordionVectorString.appendChild(document.createTextNode(vectorComponentString));
         accordionButton.appendChild(accordionVectorString);
 

@@ -44,13 +44,13 @@ function extractPossibleNameFromFreeText(inputString, version, shortVersion) {
     if (scoreNameMatcher.test(inputString)) {
         const result = scoreNameMatcher.exec(inputString);
         if (result.length === 3 && result[2].length > 0  && result[2].trim().length <= 25) {
-            return result[1] + ' ' + result[2].trim();
+            return (result[1] + ' ' + result[2].trim()).trim();
         }
         return result[1];
     }
 
     if (inputString.trim().length < 25) {
-        return version + ' ' + inputString.trim();
+        return (version + ' ' + inputString.trim()).trim();
     }
 
     return version;

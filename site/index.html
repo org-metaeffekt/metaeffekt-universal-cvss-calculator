@@ -67,8 +67,9 @@ limitations under the License.
 <body>
 
 <div class="container mt-5">
-    <h2 class="mb-4"><span>Universal CVSS Calculator</span>
-        <a class="fs-4 ms-2 by-metaeffekt-header" href="https://metaeffekt.com" target="_blank">by {metæffekt}</a>
+    <h2 class="mb-4" id="siteTitle">
+        <span class="me-2">Universal CVSS Calculator</span>
+        <a class="fs-4 by-metaeffekt-header" href="https://metaeffekt.com" target="_blank">by {metæffekt}</a>
     </h2>
     <div class="row">
         <div class="col-lg-8 col-md-12 col-12 mb-3">
@@ -103,7 +104,8 @@ limitations under the License.
                             4.0
                         </button>
 
-                        <input type="text" class="form-control" placeholder="Enter CVSS / CVE..." aria-label="Vulnerability"
+                        <input type="text" class="form-control" placeholder="Enter CVSS / CVE..."
+                               aria-label="Vulnerability"
                                id="inputAddVectorByVulnerability"
                                aria-describedby="inputAddVectorByString"
                                data-bs-toggle="popover" data-bs-placement="top" data-bs-trigger="hover"
@@ -127,7 +129,8 @@ limitations under the License.
                     <button type="button" class="btn btn-outline-success"
                             onclick="copyLink();"
                             data-bs-toggle="popover" data-bs-placement="top"
-                            data-bs-content="Click to copy a link for these vectors to clipboard." data-bs-trigger="hover">
+                            data-bs-content="Click to copy a link for these vectors to clipboard."
+                            data-bs-trigger="hover">
                         <i class="bi bi-link-45deg"></i>
                     </button>
                 </div>
@@ -149,7 +152,7 @@ limitations under the License.
             <div id="cvss-vector-list" class="d-flex flex-column gap-2"></div>
 
             <!-- a section where the calculated CVSS score parts are shown -->
-            <div class="mt-4" id="cvss-score-details"></div>
+            <div id="cvss-score-details" class="mt-4 overflow-x-scroll"></div>
 
             <!-- a section where CVSS vector parts are explained and can be modified -->
             <div class="accordion mt-4P5" id="cvss-component-details"></div>
@@ -233,7 +236,7 @@ limitations under the License.
             <div class="col-lg-2 mb-2">
                 <i class="bi bi-braces-asterisk me-1"></i>
                 <a data-bs-toggle="modal" data-bs-target="#changelogModal" href="#" class="footer-link">
-                    1.0.3
+                    1.0.4 <span style="opacity: 40%">&nbsp;(2024-01-16)</span>
                 </a>
             </div>
         </div>
@@ -426,7 +429,8 @@ THE SOFTWARE.
                 Using the buttons and input field at the top, you can:
                 <ul>
                     <li>
-                        Click on the first button that says <code><i class="bi bi-clipboard-plus-fill"></i> CVSS</code> to
+                        Click on the first button that says <code><i class="bi bi-clipboard-plus-fill"></i> CVSS</code>
+                        to
                         import multiple vectors at once.
                     </li>
                     <li>Click on of the buttons next to it to add a vector of that CVSS version.</li>
@@ -519,6 +523,10 @@ THE SOFTWARE.
                 <h5>Version 1.0.4 <span class="fs-6 text-secondary ms-2">2024-01-16</span></h5>
                 <ul>
                     <li>Added a limit of 25 vectors to the vector list.</li>
+                    <li>
+                        Improved mobile experience by adding more screen size checks and adding overflow scrolling
+                        behaviours.
+                    </li>
                 </ul>
                 <hr>
                 <h5>Version 1.0.3 <span class="fs-6 text-secondary ms-2">2024-01-15</span></h5>

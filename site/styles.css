@@ -343,6 +343,13 @@ body {
     }
 }
 
+@media (max-width: 500px) {
+    #siteTitle {
+        display: flex;
+        flex-direction: column;
+    }
+}
+
 .cvss-creation-utils-container {
     justify-content: space-between;
 }
