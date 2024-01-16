@@ -13,17 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {
-    BooleanVectorComponentValue,
-    ChangedNumberVectorComponentValue,
-    ComponentCategory,
-    CvssVector,
-    MultiScoreResult,
-    NumberVectorComponentValue,
-    VectorComponent,
-    VectorComponentValue
-} from "../CvssVector";
-import {Cvss4P0Components} from "../cvss4p0/Cvss4P0Components";
+import {ComponentCategory, CvssVector, MultiScoreResult, VectorComponent, VectorComponentValue} from "../CvssVector";
 import {Cvss3P1Components} from "./Cvss3P1Components";
 
 export class Cvss3P1 extends CvssVector<MultiScoreResult> {
