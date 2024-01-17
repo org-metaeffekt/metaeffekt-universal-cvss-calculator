@@ -1472,8 +1472,11 @@ function loadFromGet() {
     if (vector) {
         const parsedVectorData = JSON.parse(vector);
         for (let [name, shown, vector, version] of parsedVectorData) {
-            if (name.length === 0 || vector.length === 0) {
+            if (vector.length === 0) {
                 continue;
+            }
+            if (!name || name.length === 0) {
+                name = undefined;
             }
             appendNewVector(vector, name, shown, version);
         }
