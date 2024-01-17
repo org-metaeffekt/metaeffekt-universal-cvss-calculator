@@ -221,7 +221,7 @@ class CvssVectorRepresentation {
         }
 
         const actualWidth = this.findRealRenderedTextWidthWithFontOfElement(this.nameElement, maxLengthName);
-        const targetSize = actualWidth / (actualWidth < 165 ? 6 : (actualWidth < 270 ? 5 : (actualWidth < 320 ? 4.4 : (actualWidth < 380 ? 4 : (3)))));
+        const targetSize = actualWidth / (actualWidth < 100 ? 6 : (actualWidth < 165 ? 5.2 : (actualWidth < 270 ? 5 : (actualWidth < 320 ? 4.4 : (actualWidth < 380 ? 4 : (3))))));
         for (let vector of cvssVectors) {
             vector.nameElement.size = targetSize;
         }
@@ -405,6 +405,12 @@ function invalidVectorToast(vectorInput, name) {
         createBootstrapToast('Invalid CVSS vector', vectorInput + ' is not a valid CVSS vector for ' + name, 'error');
     } else {
         createBootstrapToast('Invalid CVSS vector', vectorInput + ' is not a valid CVSS vector', 'error');
+    }
+}
+
+function clearVectors() {
+    while (cvssVectors.length > 0) {
+        cvssVectors.pop().removeButton.click();
     }
 }
 
@@ -667,7 +673,7 @@ function updateScores() {
                 vector.scoreDisplayButton.classList.remove('bg-pastel-gray', 'bg-strong-yellow', 'bg-strong-light-orange', 'bg-strong-dark-orange', 'bg-strong-red');
                 vector.scoreDisplayButton.classList.add('bg-' + severityRange.color);
                 vector.scoreDisplayButton.setAttribute('data-bs-toggle', 'popover');
-                vector.scoreDisplayButton.setAttribute('data-bs-placement', 'right');
+                vector.scoreDisplayButton.setAttribute('data-bs-placement', 'left');
                 vector.scoreDisplayButton.setAttribute('data-bs-content', severityRange.severity);
                 vector.scoreDisplayButton.setAttribute('data-bs-trigger', 'hover');
 
@@ -1451,6 +1457,17 @@ function createBootstrapToast(title, message, type = 'info') {
 function loadFromGet() {
     const urlParams = new URLSearchParams(window.location.search);
 
+    const gzipParam = urlParams.get('b64gzip');
+    if (gzipParam) {
+        const decompressedParams = decompressBase64GzipParam(gzipParam);
+        const additionalParams = new URLSearchParams(decompressedParams);
+
+        // append additional parameters to urlParams
+        for (const [key, value] of additionalParams) {
+            urlParams.append(key, value);
+        }
+    }
+
     const vector = urlParams.get('vector');
     if (vector) {
         const parsedVectorData = JSON.parse(vector);
@@ -1491,6 +1508,13 @@ function loadFromGet() {
         }
         loadNext();
     }
+}
+
+function decompressBase64GzipParam(encodedString) {
+    const binaryString = atob(encodedString.replace(/-/g, '+').replace(/_/g, '/'));
+    const charData = binaryString.split('').map(c => c.charCodeAt(0));
+    const binData = new Uint8Array(charData);
+    return pako.inflate(binData, {to: 'string'});
 }
 
 let storeInGetTimeout = null;
@@ -1536,6 +1560,7 @@ function storeInGet() {
         }
 
         urlParams.delete('cve');
+        urlParams.delete('b64gzip');
 
         if (urlParams.toString().length === 0) {
             window.history.replaceState({}, '', window.location.pathname);

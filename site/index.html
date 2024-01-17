@@ -22,7 +22,7 @@ limitations under the License.
     <meta name="language" content="en">
     <meta name="author" content="{metæffekt} GmbH">
     <meta name="description"
-          content="An online CVSS Calculator for all currently released CVSS versions by {metæffekt}">
+          content="Online CVSS Calculator for CVSS 2.0, 3.1, 4.1 by {metæffekt}">
     <meta name="keywords" content="CVSS, Calculator, CVSS Calculator, CVSS 2.0, CVSS 3.0, CVSS 3.1, CVSS 4.0">
     <meta name="robots" content="index, follow">
     <meta name="theme-color" content="#ffffff">
@@ -30,14 +30,14 @@ limitations under the License.
     <meta property="og:title" content="CVSS Calculator by {metæffekt}">
     <meta property="og:site_name" content="CVSS Calculator by {metæffekt}">
     <meta property="og:description"
-          content="An online CVSS Calculator for all currently released CVSS versions by {metæffekt}">
+          content="Online CVSS Calculator for CVSS 2.0, 3.1, 4.1 by {metæffekt}">
     <meta property="og:image" content="https://metaeffekt.com/security/cvss/calculator/img/calculator-preview.png">
     <meta property="og:type" content="website">
 
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="CVSS Calculator by {metæffekt}">
     <meta name="twitter:description"
-          content="An online CVSS Calculator for all currently released CVSS versions by {metæffekt}">
+          content="Online CVSS Calculator for CVSS 2.0, 3.1, 4.1 by {metæffekt}">
     <meta name="twitter:image" content="https://metaeffekt.com/security/cvss/calculator/img/calculator-preview.png">
 
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -51,6 +51,10 @@ limitations under the License.
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"
             integrity="sha512-ElRFoEQdI5Ht6kZvyzXhYG9NqjtkmlkfYk0wr6wHxU9JEHakS7UJZNeml5ALk+8IKlU6jDgMabC3vkumRokgJA=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"
+            integrity="sha512-g2TeAWw5GPnX7z0Kn8nFbYfeHcvAu/tx6d6mrLe/90mkCxO+RcptyYpksUz35EO337F83bZwcmUyHiHamspkfg=="
             crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <!-- development version -->
@@ -123,15 +127,22 @@ limitations under the License.
                     <button type="button" class="btn btn-outline-success"
                             onclick="copyVectors();"
                             data-bs-toggle="popover" data-bs-placement="top"
-                            data-bs-content="Click to copy vectors and scores to clipboard." data-bs-trigger="hover">
+                            data-bs-content="Copy vectors and scores to clipboard." data-bs-trigger="hover">
                         <i class="bi bi-clipboard"></i>
                     </button>
                     <button type="button" class="btn btn-outline-success"
                             onclick="copyLink();"
                             data-bs-toggle="popover" data-bs-placement="top"
-                            data-bs-content="Click to copy a link for these vectors to clipboard."
+                            data-bs-content="Copy link for active vectors to clipboard."
                             data-bs-trigger="hover">
                         <i class="bi bi-link-45deg"></i>
+                    </button>
+                    <button type="button" class="btn btn-outline-danger"
+                            onclick="clearVectors()"
+                            data-bs-toggle="popover" data-bs-placement="top"
+                            data-bs-content="Clear all vectors. Cannot be undone."
+                            data-bs-trigger="hover">
+                        <i class="bi bi-dash-circle"></i>
                     </button>
                 </div>
             </div>
@@ -236,7 +247,7 @@ limitations under the License.
             <div class="col-lg-2 mb-2">
                 <i class="bi bi-braces-asterisk me-1"></i>
                 <a data-bs-toggle="modal" data-bs-target="#changelogModal" href="#" class="footer-link">
-                    1.0.4 <span style="opacity: 40%">&nbsp;(2024-01-16)</span>
+                    1.0.5 <span style="opacity: 40%">&nbsp;(2024-01-17)</span>
                 </a>
             </div>
         </div>
@@ -307,20 +318,21 @@ limitations under the License.
                 </p>
 
                 <p>
-                    <b>NIST NVD</b>: This product uses data from the NVD API but is not endorsed or certified by the
+                    <b>NIST NVD</b><br> This product uses data from the NVD API but is not endorsed or certified by the
                     NVD.
                     <a href="https://nvd.nist.gov/developers/start-here" target="_blank">
                         https://nvd.nist.gov/developers/start-here</a>.
                 </p>
 
                 <p>
-                    <b>CVSS by FIRST</b>: CVSS is owned by FIRST and used by permission. CVSS is free for use by anyone.
+                    <b>CVSS by FIRST</b><br> CVSS is owned by FIRST and used by permission. CVSS is free for use by
+                    anyone.
                     <a href="https://www.first.org/cvss/specification-document" target="_blank">
                         https://www.first.org/cvss/specification-document</a>.
                 </p>
 
                 <p>
-                    <b>Chart.js</b>:
+                    <b>Chart.js</b><br>
                     <a href="https://github.com/chartjs/Chart.js/blob/v3.9.1/LICENSE.md" target="_blank">
                         Chart.js License
                     </a>
@@ -350,7 +362,7 @@ THE SOFTWARE.
                 </p>
 
                 <p>
-                    <b>Bootstrap</b>:
+                    <b>Bootstrap</b><br>
                     <a href="https://getbootstrap.com/docs/5.3/about/license/" target="_blank">
                         Bootstrap License
                     </a>
@@ -380,7 +392,7 @@ THE SOFTWARE.
                 </p>
 
                 <p>
-                    <b>Bootstrap Icons</b>:
+                    <b>Bootstrap Icons</b><br>
                     <a href="https://github.com/twbs/icons/blob/v1.11.3/LICENSE" target="_blank">
                         Bootstrap Icons License
                     </a>
@@ -407,6 +419,77 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
             </pre>
+                </p>
+
+                <p>
+                    <b>pako</b><br>
+                    <a href="https://github.com/nodeca/pako/blob/master/LICENSE" target="_blank">
+                        pako MIT License
+                    </a>
+                <pre>
+(The MIT License)
+
+Copyright (C) 2014-2017 by Vitaly Puzrin and Andrei Tuputcyn
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+            </pre>
+                Portions of the Pako library, specifically the contents of the <code>/lib/zlib</code> folder, are based
+                on the zlib C sources and are licensed under the Zlib License. The JavaScript port of these sources and
+                additional contributions are under the Expat License (similar to MIT).
+                <pre>
+Acknowledgments:
+
+  The deflate format used by zlib was defined by Phil Katz.  The deflate and
+  zlib specifications were written by L.  Peter Deutsch.  Thanks to all the
+  people who reported problems and suggested various improvements in zlib; they
+  are too numerous to cite here.
+
+Copyright notice:
+
+ (C) 1995-2013 Jean-loup Gailly and Mark Adler
+
+Copyright (c) <''year''> <''copyright holders''>
+
+This software is provided 'as-is', without any express or implied
+warranty. In no event will the authors be held liable for any damages
+arising from the use of this software.
+
+Permission is granted to anyone to use this software for any purpose,
+including commercial applications, and to alter it and redistribute it
+freely, subject to the following restrictions:
+
+1. The origin of this software must not be misrepresented; you must not
+   claim that you wrote the original software. If you use this software
+   in a product, an acknowledgment in the product documentation would be
+   appreciated but is not required.
+2. Altered source versions must be plainly marked as such, and must not be
+   misrepresented as being the original software.
+3. This notice may not be removed or altered from any source distribution.
+
+
+  Jean-loup Gailly        Mark Adler
+  jloup@gzip.org          madler@alumni.caltech.edu
+
+Copyright:
+(C) 1995-2013 Jean-loup Gailly and Mark Adler
+(C) 2014-2017 Vitaly Puzrin and Andrey Tupitsin
+                </pre>
                 </p>
             </div>
         </div>
@@ -520,6 +603,21 @@ THE SOFTWARE.
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
+                <h5>Version 1.0.5 <span class="fs-6 text-secondary ms-2">2024-01-17</span></h5>
+                <ul>
+                    <li>
+                        Added support for a <code>b64gzip</code> parameter that accepts a gzip compressed and base64
+                        encoded string that it will decode and extract URL parameters from, replacing all existing
+                        URL parameters that are present in the encoded string.<br>
+                        Using this is usually not worth it if only one vector is passed, but with three or more vectors,
+                        a significant reduction of more than 40-50% can be achieved.
+                    </li>
+                    <li>Added a button to clear all vectors to the vector list.</li>
+                    <li>
+                        Improved detection of CVSS names for vectors copied from a Vulnerability Assessment Dashboard.
+                    </li>
+                </ul>
+                <hr>
                 <h5>Version 1.0.4 <span class="fs-6 text-secondary ms-2">2024-01-16</span></h5>
                 <ul>
                     <li>Added a limit of 25 vectors to the vector list.</li>

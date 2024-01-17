@@ -30,14 +30,24 @@ function extractVectorsFromFreeText(inputString) {
 }
 
 function extractPossibleNameFromFreeText(inputString, version, shortVersion) {
+    inputString = inputString.replaceAll('\t', ' ');
     const possibleCve = extractAndFormatCVE(inputString);
     if (possibleCve) {
         return shortVersion + ' ' + possibleCve.replace('CVE-', '');
     }
 
-    const inMatcher = /in ([A-Za-z.:-]+(?: [A-Za-z.:-]+)?)/i;
+    const inMatcher = /in (?!CVSS)([A-Za-z.:-]+(?: [A-Za-z.:-]+)?)/i;
     if (inMatcher.test(inputString)) {
         return shortVersion + ' ' + inMatcher.exec(inputString)[1].trim();
+    }
+
+    const vadGen3Matcher = /(CVSS ?:? ?\d+\.\d+)([^0-9]*)\d+\.\d+/i;
+    if (vadGen3Matcher.test(inputString)) {
+        const result = vadGen3Matcher.exec(inputString);
+        if (result.length === 3 && result[2].length > 0  && result[2].trim().length <= 25) {
+            return (shortVersion + ' ' + result[2].trim()).trim();
+        }
+        return result[1];
     }
 
     const scoreNameMatcher = /\d+\.\d+ +((?:CVSS ?:? ?)?\d+\.\d+)(.*)/i;
