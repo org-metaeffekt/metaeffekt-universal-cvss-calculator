@@ -215,7 +215,7 @@
 
 @media (max-width: 991px) {
     :root {
-        --footer-height: 147px;
+        --footer-height: 170px;
     }
 }
 
@@ -347,6 +347,17 @@ body {
     #siteTitle {
         display: flex;
         flex-direction: column;
+    }
+}
+
+@media (min-width: 767px) {
+    #cvss-score-details {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+    #cvss-score-details::-webkit-scrollbar {
+        display: none;
     }
 }
 
