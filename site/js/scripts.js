@@ -76,8 +76,16 @@ class CvssVectorRepresentation {
                 const diffVectorString = diffVector.toString(false, diffVector.getRegisteredComponents(), true);
                 if (diffVector && diffVector.size() > 0) {
                     copyText(diffVectorString, 'diff vector with ' + diffVector.size() + ' changes');
+                    this.vectorStringElement.value = diffVectorString;
+                    setTimeout(() => {
+                        this.vectorStringElement.value = this.cvssInstance.toString();
+                    }, 1700);
                 } else {
                     createBootstrapToast('No change', 'The vector string has not changed from it\'s initial state. Use the buttons below to change some components first.', 'warning');
+                    this.vectorStringElement.value = 'No changes';
+                    setTimeout(() => {
+                        this.vectorStringElement.value = this.cvssInstance.toString();
+                    }, 1200);
                 }
             } else {
                 copyText(this.vectorStringElement.value, 'vector');
@@ -179,7 +187,7 @@ class CvssVectorRepresentation {
             copyVectorToClipboardButton.classList.add('btn', 'btn-outline-secondary', 'cvss-vector-button-copy-to-clipboard');
             copyVectorToClipboardButton.setAttribute('data-bs-toggle', 'popover');
             copyVectorToClipboardButton.setAttribute('data-bs-placement', 'left');
-            copyVectorToClipboardButton.setAttribute('data-bs-content', 'Copy vector to clipboard. Alt/Opt + click to copy only components that changed since adding them to this page.');
+            copyVectorToClipboardButton.setAttribute('data-bs-content', 'Copy vector to clipboard. Shift + click to copy only components that changed since adding them to this page.');
             copyVectorToClipboardButton.setAttribute('data-bs-trigger', 'hover');
             const copyIcon = document.createElement('i');
             copyIcon.classList.add('bi', 'bi-clipboard');
