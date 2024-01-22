@@ -16,16 +16,18 @@
 class CvssVectorRepresentation {
 
     constructor(name, cvssInstance, shown) {
+        this.initialCvssInstance = cvssInstance.clone();
         this.cvssInstance = cvssInstance;
         this.name = name;
         this.shown = shown === undefined ? true : shown;
         this.hasBeenDestroyed = false;
 
-        const [domElement, scoreDisplayButton, nameElement, vectorStringElement, visibilityToggleButton, removeButton] = this.createDomElement();
+        const [domElement, scoreDisplayButton, nameElement, vectorStringElement, copyVectorToClipboardButton, visibilityToggleButton, removeButton] = this.createDomElement();
         this.domElement = domElement;
         this.scoreDisplayButton = scoreDisplayButton;
         this.nameElement = nameElement;
         this.vectorStringElement = vectorStringElement;
+        this.copyVectorToClipboardButton = copyVectorToClipboardButton;
         this.visibilityToggleButton = visibilityToggleButton;
         this.removeButton = removeButton;
 
@@ -61,6 +63,24 @@ class CvssVectorRepresentation {
             } else {
                 createBootstrapToast('No change', 'The vector string has not changed', 'warning');
                 this.vectorStringElement.value = this.cvssInstance.toString();
+            }
+        });
+
+        // clicking the copy button will copy the vector string to the clipboard
+        this.copyVectorToClipboardButton.addEventListener('click', event => {
+            if (this.hasBeenDestroyed) {
+                return;
+            }
+            if (event.altKey || event.metaKey || event.ctrlKey || event.shiftKey) {
+                const diffVector = this.cvssInstance.diffVector(this.initialCvssInstance);
+                const diffVectorString = diffVector.toString(false, diffVector.getRegisteredComponents(), true);
+                if (diffVector && diffVector.size() > 0) {
+                    copyText(diffVectorString, 'diff vector with ' + diffVector.size() + ' changes');
+                } else {
+                    createBootstrapToast('No change', 'The vector string has not changed from it\'s initial state. Use the buttons below to change some components first.', 'warning');
+                }
+            } else {
+                copyText(this.vectorStringElement.value, 'vector');
             }
         });
 
@@ -153,12 +173,26 @@ class CvssVectorRepresentation {
             domElement.appendChild(vectorStringElement);
         }
 
+        const copyVectorToClipboardButton = document.createElement('button');
+        {
+            copyVectorToClipboardButton.type = 'button';
+            copyVectorToClipboardButton.classList.add('btn', 'btn-outline-secondary', 'cvss-vector-button-copy-to-clipboard');
+            copyVectorToClipboardButton.setAttribute('data-bs-toggle', 'popover');
+            copyVectorToClipboardButton.setAttribute('data-bs-placement', 'left');
+            copyVectorToClipboardButton.setAttribute('data-bs-content', 'Copy vector to clipboard. Alt/Opt + click to copy only components that changed since adding them to this page.');
+            copyVectorToClipboardButton.setAttribute('data-bs-trigger', 'hover');
+            const copyIcon = document.createElement('i');
+            copyIcon.classList.add('bi', 'bi-clipboard');
+            copyVectorToClipboardButton.appendChild(copyIcon);
+            domElement.appendChild(copyVectorToClipboardButton);
+        }
+
         const visibilityToggleButton = document.createElement('button');
         {
             visibilityToggleButton.type = 'button';
             visibilityToggleButton.classList.add('btn', 'btn-outline-secondary', 'cvss-vector-button-toggle-visibility');
             visibilityToggleButton.setAttribute('data-bs-toggle', 'popover');
-            visibilityToggleButton.setAttribute('data-bs-placement', 'left');
+            visibilityToggleButton.setAttribute('data-bs-placement', 'bottom');
             visibilityToggleButton.setAttribute('data-bs-content', 'Toggle visibility');
             visibilityToggleButton.setAttribute('data-bs-trigger', 'hover');
             const visibilityIcon = document.createElement('i');
@@ -183,7 +217,7 @@ class CvssVectorRepresentation {
 
         updateTooltip(domElement);
 
-        return [domElement, scoreDisplayButton, nameElement, vectorStringElement, visibilityToggleButton, removeButton];
+        return [domElement, scoreDisplayButton, nameElement, vectorStringElement, copyVectorToClipboardButton, visibilityToggleButton, removeButton];
     }
 
     findRealRenderedTextWidthWithFontOfElement(referenceElement, text) {
@@ -952,6 +986,9 @@ Security requirements: ${securityRequirements}`;
                 input.setAttribute('readonly', 'readonly');
             });
 
+            Array.from(selectedCvssDuplicatedSection.getElementsByClassName('cvss-vector-button-copy-to-clipboard')).forEach(button => {
+                button.remove();
+            });
             Array.from(selectedCvssDuplicatedSection.getElementsByClassName('cvss-vector-button-toggle-visibility')).forEach(button => {
                 button.remove();
             });
@@ -1167,14 +1204,19 @@ function setSelectedVector(vectorInstance) {
                 componentHeader.innerText = component.name;
                 componentHeader.setAttribute('data-bs-toggle', 'popover');
                 componentHeader.setAttribute('data-bs-placement', 'left');
+                componentHeader.setAttribute('title', component.shortName + ' - ' + component.name);
                 if (component.description) {
-                    componentHeader.setAttribute('title', component.shortName);
-                    componentHeader.setAttribute('data-bs-content', component.description);
+                    componentHeader.setAttribute('data-bs-html', true);
+                    componentHeader.setAttribute('data-bs-content', component.description + '<br/>Click component name to copy value to clipboard.');
                 } else {
-                    componentHeader.setAttribute('data-bs-content', component.shortName);
+                    componentHeader.setAttribute('data-bs-content', 'Click component name to copy value to clipboard.');
                 }
                 componentHeader.setAttribute('data-bs-trigger', 'hover focus');
                 componentHeader.classList.add('col-12', 'col-xl-3', 'col-xxl-3', 'align-middle', 'pe-2');
+                componentHeader.addEventListener('click', () => {
+                    copyText(component.shortName + ':' + currentValue.shortName);
+                });
+                componentHeader.style.cursor = 'pointer';
                 componentContainer.appendChild(componentHeader);
 
                 // buttons
@@ -1386,6 +1428,20 @@ function copyLink() {
     } catch (e) {
         console.error(e);
         alert('Copy the following text by highlighting it and using ctrl/cmd + c:\n' + window.location.href);
+    }
+}
+
+function copyText(text, displayName = undefined) {
+    try {
+        navigator.clipboard.writeText(text);
+        createBootstrapToast('Copied to clipboard', 'Copied ' + (displayName ? displayName : (text.length < 20 ? '"' + text + '"' : 'text')) + ' to clipboard.', 'success');
+    } catch (e) {
+        console.error(e);
+        if (text.includes('\n')) {
+            alert('Copy the following text by highlighting it and using ctrl/cmd + c:\n' + text);
+        } else {
+            prompt('Copy the following text by highlighting it and using ctrl/cmd + c:', text);
+        }
     }
 }
 

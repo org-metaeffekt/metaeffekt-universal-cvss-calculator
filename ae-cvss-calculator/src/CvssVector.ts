@@ -198,19 +198,27 @@ export abstract class CvssVector<R extends BaseScoreResult> {
         return componentValue;
     }
 
+    public size(): number {
+        // only include defined components
+        return Array.from(this.components.values()).filter(this.isComponentValueDefined).length;
+    }
+
     public getFirstDefinedComponent<T extends VectorComponentValue>(components: VectorComponent<T>[]): T {
         return components
             .map(component => this.components.get(component))
-            .find(component => component !== undefined && component.shortName !== 'ND' && component.shortName !== 'X') as T;
+            .find(this.isComponentValueDefined) as T;
     }
 
-    public toString(forceAllComponents = false, categories = this.getRegisteredComponents()): string {
+    public toString(forceAllComponents = false, categories = this.getRegisteredComponents(), showOnlyDefinedComponents = false): string {
         let result = "";
         for (const [category, components] of categories) {
             if (forceAllComponents || this.isCategoryPartiallyDefined(category)) {
                 for (const component of components) {
                     const value = this.components.get(component);
                     if (value) {
+                        if (showOnlyDefinedComponents && !this.isComponentValueDefined(value)) {
+                            continue;
+                        }
                         result += `${component.shortName}:${value.shortName}/`;
                     }
                 }
@@ -274,5 +282,45 @@ export abstract class CvssVector<R extends BaseScoreResult> {
         }
 
         return undefined;
+    }
+
+    public clone(): CvssVector<R> {
+        const vector = new (this.constructor as any)();
+        vector.components = new Map(this.components);
+        return vector;
+    }
+
+    public diffVector(checkVector: CvssVector<R>): CvssVector<R> {
+        const diffVector = new (this.constructor as any)();
+
+        // only include components that are different:
+        // - value differs
+        // - value is not defined in A
+        // - value is not defined in B
+
+        for (const [category, components] of this.getRegisteredComponents()) {
+            for (const component of components) {
+                const valueA = this.components.get(component);
+                const valueB = checkVector.components.get(component);
+
+                const valueADefined = this.isComponentValueDefined(valueA);
+                const valueBDefined = this.isComponentValueDefined(valueB);
+
+                // @ts-ignore
+                if (valueADefined && valueBDefined && valueA.shortName !== valueB.shortName) {
+                    diffVector.applyComponent(component, valueB);
+                } else if (!valueADefined && valueBDefined) {
+                    diffVector.applyComponent(component, valueB);
+                } else if (valueADefined && !valueBDefined) {
+                    diffVector.applyComponent(component, valueA);
+                }
+            }
+        }
+
+        return diffVector;
+    }
+
+    protected isComponentValueDefined(component: VectorComponentValue | undefined): boolean {
+        return component !== undefined && component.shortName !== 'ND' && component.shortName !== 'X';
     }
 }
