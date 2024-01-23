@@ -100,23 +100,34 @@ class CvssVectorRepresentation {
         });
 
         // remove button
-        this.removeButton.addEventListener('click', () => {
+        this.removeButton.addEventListener('click', event => {
             if (this.hasBeenDestroyed) {
                 return;
             }
-            this.hasBeenDestroyed = true;
-            this.domElement.remove();
-            const index = cvssVectors.indexOf(this);
-            if (index > -1) {
-                cvssVectors.splice(index, 1);
+
+            if (event.altKey || event.metaKey || event.ctrlKey || event.shiftKey) {
+                this.cvssInstance.clearComponents();
+                updateScores();
+                storeInGet();
+                setTimeout(() => {
+                    this.vectorStringElement.value = this.cvssInstance.toString();
+                }, 10);
+
+            } else {
+                this.hasBeenDestroyed = true;
+                this.domElement.remove();
+                const index = cvssVectors.indexOf(this);
+                if (index > -1) {
+                    cvssVectors.splice(index, 1);
+                }
+                this.adjustNameColumnSize();
+                if (selectedVector === this.cvssInstance) {
+                    setSelectedVector(null);
+                }
+                updateScores();
+                storeInGet();
+                unregisterAllTooltips(this.domElement);
             }
-            this.adjustNameColumnSize();
-            if (selectedVector === this.cvssInstance) {
-                setSelectedVector(null);
-            }
-            updateScores();
-            storeInGet();
-            unregisterAllTooltips(this.domElement);
         });
 
         this.visibilityToggleButton.addEventListener('click', () => {
@@ -187,7 +198,7 @@ class CvssVectorRepresentation {
             copyVectorToClipboardButton.classList.add('btn', 'btn-outline-secondary', 'cvss-vector-button-copy-to-clipboard');
             copyVectorToClipboardButton.setAttribute('data-bs-toggle', 'popover');
             copyVectorToClipboardButton.setAttribute('data-bs-placement', 'left');
-            copyVectorToClipboardButton.setAttribute('data-bs-content', 'Copy vector to clipboard. Shift + click to copy only components that changed since adding them to this page.');
+            copyVectorToClipboardButton.setAttribute('data-bs-content', 'Copy vector to clipboard or shift-click to copy only components that changed since adding them to this page.');
             copyVectorToClipboardButton.setAttribute('data-bs-trigger', 'hover');
             const copyIcon = document.createElement('i');
             copyIcon.classList.add('bi', 'bi-clipboard');
@@ -215,7 +226,7 @@ class CvssVectorRepresentation {
             removeButton.classList.add('btn', 'btn-outline-danger', 'cvss-vector-button-remove');
             removeButton.setAttribute('data-bs-toggle', 'popover');
             removeButton.setAttribute('data-bs-placement', 'right');
-            removeButton.setAttribute('data-bs-content', 'Remove vector');
+            removeButton.setAttribute('data-bs-content', 'Remove vector or shift-click to clear all vector components.');
             removeButton.setAttribute('data-bs-trigger', 'hover');
             const removeIcon = document.createElement('i');
             removeIcon.classList.add('bi', 'bi-dash-circle');
@@ -1243,9 +1254,9 @@ function setSelectedVector(vectorInstance) {
                     componentButtonGroup.appendChild(componentButton);
                     componentButton.classList.add('btn', 'btn-sm', 'cvss-component-button');
                     if (component.values.length > 5) {
-                        componentButton.classList.add('col-2');
+                        componentButton.classList.add('col-cvss-buttons-small');
                     } else {
-                        componentButton.classList.add('col-2-5');
+                        componentButton.classList.add('col-cvss-buttons');
                     }
 
                     componentButton.type = 'button';
@@ -1256,6 +1267,10 @@ function setSelectedVector(vectorInstance) {
                     componentButton.setAttribute('data-bs-content', componentValue.description);
                     componentButton.setAttribute('title', componentValue.shortName + ' - ' + componentValue.name);
                     componentButton.setAttribute('data-bs-trigger', 'hover focus');
+
+                    if (componentValue.shortName === 'X' || componentValue.shortName === 'ND') {
+                        componentButton.style.maxWidth = '33px';
+                    }
 
                     const buttonText = document.createElement('span');
                     buttonText.classList.add('button-text');
@@ -1273,7 +1288,16 @@ function setSelectedVector(vectorInstance) {
                     componentButton.appendChild(buttonText);
 
                     if (componentValue === currentValue) {
-                        let type = (componentValue.shortName === 'X' || componentValue.shortName === 'ND') ? 'outline-primary' : 'primary';
+                        let type;
+                        if (componentValue.shortName === 'X' || componentValue.shortName === 'ND') {
+                            if (componentCategoryName === 'base') {
+                                type = 'danger';
+                            } else {
+                                type = 'outline-primary';
+                            }
+                        } else {
+                            type = 'primary';
+                        }
                         componentButton.classList.add('btn-' + type);
                     } else {
                         componentButton.classList.add('btn-outline-secondary');
