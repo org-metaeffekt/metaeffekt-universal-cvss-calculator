@@ -288,6 +288,10 @@ export class Cvss4P0 extends CvssVector<SingleScoreResult> {
         const environmental = this.isCategoryPartiallyDefined(Cvss4P0Components.ENVIRONMENTAL_MODIFIED_BASE_CATEGORY)
             || this.isCategoryPartiallyDefined(Cvss4P0Components.ENVIRONMENTAL_SECURITY_REQUIREMENT_CATEGORY);
 
+        if (!base && !threat && !environmental) {
+            return "CVSS";
+        }
+
         let nomenclature = "CVSS-";
         if (base) {
             nomenclature += "B";

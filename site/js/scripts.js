@@ -1201,7 +1201,7 @@ function setSelectedVector(vectorInstance) {
         // accordionCollapse.setAttribute('data-bs-parent', '#cvss-component-details'); // causes other accordions to collapse when this one is expanded
 
         const accordionBody = document.createElement('div');
-        accordionBody.classList.add('accordion-body');
+        accordionBody.classList.add('accordion-body', 'position-relative');
         {
             // create button groups for all components with a header that contains the component name
             let previousSubCategory = undefined;
@@ -1217,11 +1217,73 @@ function setSelectedVector(vectorInstance) {
                     }
                     subCategoryHeader.innerText = component.subCategory;
                     accordionBody.appendChild(subCategoryHeader);
+
+                    // find all user guides in this componentsList
+                    if (isFirst) {
+                        const userGuides = [];
+                        for (let component of componentsList) {
+                            const userGuide = findCvssUserGuide(vectorInstance.getVectorName(), component.shortName);
+                            if (userGuide) {
+                                userGuides.push({
+                                    userGuide: userGuide,
+                                    component: component
+                                });
+                            }
+                        }
+
+                        if (userGuides.length > 0) {
+                            const userGuideButton = document.createElement('i');
+                            userGuideButton.classList.add('position-absolute', 'bi', 'bi-compass-fill', 'text-secondary');
+                            userGuideButton.style.top = '-0.3rem';
+                            userGuideButton.style.right = '-0.24rem';
+                            userGuideButton.style.padding = '1rem';
+                            userGuideButton.style.cursor = 'pointer';
+                            userGuideButton.setAttribute('data-bs-toggle', 'popover');
+                            userGuideButton.setAttribute('data-bs-placement', 'right');
+                            userGuideButton.setAttribute('data-bs-content', 'Click to open a multiple-choice dialog to select the correct values for the metrics in this group.');
+                            userGuideButton.setAttribute('title', 'User Guide: all ' + componentCategoryName + ' metrics');
+                            userGuideButton.setAttribute('data-bs-trigger', 'hover');
+                            accordionBody.appendChild(userGuideButton);
+
+                            userGuideButton.addEventListener('click', () => {
+                                let index = 0;
+                                function openNextUserGuideModal() {
+                                    if (index < userGuides.length) {
+                                        openUserGuideModal(vectorInstance, userGuides[index].component.shortName, userGuides[index].userGuide, openNextUserGuideModal);
+                                        index++;
+                                    }
+                                }
+                                openNextUserGuideModal();
+                            });
+
+                        }
+                    }
                 }
 
                 const componentContainer = document.createElement('div');
-                componentContainer.classList.add('columns', 'cvss-component-selection-element-container');
+                componentContainer.classList.add('columns', 'cvss-component-selection-element-container', 'position-relative');
                 accordionBody.appendChild(componentContainer);
+
+                // user guide button if available
+                const userGuide = findCvssUserGuide(vectorInstance.getVectorName(), component.shortName);
+                if (userGuide) {
+                    const userGuideButton = document.createElement('i');
+                    userGuideButton.classList.add('position-absolute', 'bi', 'bi-compass', 'text-secondary');
+                    userGuideButton.style.top = '-0.8rem';
+                    userGuideButton.style.right = '-1.5rem';
+                    userGuideButton.style.padding = '1rem';
+                    userGuideButton.style.cursor = 'pointer';
+                    userGuideButton.setAttribute('data-bs-toggle', 'popover');
+                    userGuideButton.setAttribute('data-bs-placement', 'right');
+                    userGuideButton.setAttribute('data-bs-content', 'Click to open a multiple-choice dialog to select the correct value for this metric.');
+                    userGuideButton.setAttribute('title', 'User Guide: ' + component.shortName);
+                    userGuideButton.setAttribute('data-bs-trigger', 'hover');
+                    componentContainer.appendChild(userGuideButton);
+
+                    userGuideButton.addEventListener('click', () => {
+                        openUserGuideModal(vectorInstance, component.shortName, userGuide);
+                    });
+                }
 
                 // header
                 const componentHeader = document.createElement('div');
@@ -1231,9 +1293,9 @@ function setSelectedVector(vectorInstance) {
                 componentHeader.setAttribute('title', component.shortName + ' - ' + component.name);
                 if (component.description) {
                     componentHeader.setAttribute('data-bs-html', true);
-                    componentHeader.setAttribute('data-bs-content', component.description + '<br/>Click component name to copy value to clipboard.');
+                    componentHeader.setAttribute('data-bs-content', component.description + '<br/>Click to copy metric value to clipboard.');
                 } else {
-                    componentHeader.setAttribute('data-bs-content', 'Click component name to copy value to clipboard.');
+                    componentHeader.setAttribute('data-bs-content', 'Click to copy metric value to clipboard.');
                 }
                 componentHeader.setAttribute('data-bs-trigger', 'hover focus');
                 componentHeader.classList.add('col-12', 'col-xl-3', 'col-xxl-3', 'align-middle', 'pe-2');
@@ -1334,6 +1396,7 @@ function setSelectedVector(vectorInstance) {
                     expandedComponentCategories.splice(index, 1);
                 }
             }
+            expandedComponentCategories = [...new Set(expandedComponentCategories)];
             shouldBeCollapsed = !shouldBeCollapsed;
             storeInGet();
         });

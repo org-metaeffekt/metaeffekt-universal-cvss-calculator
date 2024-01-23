@@ -58,13 +58,14 @@ limitations under the License.
             crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <!-- development version -->
-    <script src="../ae-cvss-calculator/dist/ae-cvss-calculator.js"></script>
+    <!--<script src="../ae-cvss-calculator/dist/ae-cvss-calculator.js"></script>-->
     <!-- production version -->
-    <!--<script src="js/ae-cvss-calculator.js"></script>-->
+    <script src="js/ae-cvss-calculator.js"></script>
 
     <link rel="stylesheet" href="styles.css">
     <script src="js/nvd-api-fetcher.js" defer></script>
     <script src="js/vector-utilities.js" defer></script>
+    <script src="js/cvss-user-guide.js" defer></script>
     <script src="js/scripts.js" defer></script>
 </head>
 
@@ -295,6 +296,22 @@ limitations under the License.
                         Append
                     </button>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal modal-lg fade" id="cvssUserGuideModal" tabindex="-1"
+     aria-labelledby="cvssUserGuideModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="cvssUserGuideModalLabel">User Guide</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="cvssUserGuideModalBody"></div>
             </div>
         </div>
     </div>
@@ -618,6 +635,12 @@ Copyright:
                     </li>
                     <li>A vector can be reset to be undefined by shift-clicking the remove vector button.</li>
                     <li>The CVSS:4.0 nomenclature will now be displayed in the macro vector explanation card.</li>
+                    <li>
+                        Added a user guide for the base components for vector versions
+                        <a href="https://www.first.org/cvss/v3.1/user-guide#Scoring-Rubrics" target="_blank">3.1</a>
+                        and <a href="https://www.first.org/cvss/v4.0/user-guide#Scoring-Rubrics" target="_blank">4.0</a>.
+                        based on their respective specification documents.
+                    </li>
                 </ul>
                 <hr>
                 <h5>Version 1.0.7 <span class="fs-6 text-secondary ms-2">2024-01-22</span></h5>
