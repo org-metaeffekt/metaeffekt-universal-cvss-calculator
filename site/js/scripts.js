@@ -831,6 +831,11 @@ function updateScores() {
         // and show macro vector in cvss4MacroVectorExplanation
         if (cvssVectors.length > 0 && selectedVector && selectedVector.getVectorName() === 'CVSS:4.0') {
             cvss4MacroVectorExplanationCard.classList.remove('d-none');
+
+            const nomenclature = selectedVector.getNomenclature();
+            const headerSpanElement = cvss4MacroVectorExplanationCard.getElementsByClassName('card-header')[0].getElementsByTagName('span')[0];
+            headerSpanElement.innerText = nomenclature + ' 4.0 MacroVector';
+
             const macroVector = selectedVector.getMacroVector();
 
             function levelToText(level) {

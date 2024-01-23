@@ -275,6 +275,33 @@ export class Cvss4P0 extends CvssVector<SingleScoreResult> {
         return severityDistances;
     }
 
+    /**
+     CVSS Nomenclature 	CVSS Metrics Used
+     CVSS-B             Base metrics
+     CVSS-BE            Base and Environmental metrics
+     CVSS-BT            Base and Threat metrics
+     CVSS-BTE           Base, Threat, Environmental metrics
+     */
+    public getNomenclature(): string {
+        const base = this.isCategoryPartiallyDefined(Cvss4P0Components.BASE_CATEGORY);
+        const threat = this.isCategoryPartiallyDefined(Cvss4P0Components.THREAT_CATEGORY);
+        const environmental = this.isCategoryPartiallyDefined(Cvss4P0Components.ENVIRONMENTAL_MODIFIED_BASE_CATEGORY)
+            || this.isCategoryPartiallyDefined(Cvss4P0Components.ENVIRONMENTAL_SECURITY_REQUIREMENT_CATEGORY);
+
+        let nomenclature = "CVSS-";
+        if (base) {
+            nomenclature += "B";
+        }
+        if (threat) {
+            nomenclature += "T";
+        }
+        if (environmental) {
+            nomenclature += "E";
+        }
+
+        return nomenclature;
+    }
+
     public getMacroVector(): Cvss4P0MacroVector {
         return Cvss4P0MacroVector.fromVector(this);
     }
