@@ -227,7 +227,7 @@ limitations under the License.
             <div class="col-lg-4">
                 <a class="d-inline-flex align-items-center mb-2 text-body-secondary text-decoration-none"
                    href="https://metaeffekt.com" target="_blank">
-                    <span class="fs-5">Universal CVSS Calculator by {metæffekt}</span>
+                    <span class="fs-5" style="margin-top:-1rem;">Universal CVSS Calculator by {metæffekt}</span>
                 </a>
             </div>
             <div class="col-lg-2">
@@ -238,21 +238,21 @@ limitations under the License.
                 </a>
             </div>
             <div class="col-lg-2">
-                <i class="bi bi-info-circle-fill me-1"></i>
-                <a data-bs-toggle="modal" data-bs-target="#licenseModal" href="#" class="footer-link">
-                    Licensing
-                </a>
-            </div>
-            <div class="col-lg-2">
                 <i class="bi bi-book-fill me-1"></i>
                 <a data-bs-toggle="modal" data-bs-target="#explanationModal" href="#" class="footer-link">
                     How to use
                 </a>
             </div>
+            <div class="col-lg-2">
+                <i class="bi bi-info-circle-fill me-1"></i>
+                <a data-bs-toggle="modal" data-bs-target="#licenseModal" href="#" class="footer-link">
+                    Licensing
+                </a>
+            </div>
             <div class="col-lg-2 mb-2">
                 <i class="bi bi-braces-asterisk me-1"></i>
                 <a data-bs-toggle="modal" data-bs-target="#changelogModal" href="#" class="footer-link">
-                    1.0.8 <span style="opacity: 40%">&nbsp;(2024-01-23)</span>
+                    1.0.9 <span style="opacity: 40%">&nbsp;(2024-01-24)</span>
                 </a>
             </div>
         </div>
@@ -623,11 +623,31 @@ Copyright:
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
+                <h5>Version 1.0.9 <span class="fs-6 text-secondary ms-2">2024-01-24</span></h5>
+                <ul>
+                    <li>Changed user guide icons to question marks <i class="bi bi-question-circle-fill"></i>.</li>
+                    <li>
+                        Adjusted height and position of footer elements to appear vertically centered and to be more
+                        useful.
+                    </li>
+                    <li>Fixed Attack Vector (AV) user guide answer to be listed under the incorrect response.</li>
+                    <li>
+                        Vector names will now be displayed in cursive if: there is a CVE name in the name field AND the
+                        official NVD vectors could be fetched for that CVE AND the relevant fetched vector is different
+                        from the current vector.<br>
+                        Right-clicking the name will reset the vector to the official fetched one.
+                    </li>
+                    <li>
+                        The NVD fetching indicator will now properly handle multiple vectors being fetched from
+                        different sources.
+                    </li>
+                </ul>
+                <hr>
                 <h5>Version 1.0.8 <span class="fs-6 text-secondary ms-2">2024-01-23</span></h5>
                 <ul>
                     <li>
-                        Undefined metrics buttons are now thinner to discourage setting base metrics to these values
-                        and to save space for the actual components.
+                        Undefined metrics buttons are displayed more narrow to discourage setting base metrics to these
+                        values and to save space for the actual components.
                     </li>
                     <li>
                         Setting base metrics to <code>ND</code> or <code>X</code> will highlight them in red to make it

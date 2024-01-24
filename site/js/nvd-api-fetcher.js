@@ -14,29 +14,92 @@
  * limitations under the License.
  */
 
-const alreadyFetched = {};
+const alreadyFetchedVulnerabilityData = {};
+const currentlyFetchingVulnerabilityData = [];
+
+const inputAddVectorByString = document.getElementById('inputAddVectorByString');
+const inputLabelDefaultContent = inputAddVectorByString.innerHTML;
 
 const fetchVulnerabilityData = async (vulnerability) => {
     if (!vulnerability || vulnerability === 'null' || vulnerability === 'undefined') {
         return null;
     }
-    if (alreadyFetched[vulnerability]) {
-        return alreadyFetched[vulnerability];
+    if (alreadyFetchedVulnerabilityData[vulnerability]) {
+        return alreadyFetchedVulnerabilityData[vulnerability];
     }
+
+    if (currentlyFetchingVulnerabilityData.includes(vulnerability)) {
+        console.log('Already fetching data for', vulnerability, '... waiting for it to finish.');
+        while (currentlyFetchingVulnerabilityData.includes(vulnerability)) {
+            await new Promise(resolve => setTimeout(resolve, 100));
+        }
+        return alreadyFetchedVulnerabilityData[vulnerability];
+    }
+    currentlyFetchingVulnerabilityData.push(vulnerability);
+
+    setTimeout(() => {
+        removeCurrentlyFetchingVulnerabilityData(vulnerability);
+    }, 10000);
+
+    inputAddVectorByString.classList.remove('btn-success');
+    inputAddVectorByString.classList.add('btn-secondary');
+
+    inputAddVectorByString.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> &nbsp;NVD';
+
+
     const url = `https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=${vulnerability}`;
     console.log('Fetching data from:', url)
     try {
         const response = await fetch(url);
         if (!response.ok) {
+            inputAddVectorByString.classList.remove('btn-secondary');
+            inputAddVectorByString.classList.remove('btn-success');
+            inputAddVectorByString.classList.add('btn-danger');
+            removeCurrentlyFetchingVulnerabilityData(vulnerability);
+            if (currentlyFetchingVulnerabilityData.length === 0) {
+                inputAddVectorByString.innerHTML = inputLabelDefaultContent;
+            }
+
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         const json = await response.json();
-        alreadyFetched[vulnerability] = json;
+        alreadyFetchedVulnerabilityData[vulnerability] = json;
+
+        inputAddVectorByString.classList.remove('btn-secondary');
+        removeCurrentlyFetchingVulnerabilityData(vulnerability);
+        if (currentlyFetchingVulnerabilityData.length === 0) {
+            inputAddVectorByString.innerHTML = inputLabelDefaultContent;
+        }
+
+        if (cvssVectors.length === 0) {
+            inputAddVectorByString.classList.remove('btn-success');
+            inputAddVectorByString.classList.add('btn-danger');
+            return;
+        }
+        inputAddVectorByString.classList.remove('btn-danger');
+        inputAddVectorByString.classList.add('btn-success');
+
         return json;
     } catch (error) {
         console.error('Error fetching data: ', error);
+
+        inputAddVectorByString.classList.remove('btn-secondary');
+        inputAddVectorByString.classList.remove('btn-success');
+        inputAddVectorByString.classList.add('btn-danger');
+        removeCurrentlyFetchingVulnerabilityData(vulnerability);
+        if (currentlyFetchingVulnerabilityData.length === 0) {
+            inputAddVectorByString.innerHTML = inputLabelDefaultContent;
+        }
+    } finally {
+        removeCurrentlyFetchingVulnerabilityData(vulnerability);
     }
 };
+
+function removeCurrentlyFetchingVulnerabilityData(vulnerability) {
+    if (currentlyFetchingVulnerabilityData.includes(vulnerability)) {
+        currentlyFetchingVulnerabilityData.splice(currentlyFetchingVulnerabilityData.indexOf(vulnerability), 1);
+    }
+}
 
 const extractCvssVectors = (json) => {
     const vectors = [];
@@ -62,15 +125,12 @@ const extractCvssVectors = (json) => {
     return vectors;
 };
 
-const extractedDescriptions = {};
-
 const extractEnglishDescription = (vulnerability, json) => {
     if (json && json.vulnerabilities) {
         const vuln = json.vulnerabilities[0];
         if (vuln.cve && vuln.cve.descriptions) {
             const desc = vuln.cve.descriptions.find(d => d.lang === 'en');
             if (desc) {
-                extractedDescriptions[vulnerability] = desc.value;
                 return desc.value;
             }
         }
@@ -78,8 +138,22 @@ const extractEnglishDescription = (vulnerability, json) => {
     return null;
 }
 
-const getCachedDescription = (vulnerability) => {
-    return extractedDescriptions[vulnerability];
+const getCvssVectors = async (vulnerability) => {
+    const json = await fetchVulnerabilityData(vulnerability);
+    return extractCvssVectors(json);
+}
+
+const getCvssVectorsAssumeFetched = (vulnerability) => {
+    return extractCvssVectors(alreadyFetchedVulnerabilityData[vulnerability]);
+}
+
+const getEnglishDescription = async (vulnerability) => {
+    const json = await fetchVulnerabilityData(vulnerability);
+    return extractEnglishDescription(vulnerability, json);
+}
+
+const getEnglishDescriptionAssumeFetched = (vulnerability) => {
+    return extractEnglishDescription(vulnerability, alreadyFetchedVulnerabilityData[vulnerability]);
 }
 
 function extractAndFormatCVE(text) {

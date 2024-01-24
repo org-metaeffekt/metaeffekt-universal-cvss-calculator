@@ -17,6 +17,7 @@ class CvssVectorRepresentation {
 
     constructor(name, cvssInstance, shown) {
         this.initialCvssInstance = cvssInstance.clone();
+        this.officialCvssInstance = undefined;
         this.cvssInstance = cvssInstance;
         this.name = name;
         this.shown = shown === undefined ? true : shown;
@@ -279,6 +280,10 @@ class CvssVectorRepresentation {
             vector.nameElement.size = targetSize;
         }
     }
+
+    getCveName() {
+        return extractAndFormatCVE(this.name);
+    }
 }
 
 function constructRadarChartInstance(canvasId) {
@@ -498,34 +503,21 @@ function appendVectorByVulnerability(vulnerability, completionCallback = undefin
     }
 
     const inputElement = document.getElementById('inputAddVectorByVulnerability');
-    inputElement.setAttribute('disabled', 'disabled')
+    inputElement.setAttribute('disabled', 'disabled');
 
     isCurrentlyFetchingFromVulnerability = true;
-    const inputAddVectorByString = document.getElementById('inputAddVectorByString');
-    inputAddVectorByString.classList.remove('btn-success');
-    inputAddVectorByString.classList.add('btn-secondary');
-
-    const inputLabelPreviousContent = inputAddVectorByString.innerHTML;
-    inputAddVectorByString.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> &nbsp;NVD';
 
     fetchVulnerabilityData(vulnerability)
         .then(json => {
             inputElement.removeAttribute('disabled');
             isCurrentlyFetchingFromVulnerability = false;
-            const cvssVectors = extractCvssVectors(json);
-            const englishDescription = extractEnglishDescription(vulnerability, json);
-
-            inputAddVectorByString.classList.remove('btn-secondary');
-            inputAddVectorByString.innerHTML = inputLabelPreviousContent;
+            const cvssVectors = getCvssVectorsAssumeFetched(vulnerability);
+            const englishDescription = getEnglishDescriptionAssumeFetched(vulnerability);
 
             if (cvssVectors.length === 0) {
                 createBootstrapToast('Error fetching from NVD', 'No CVSS vector found for ' + vulnerability, 'error');
-                inputAddVectorByString.classList.remove('btn-success');
-                inputAddVectorByString.classList.add('btn-danger');
                 return;
             }
-            inputAddVectorByString.classList.remove('btn-danger');
-            inputAddVectorByString.classList.add('btn-success');
 
             inputElement.value = '';
 
@@ -547,10 +539,6 @@ function appendVectorByVulnerability(vulnerability, completionCallback = undefin
         .catch(error => {
             isCurrentlyFetchingFromVulnerability = false;
             inputElement.removeAttribute('disabled');
-            inputAddVectorByString.classList.remove('btn-secondary');
-            inputAddVectorByString.classList.remove('btn-success');
-            inputAddVectorByString.classList.add('btn-danger');
-            inputAddVectorByString.innerHTML = inputLabelPreviousContent;
             createBootstrapToast('Error fetching from NVD', 'Error fetching data: ' + error, 'error');
             completionCallback && completionCallback();
         });
@@ -640,6 +628,69 @@ function updateScores() {
             createBootstrapToast('Too many vectors', removeCount + ' ' + (removeCount === 1 ? 'vector has' : 'vectors have') + ' been removed from your list.', 'warning');
         }
 
+        // try to find official vectors
+        for (let vector of cvssVectors) {
+            const cvssVectorInstance = vector.cvssInstance;
+            const officialVector = vector.cvssInstance.officialCvssInstance;
+            const cvssVectorCveName = vector.getCveName();
+            if (!officialVector && cvssVectorInstance && cvssVectorCveName) {
+                getCvssVectors(cvssVectorCveName)
+                    .then(vectors => {
+                        vectors = vectors.map(v => {
+                            const instance = createInstanceForVector(v.vector);
+                            if (instance && instance.constructor === cvssVectorInstance.constructor) {
+                                return instance;
+                            }
+                            return null;
+                        }).filter(v => v !== null);
+                        if (vectors.length === 0) {
+                            console.error('No official vector found for', cvssVectorCveName);
+                            return;
+                        } else if (vectors.length === 1) {
+                            vector.officialCvssInstance = vectors[0];
+                        } else {
+                            let smallestDiffVectorSize = Infinity;
+                            let smallestDiffVector = null;
+                            for (let vector of vectors) {
+                                const diffVector = vector.diffVector(cvssVectorInstance);
+                                if (diffVector.size() < smallestDiffVectorSize) {
+                                    smallestDiffVectorSize = diffVector.size();
+                                    smallestDiffVector = vector;
+                                }
+                            }
+                            vector.officialCvssInstance = smallestDiffVector;
+                        }
+
+                        if (vector.officialCvssInstance) {
+                            const nameElement = vector.nameElement;
+                            const diff = vector.officialCvssInstance.diffVector(cvssVectorInstance).size();
+                            if (diff > 0) {
+                                nameElement.classList.add('fst-italic');
+                                nameElement.setAttribute('data-bs-toggle', 'popover');
+                                nameElement.setAttribute('data-bs-placement', 'top');
+                                nameElement.setAttribute('data-bs-title', 'Vector modified');
+                                nameElement.setAttribute('data-bs-content', 'The vector displayed here has been modified from the official vector for ' + cvssVectorCveName + ' by ' + diff + ' metrics. Right-click this element to reset to the official vector: ' + vector.officialCvssInstance.toString());
+                                nameElement.setAttribute('data-bs-trigger', 'hover');
+                                updateTooltip(nameElement.parentElement);
+
+                                const listener = e => {
+                                    e.preventDefault();
+                                    vector.cvssInstance.clearComponents();
+                                    vector.cvssInstance.applyVector(vector.officialCvssInstance.toString());
+                                    updateScores();
+                                    storeInGet();
+                                    nameElement.removeEventListener('contextmenu', listener);
+                                };
+                                nameElement.addEventListener('contextmenu', listener);
+                            } else {
+                                nameElement.classList.remove('fst-italic');
+                                unregisterAllTooltips(nameElement.parentElement);
+                            }
+                        }
+                    });
+            }
+        }
+
         const shownVectors = cvssVectors.filter(vector => vector.shown);
         const hiddenVectors = cvssVectors.filter(vector => !vector.shown);
         const selectedVectorContainerInstance = cvssVectors.find(vector => vector.cvssInstance === selectedVector);
@@ -676,31 +727,20 @@ function updateScores() {
         // cve description display
         if (selectedVectorContainerInstance) {
             const vulnerabilityName = extractAndFormatCVE(selectedVectorContainerInstance.name);
-            let description = getCachedDescription(vulnerabilityName);
 
-            if (!description) {
-                fetchVulnerabilityData(vulnerabilityName)
-                    .then(json => {
-                        description = extractEnglishDescription(vulnerabilityName, json);
-                        if (description) {
-                            cveDetailsDisplayTitle.innerText = vulnerabilityName;
-                            cveDetailsDisplay.innerText = description;
-                            cveDetailsDisplayTitle.href = 'https://nvd.nist.gov/vuln/detail/' + vulnerabilityName;
-                            cveDetailsDisplayCard.classList.remove('d-none');
-                        } else {
-                            cveDetailsDisplayCard.classList.add('d-none');
-                        }
-                    })
-            }
-
-            if (description) {
-                cveDetailsDisplayTitle.innerText = vulnerabilityName;
-                cveDetailsDisplay.innerText = description;
-                cveDetailsDisplayTitle.href = 'https://nvd.nist.gov/vuln/detail/' + vulnerabilityName;
-                cveDetailsDisplayCard.classList.remove('d-none');
-            } else {
+            getEnglishDescription(vulnerabilityName)
+                .then(description => {
+                    if (description) {
+                        cveDetailsDisplayTitle.innerText = vulnerabilityName;
+                        cveDetailsDisplay.innerText = description;
+                        cveDetailsDisplayTitle.href = 'https://nvd.nist.gov/vuln/detail/' + vulnerabilityName;
+                        cveDetailsDisplayCard.classList.remove('d-none');
+                    } else {
+                        cveDetailsDisplayCard.classList.add('d-none');
+                    }
+                }).catch(error => {
                 cveDetailsDisplayCard.classList.add('d-none');
-            }
+            });
         } else {
             cveDetailsDisplayCard.classList.add('d-none');
         }
@@ -1233,11 +1273,7 @@ function setSelectedVector(vectorInstance) {
 
                         if (userGuides.length > 0) {
                             const userGuideButton = document.createElement('i');
-                            userGuideButton.classList.add('position-absolute', 'bi', 'bi-compass-fill', 'text-secondary');
-                            userGuideButton.style.top = '-0.3rem';
-                            userGuideButton.style.right = '-0.24rem';
-                            userGuideButton.style.padding = '1rem';
-                            userGuideButton.style.cursor = 'pointer';
+                            userGuideButton.classList.add('position-absolute', 'bi', 'bi-question-circle-fill', 'text-secondary', 'user-guide-group');
                             userGuideButton.setAttribute('data-bs-toggle', 'popover');
                             userGuideButton.setAttribute('data-bs-placement', 'right');
                             userGuideButton.setAttribute('data-bs-content', 'Click to open a multiple-choice dialog to select the correct values for the metrics in this group.');
@@ -1247,12 +1283,14 @@ function setSelectedVector(vectorInstance) {
 
                             userGuideButton.addEventListener('click', () => {
                                 let index = 0;
+
                                 function openNextUserGuideModal() {
                                     if (index < userGuides.length) {
-                                        openUserGuideModal(vectorInstance, userGuides[index].component.shortName, userGuides[index].userGuide, openNextUserGuideModal);
+                                        openUserGuideModal(vectorInstance, userGuides[index].component, userGuides[index].userGuide, openNextUserGuideModal);
                                         index++;
                                     }
                                 }
+
                                 openNextUserGuideModal();
                             });
 
@@ -1268,11 +1306,7 @@ function setSelectedVector(vectorInstance) {
                 const userGuide = findCvssUserGuide(vectorInstance.getVectorName(), component.shortName);
                 if (userGuide) {
                     const userGuideButton = document.createElement('i');
-                    userGuideButton.classList.add('position-absolute', 'bi', 'bi-compass', 'text-secondary');
-                    userGuideButton.style.top = '-0.8rem';
-                    userGuideButton.style.right = '-1.5rem';
-                    userGuideButton.style.padding = '1rem';
-                    userGuideButton.style.cursor = 'pointer';
+                    userGuideButton.classList.add('position-absolute', 'bi', 'bi-question-circle', 'text-secondary', 'user-guide-individual');
                     userGuideButton.setAttribute('data-bs-toggle', 'popover');
                     userGuideButton.setAttribute('data-bs-placement', 'right');
                     userGuideButton.setAttribute('data-bs-content', 'Click to open a multiple-choice dialog to select the correct value for this metric.');
@@ -1281,7 +1315,7 @@ function setSelectedVector(vectorInstance) {
                     componentContainer.appendChild(userGuideButton);
 
                     userGuideButton.addEventListener('click', () => {
-                        openUserGuideModal(vectorInstance, component.shortName, userGuide);
+                        openUserGuideModal(vectorInstance, component, userGuide);
                     });
                 }
 

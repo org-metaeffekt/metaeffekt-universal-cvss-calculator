@@ -25,12 +25,12 @@ const cvssUserGuideData = {
                     'type': 'question',
                     'question': 'Must the vulnerability be exploited from a network adjacent to the target?',
                     'options': {
-                        'Yes': {
+                        'No': {
                             'type': 'metric',
                             'metric': 'N',
                             'description': 'Vulnerability is exploitable from across the Internet, or absent more information, assume worst case.'
                         },
-                        'No': {
+                        'Yes': {
                             'type': 'metric',
                             'metric': 'A',
                             'description': 'Vulnerability is exploitable across a limited physical or logical network, i.e., Bluetooth, Wi-Fi, etc.'
@@ -209,6 +209,93 @@ const cvssUserGuideData = {
                     'metric': 'N',
                     'description': 'No availability impact.'
                 },
+            }
+        },
+        'E': {
+            'type': 'question',
+            'question': 'Is there any exploit code available at all (working or not)?',
+            'options': {
+                'Yes': {
+                    'type': 'question',
+                    'question': 'Is the exploit code in an early development stage or more advanced?',
+                    'options': {
+                        'Early Development Stage': {
+                            'type': 'question',
+                            'question': 'Is the exploit code unproven or a proof of concept?',
+                            'options': {
+                                'Unproven': {
+                                    'type': 'metric',
+                                    'metric': 'U',
+                                    'description': 'The exploit code is unproven, meaning there is no known instance of an exploit in the wild.'
+                                },
+                                'Proof of Concept': {
+                                    'type': 'metric',
+                                    'metric': 'P',
+                                    'description': 'The exploit code is at the proof of concept stage, indicating that it demonstrates the vulnerability’s feasibility but is not refined.'
+                                }
+                            }
+                        },
+                        'Advanced Stage': {
+                            'type': 'question',
+                            'question': 'Is the exploit code functional or of high maturity?',
+                            'options': {
+                                'Functional': {
+                                    'type': 'metric',
+                                    'metric': 'F',
+                                    'description': 'The exploit code is functional and can be used to exploit the vulnerability under certain conditions.'
+                                },
+                                'High Maturity': {
+                                    'type': 'metric',
+                                    'metric': 'H',
+                                    'description': 'The exploit code is highly mature, reliable, and either widely available or usable in most situations.'
+                                }
+                            }
+                        }
+                    }
+                },
+                'No': {
+                    'type': 'metric',
+                    'metric': 'X',
+                    'description': 'There is no exploit code available.'
+                }
+            }
+        },
+        'RL': {
+            'type': 'question',
+            'question': 'Is there a remediation available for the vulnerability?',
+            'options': {
+                'Yes': {
+                    'type': 'question',
+                    'question': 'Is the official remediation a complete fix?',
+                    'options': {
+                        'Yes': {
+                            'type': 'metric',
+                            'metric': 'O',
+                            'description': 'An official patch or fix is available and it completely resolves the vulnerability.'
+                        },
+                        'No': {
+                            'type': 'question',
+                            'question': 'Is the official remediation a temporary fix or a workaround?',
+                            'options': {
+                                'Temporary Remediation': {
+                                    'type': 'metric',
+                                    'metric': 'T',
+                                    'description': 'There is an official but temporary fix available. This includes instances where the vendor issues a temporary hotfix, tool, or workaround.'
+                                },
+                                'Workaround': {
+                                    'type': 'metric',
+                                    'metric': 'W',
+                                    'description': 'There is an unofficial, non-vendor solution available. In some cases, users of the affected technology will create a patch of their own or provide steps to work around or otherwise mitigate the vulnerability.'
+                                }
+                            }
+                        }
+                    }
+                },
+                'No': {
+                    'type': 'metric',
+                    'metric': 'U',
+                    'description': 'There is either no solution available or it is impossible to apply.'
+                }
             }
         }
     },
@@ -510,13 +597,13 @@ function findCvssUserGuide(version, metric) {
     return null;
 }
 
-function openUserGuideModal(vectorInstance, metricName, userGuide, completionCallback = undefined) {
+function openUserGuideModal(vectorInstance, component, userGuide, completionCallback = undefined) {
     const modal = new bootstrap.Modal(document.getElementById('cvssUserGuideModal'));
     const modalTitle = document.getElementById('cvssUserGuideModalLabel');
-    modalTitle.innerText = `${vectorInstance.getVectorName()} ${metricName} - User Guide`;
+    modalTitle.innerText = `${vectorInstance.getVectorName()} ${component.shortName} - User Guide`;
     const modalBody = document.getElementById('cvssUserGuideModalBody');
     modalBody.innerHTML = `
-Answer the following questions to determine the value of the <b>${metricName}</b> metric.
+Answer the following questions to determine the value of the <b>${component.name} (${component.shortName})</b> metric.
 `;
 
     function createQuestionContent(questionData, container) {
@@ -591,7 +678,7 @@ Answer the following questions to determine the value of the <b>${metricName}</b
     function applyMetric(metricData) {
         setTimeout(() => {
             modal.hide();
-            vectorInstance.applyComponentString(metricName, metricData.metric);
+            vectorInstance.applyComponentString(component.shortName, metricData.metric);
             if (completionCallback) completionCallback();
         }, 100);
     }

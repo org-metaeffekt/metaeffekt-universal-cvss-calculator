@@ -522,3 +522,31 @@ body {
 .btn-outline-secondary.cvss-component-button {
     --bs-btn-color: #2b2b2b;
 }
+
+.user-guide-individual {
+    top: 0.18rem;
+    right: -1.5rem;
+    padding: 0.05rem 1rem;
+    cursor: pointer;
+    z-index: 2;
+}
+
+.user-guide-group {
+    top: -0.3rem;
+    right: -0.24rem;
+    padding: 1rem;
+    cursor: pointer;
+    z-index: 2;
+}
+
+@media (max-width: 1199px) {
+    .user-guide-individual {
+        top: -0.1rem;
+        right: -0.9rem;
+    }
+
+    .user-guide-group {
+        top: -0.3rem;
+        right: 0.35rem;
+    }
+}
