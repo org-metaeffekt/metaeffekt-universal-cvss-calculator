@@ -71,11 +71,6 @@ const fetchVulnerabilityData = async (vulnerability) => {
             inputAddVectorByString.innerHTML = inputLabelDefaultContent;
         }
 
-        if (cvssVectors.length === 0) {
-            inputAddVectorByString.classList.remove('btn-success');
-            inputAddVectorByString.classList.add('btn-danger');
-            return;
-        }
         inputAddVectorByString.classList.remove('btn-danger');
         inputAddVectorByString.classList.add('btn-success');
 

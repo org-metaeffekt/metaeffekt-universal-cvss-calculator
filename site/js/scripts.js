@@ -23,13 +23,14 @@ class CvssVectorRepresentation {
         this.shown = shown === undefined ? true : shown;
         this.hasBeenDestroyed = false;
 
-        const [domElement, scoreDisplayButton, nameElement, vectorStringElement, copyVectorToClipboardButton, visibilityToggleButton, removeButton] = this.createDomElement();
+        const [domElement, scoreDisplayButton, nameElement, vectorStringElement, copyVectorToClipboardButton, visibilityToggleButton, cloneButton, removeButton] = this.createDomElement();
         this.domElement = domElement;
         this.scoreDisplayButton = scoreDisplayButton;
         this.nameElement = nameElement;
         this.vectorStringElement = vectorStringElement;
         this.copyVectorToClipboardButton = copyVectorToClipboardButton;
         this.visibilityToggleButton = visibilityToggleButton;
+        this.cloneButton = cloneButton;
         this.removeButton = removeButton;
 
         this.cvssInstance.addVectorChangedListener(vector => {
@@ -111,6 +112,15 @@ class CvssVectorRepresentation {
             storeInGet();
         });
 
+        this.cloneButton.addEventListener('click', () => {
+            if (this.hasBeenDestroyed) {
+                return;
+            }
+            this.cloneAndAppendVector();
+            updateScores();
+            setSelectedVector(cvssInstance);
+        });
+
         // remove button
         this.removeButton.addEventListener('click', event => {
             if (this.hasBeenDestroyed) {
@@ -164,6 +174,15 @@ class CvssVectorRepresentation {
 
     appendTo(container) {
         container.appendChild(this.domElement);
+    }
+
+    cloneAndAppendVector() {
+        const cvssInstance = this.cvssInstance.clone();
+        const name = this.name;
+        const vectorRepresentation = new CvssVectorRepresentation(name, cvssInstance);
+        vectorRepresentation.appendTo(cvssVectorListContainerElement);
+        cvssVectors.push(vectorRepresentation);
+        vectorRepresentation.adjustNameColumnSize();
     }
 
     createDomElement() {
@@ -232,6 +251,20 @@ class CvssVectorRepresentation {
             domElement.appendChild(visibilityToggleButton);
         }
 
+        const cloneButton = document.createElement('button');
+        {
+            cloneButton.type = 'button';
+            cloneButton.classList.add('btn', 'btn-outline-primary', 'cvss-vector-button-copy-to-clipboard');
+            cloneButton.setAttribute('data-bs-toggle', 'popover');
+            cloneButton.setAttribute('data-bs-placement', 'bottom');
+            cloneButton.setAttribute('data-bs-content', 'Clone this vector');
+            cloneButton.setAttribute('data-bs-trigger', 'hover');
+            const copyIcon = document.createElement('i');
+            copyIcon.classList.add('bi', 'bi-copy');
+            cloneButton.appendChild(copyIcon);
+            domElement.appendChild(cloneButton);
+        }
+
         const removeButton = document.createElement('button');
         {
             removeButton.type = 'button';
@@ -248,7 +281,7 @@ class CvssVectorRepresentation {
 
         updateTooltip(domElement);
 
-        return [domElement, scoreDisplayButton, nameElement, vectorStringElement, copyVectorToClipboardButton, visibilityToggleButton, removeButton];
+        return [domElement, scoreDisplayButton, nameElement, vectorStringElement, copyVectorToClipboardButton, visibilityToggleButton, cloneButton, removeButton];
     }
 
     findRealRenderedTextWidthWithFontOfElement(referenceElement, text) {
@@ -443,7 +476,7 @@ function appendNewVector(vectorInput, name, shown = true, version = undefined) {
     }
 }
 
-function appendNewEmptyVector(vectorInput, name, prependCvssOnLargeScreens = false) {
+function appendNewEmptyVector(vectorInput, name, prependCvssOnLargeScreens = false, fillRandomBaseVector = true) {
     const screenWidth = window.innerWidth;
     if (screenWidth >= 992 && prependCvssOnLargeScreens) {
         name = 'CVSS:' + name;
@@ -457,7 +490,9 @@ function appendNewEmptyVector(vectorInput, name, prependCvssOnLargeScreens = fal
         return;
     }
     if (cvssInstance) {
-        cvssInstance.fillRandomBaseVector();
+        if (fillRandomBaseVector) {
+            cvssInstance.fillRandomBaseVector();
+        }
         const vectorRepresentation = new CvssVectorRepresentation(name, cvssInstance);
         vectorRepresentation.appendTo(cvssVectorListContainerElement);
         cvssVectors.push(vectorRepresentation);
@@ -467,6 +502,10 @@ function appendNewEmptyVector(vectorInput, name, prependCvssOnLargeScreens = fal
     } else {
         invalidVectorToast(vectorInput, name);
     }
+}
+
+function appendNewEmptyVectorButtonClick(event, vectorInput, name, prependCvssOnLargeScreens = false) {
+    appendNewEmptyVector(vectorInput, name, prependCvssOnLargeScreens, event.altKey || event.metaKey || event.ctrlKey || event.shiftKey);
 }
 
 function invalidVectorToast(vectorInput, name) {
@@ -481,6 +520,16 @@ function clearVectors() {
     while (cvssVectors.length > 0) {
         cvssVectors.pop().removeButton.click();
     }
+}
+
+function cloneAllVectors() {
+    const vectorCount = cvssVectors.length;
+    for (let i = 0; i < vectorCount; i++) {
+        const vector = cvssVectors[i];
+        vector.cloneAndAppendVector();
+    }
+    updateScores();
+    storeInGet();
 }
 
 let isCurrentlyFetchingFromVulnerability = false;
@@ -685,7 +734,7 @@ function updateScores() {
                                 updateTooltip(nameElement.parentElement);
                             } else {
                                 nameElement.classList.remove('fst-italic');
-                                unregisterAllTooltips(nameElement.parentElement);
+                                unregisterAllTooltips(nameElement);
                             }
                         }
                     });
@@ -1588,6 +1637,14 @@ function updateTooltip(element) {
 }
 
 function unregisterAllTooltips(element) {
+    // check if element already has data-bs-toggle="popover" attribute
+    if (element.hasAttribute('data-bs-toggle')) {
+        const popover = bootstrap.Popover.getInstance(element);
+        if (popover) {
+            popover.dispose();
+        }
+        return;
+    }
     // find all that have already been initialized and destroy them
     const tooltipTriggerList = [].slice.call(element.querySelectorAll('[data-bs-toggle="popover"]'));
     tooltipTriggerList.map(function (tooltipTriggerEl) {
