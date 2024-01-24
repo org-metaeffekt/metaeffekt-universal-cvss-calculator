@@ -100,6 +100,17 @@ class CvssVectorRepresentation {
             storeInGet();
         });
 
+        this.nameElement.addEventListener('contextmenu', e => {
+            if (!this.officialCvssInstance) {
+                return;
+            }
+            e.preventDefault();
+            this.cvssInstance.clearComponents();
+            this.cvssInstance.applyVector(this.officialCvssInstance.toString());
+            updateScores();
+            storeInGet();
+        });
+
         // remove button
         this.removeButton.addEventListener('click', event => {
             if (this.hasBeenDestroyed) {
@@ -667,21 +678,11 @@ function updateScores() {
                             if (diff > 0) {
                                 nameElement.classList.add('fst-italic');
                                 nameElement.setAttribute('data-bs-toggle', 'popover');
-                                nameElement.setAttribute('data-bs-placement', 'top');
+                                nameElement.setAttribute('data-bs-placement', 'bottom');
                                 nameElement.setAttribute('data-bs-title', 'Vector modified');
                                 nameElement.setAttribute('data-bs-content', 'The vector displayed here has been modified from the official vector for ' + cvssVectorCveName + ' by ' + diff + ' metrics. Right-click this element to reset to the official vector: ' + vector.officialCvssInstance.toString());
                                 nameElement.setAttribute('data-bs-trigger', 'hover');
                                 updateTooltip(nameElement.parentElement);
-
-                                const listener = e => {
-                                    e.preventDefault();
-                                    vector.cvssInstance.clearComponents();
-                                    vector.cvssInstance.applyVector(vector.officialCvssInstance.toString());
-                                    updateScores();
-                                    storeInGet();
-                                    nameElement.removeEventListener('contextmenu', listener);
-                                };
-                                nameElement.addEventListener('contextmenu', listener);
                             } else {
                                 nameElement.classList.remove('fst-italic');
                                 unregisterAllTooltips(nameElement.parentElement);
