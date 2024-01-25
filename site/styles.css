@@ -550,3 +550,49 @@ body {
         right: 0.35rem;
     }
 }
+
+.dragging {
+    opacity: 0.5;
+    animation: dragging-wiggle 0.5s infinite;
+}
+
+.dragover {
+    filter: saturate(1.3) brightness(1.2);
+    animation: dragover-wiggle 0.5s infinite;
+}
+
+@keyframes dragging-wiggle {
+    0% {
+        transform: rotate(0deg);
+    }
+    25% {
+        transform: rotate(.5deg);
+    }
+    50% {
+        transform: rotate(0deg);
+    }
+    75% {
+        transform: rotate(-.5deg);
+    }
+    100% {
+        transform: rotate(0deg);
+    }
+}
+
+@keyframes dragover-wiggle {
+    0% {
+        transform: rotate(0deg);
+    }
+    25% {
+        transform: rotate(-.3deg);
+    }
+    50% {
+        transform: rotate(0deg);
+    }
+    75% {
+        transform: rotate(.3deg);
+    }
+    100% {
+        transform: rotate(0deg);
+    }
+}

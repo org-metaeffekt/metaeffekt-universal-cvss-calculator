@@ -70,18 +70,24 @@ class CvssVectorRepresentation {
         });
 
         // drag and drop support for moving the element up and down in its container and the cvss vector list
-        this.domElement.setAttribute('draggable', 'true')
-        this.domElement.addEventListener('dragstart', event => {
+        this.scoreDisplayButton.setAttribute('draggable', 'true');
+        this.scoreDisplayButton.addEventListener('dragstart', event => {
             event.dataTransfer.setData('text/plain', this.uniqueId);
             event.dataTransfer.effectAllowed = 'move';
             this.domElement.classList.add('dragging');
+            unregisterAllTooltips(this.scoreDisplayButton);
         });
-        this.domElement.addEventListener('dragend', event => {
+        this.scoreDisplayButton.addEventListener('dragend', event => {
             this.domElement.classList.remove('dragging');
+            updateTooltip(this.scoreDisplayButton);
         });
         this.domElement.addEventListener('dragover', event => {
             event.preventDefault();
             event.dataTransfer.dropEffect = 'move';
+            this.domElement.classList.add('dragover');
+        });
+        this.domElement.addEventListener('dragleave', event => {
+            this.domElement.classList.remove('dragover');
         });
         this.domElement.addEventListener('drop', event => {
             event.preventDefault();
@@ -96,6 +102,12 @@ class CvssVectorRepresentation {
                     this.rearrangeOrderBasedOnCvssList(cvssVectorListContainerElement);
                     updateScores();
                     storeInGet();
+
+                    // remove dragover class from all elements
+                    const dragoverElements = document.getElementsByClassName('dragover');
+                    for (let i = 0; i < dragoverElements.length; i++) {
+                        dragoverElements[i].classList.remove('dragover');
+                    }
                 }
             }
         });
@@ -862,7 +874,8 @@ function updateScores() {
                 vector.scoreDisplayButton.classList.add('bg-' + severityRange.color);
                 vector.scoreDisplayButton.setAttribute('data-bs-toggle', 'popover');
                 vector.scoreDisplayButton.setAttribute('data-bs-placement', 'left');
-                vector.scoreDisplayButton.setAttribute('data-bs-content', severityRange.severity);
+                vector.scoreDisplayButton.setAttribute('data-bs-html', 'true');
+                vector.scoreDisplayButton.setAttribute('data-bs-content', '<b>' + severityRange.severity + '</b><br><small>Drag to reorder</small>');
                 vector.scoreDisplayButton.setAttribute('data-bs-trigger', 'hover');
 
                 if (scores.overall === 0 && !vector.cvssInstance.isBaseFullyDefined()) {
@@ -1675,6 +1688,13 @@ function copyText(text, displayName = undefined) {
 }
 
 function updateTooltip(element) {
+    if (element.hasAttribute('data-bs-toggle')) {
+        const popover = bootstrap.Popover.getInstance(element);
+        if (popover) {
+            popover.update();
+        }
+        return;
+    }
     const tooltipTriggerList = [].slice.call(element.querySelectorAll('[data-bs-toggle="popover"]'));
     tooltipTriggerList.map(function (tooltipTriggerEl) {
         return new bootstrap.Popover(tooltipTriggerEl);
