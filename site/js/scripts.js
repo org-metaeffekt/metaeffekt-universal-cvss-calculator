@@ -70,17 +70,22 @@ class CvssVectorRepresentation {
         });
 
         // drag and drop support for moving the element up and down in its container and the cvss vector list
-        this.scoreDisplayButton.setAttribute('draggable', 'true');
-        this.scoreDisplayButton.addEventListener('dragstart', event => {
-            event.dataTransfer.setData('text/plain', this.uniqueId);
-            event.dataTransfer.effectAllowed = 'move';
-            this.domElement.classList.add('dragging');
-            unregisterAllTooltips(this.scoreDisplayButton);
-        });
-        this.scoreDisplayButton.addEventListener('dragend', event => {
-            this.domElement.classList.remove('dragging');
-            updateTooltip(this.scoreDisplayButton);
-        });
+        const draggableElements = [this.scoreDisplayButton, this.copyVectorToClipboardButton, this.visibilityToggleButton, this.cloneButton, this.removeButton];
+
+        for (let draggableElement of draggableElements) {
+            draggableElement.setAttribute('draggable', 'true');
+            draggableElement.addEventListener('dragstart', event => {
+                event.dataTransfer.setData('text/plain', this.uniqueId);
+                event.dataTransfer.effectAllowed = 'move';
+                this.domElement.classList.add('dragging');
+                unregisterAllTooltips(draggableElement);
+            });
+            draggableElement.addEventListener('dragend', event => {
+                this.domElement.classList.remove('dragging');
+                updateTooltip(draggableElement);
+            });
+        }
+
         this.domElement.addEventListener('dragover', event => {
             event.preventDefault();
             event.dataTransfer.dropEffect = 'move';
