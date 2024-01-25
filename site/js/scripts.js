@@ -22,6 +22,7 @@ class CvssVectorRepresentation {
         this.name = name;
         this.shown = shown === undefined ? true : shown;
         this.hasBeenDestroyed = false;
+        this.uniqueId = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 
         const [domElement, scoreDisplayButton, nameElement, vectorStringElement, copyVectorToClipboardButton, visibilityToggleButton, cloneButton, removeButton] = this.createDomElement();
         this.domElement = domElement;
@@ -65,6 +66,37 @@ class CvssVectorRepresentation {
             } else {
                 createBootstrapToast('No change', 'The vector string has not changed', 'warning');
                 this.vectorStringElement.value = this.cvssInstance.toString();
+            }
+        });
+
+        // drag and drop support for moving the element up and down in its container and the cvss vector list
+        this.domElement.setAttribute('draggable', 'true')
+        this.domElement.addEventListener('dragstart', event => {
+            event.dataTransfer.setData('text/plain', this.uniqueId);
+            event.dataTransfer.effectAllowed = 'move';
+            this.domElement.classList.add('dragging');
+        });
+        this.domElement.addEventListener('dragend', event => {
+            this.domElement.classList.remove('dragging');
+        });
+        this.domElement.addEventListener('dragover', event => {
+            event.preventDefault();
+            event.dataTransfer.dropEffect = 'move';
+        });
+        this.domElement.addEventListener('drop', event => {
+            event.preventDefault();
+            const draggedElementId = event.dataTransfer.getData('text/plain');
+            const draggedElement = cvssVectors.find(vector => vector.uniqueId === draggedElementId);
+            if (draggedElement) {
+                const draggedElementIndex = cvssVectors.indexOf(draggedElement);
+                const thisElementIndex = cvssVectors.indexOf(this);
+                if (draggedElementIndex > -1 && thisElementIndex > -1) {
+                    cvssVectors.splice(draggedElementIndex, 1);
+                    cvssVectors.splice(thisElementIndex, 0, draggedElement);
+                    this.rearrangeOrderBasedOnCvssList(cvssVectorListContainerElement);
+                    updateScores();
+                    storeInGet();
+                }
             }
         });
 
@@ -118,7 +150,11 @@ class CvssVectorRepresentation {
             }
             this.cloneAndAppendVector();
             updateScores();
-            setSelectedVector(cvssInstance);
+
+            setTimeout(() => {
+                const lastVector = cvssVectors[cvssVectors.length - 1];
+                setSelectedVector(lastVector.cvssInstance);
+            }, 1);
         });
 
         // remove button
@@ -174,6 +210,15 @@ class CvssVectorRepresentation {
 
     appendTo(container) {
         container.appendChild(this.domElement);
+    }
+
+    rearrangeOrderBasedOnCvssList(container) {
+        while (container.firstChild) {
+            container.removeChild(container.firstChild);
+        }
+        for (let vector of cvssVectors) {
+            container.appendChild(vector.domElement);
+        }
     }
 
     cloneAndAppendVector() {
@@ -505,7 +550,7 @@ function appendNewEmptyVector(vectorInput, name, prependCvssOnLargeScreens = fal
 }
 
 function appendNewEmptyVectorButtonClick(event, vectorInput, name, prependCvssOnLargeScreens = false) {
-    appendNewEmptyVector(vectorInput, name, prependCvssOnLargeScreens, event.altKey || event.metaKey || event.ctrlKey || event.shiftKey);
+    appendNewEmptyVector(vectorInput, name, prependCvssOnLargeScreens, event && (event.altKey || event.metaKey || event.ctrlKey || event.shiftKey));
 }
 
 function invalidVectorToast(vectorInput, name) {
