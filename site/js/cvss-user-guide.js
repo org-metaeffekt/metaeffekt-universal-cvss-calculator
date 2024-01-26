@@ -217,23 +217,12 @@ const cvssUserGuideData = {
             'options': {
                 'Yes': {
                     'type': 'question',
-                    'question': 'Is the exploit code in an early development stage or more advanced?',
+                    'question': 'Is the exploit code only a proof-of-concept or more advanced?',
                     'options': {
-                        'Early Development Stage': {
-                            'type': 'question',
-                            'question': 'Is the exploit code unproven or a proof of concept?',
-                            'options': {
-                                'Unproven': {
-                                    'type': 'metric',
-                                    'metric': 'U',
-                                    'description': 'The exploit code is unproven, meaning there is no known instance of an exploit in the wild.'
-                                },
-                                'Proof of Concept': {
-                                    'type': 'metric',
-                                    'metric': 'P',
-                                    'description': 'The exploit code is at the proof of concept stage, indicating that it demonstrates the vulnerability’s feasibility but is not refined.'
-                                }
-                            }
+                        'Proof of Concept': {
+                            'type': 'metric',
+                            'metric': 'P',
+                            'description': 'The exploit code is at the proof of concept stage, indicating that it demonstrates the vulnerability’s feasibility but is not refined.'
                         },
                         'Advanced Stage': {
                             'type': 'question',
@@ -255,9 +244,9 @@ const cvssUserGuideData = {
                 },
                 'No': {
                     'type': 'metric',
-                    'metric': 'X',
-                    'description': 'There is no exploit code available.'
-                }
+                    'metric': 'U',
+                    'description': 'No exploit code is available, or an exploit is theoretical.'
+                },
             }
         },
         'RL': {
