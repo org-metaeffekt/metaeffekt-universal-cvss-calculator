@@ -44,9 +44,25 @@ export class Cvss3P1 extends CvssVector<MultiScoreResult> {
     }
 
     fillRandomBaseVector(): void {
-        const baseCategoryComponents = Cvss3P1Components.BASE_CATEGORY_VALUES;
-        for (let i = 0; i < baseCategoryComponents.length; i++) {
-            const component = baseCategoryComponents[i];
+        this.fillRandomComponentsForCategory(Cvss3P1Components.BASE_CATEGORY);
+    }
+
+    fillRandomTemporalVector(): void {
+        this.fillRandomComponentsForCategory(Cvss3P1Components.TEMPORAL_CATEGORY);
+    }
+
+    fillRandomEnvironmentalVector(): void {
+        this.fillRandomComponentsForCategory(Cvss3P1Components.ENVIRONMENTAL_CATEGORY);
+    }
+
+    fillRandomComponentsForCategory(category: ComponentCategory): void {
+        const categoryComponents = Cvss3P1Components.REGISTERED_COMPONENTS.get(category);
+        if (!categoryComponents) {
+            console.warn('Failed to pick random vector components for', category);
+            return;
+        }
+        for (let i = 0; i < categoryComponents.length; i++) {
+            const component = categoryComponents[i];
             const value = super.pickRandomDefinedComponentValue(component);
             if (value) {
                 this.applyComponent(component, value);

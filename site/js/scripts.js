@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 class CvssVectorRepresentation {
 
     constructor(name, cvssInstance, shown) {
@@ -483,6 +484,7 @@ const cvss3P1SeverityRadarContainer = document.getElementById('CVSS:3.1SeverityR
 const cvss2P0SeverityRadarContainer = document.getElementById('CVSS:2.0SeverityRadarContainer');
 
 const cvssVectors = [];
+let chartInterpolationMethod = 'base'; // interpolated | base
 
 severityRadarToggleContainer.addEventListener('click', () => {
     updateScores();
@@ -673,6 +675,18 @@ function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
+function interpolateChartScoresBaseScores(scores) {
+    if (isNotDefined(scores.environmental) && scores.base) {
+        scores.environmental = scores.base;
+    }
+    if (isNotDefined(scores.modifiedImpact) && scores.impact) {
+        scores.modifiedImpact = scores.impact;
+    }
+    if (isNotDefined(scores.temporal) && scores.base) {
+        scores.temporal = scores.base;
+    }
+}
+
 function interpolateChartScores(scores) {
     if (isNotDefined(scores.environmental) && scores.base && scores.exploitability) {
         scores.environmental = createInterpolationPoint(scores.base, scores.exploitability);
@@ -857,24 +871,33 @@ function updateScores() {
             cveDetailsDisplayCard.classList.add('d-none');
         }
 
+        // now update the charts and the score table
         const datasets = {'default': [], 'CVSS:2.0': [], 'CVSS:3.1': [], 'CVSS:4.0': []};
         const useVersionedCharts = !document.getElementById('severityRadarToggle').checked;
 
+        const calculatedVectorScores = {};
+        const calculatedNormalizedVectorScores = {};
         for (let vector of cvssVectors) {
-            const scores = vector.cvssInstance.calculateScores(true);
+            calculatedVectorScores[vector.uniqueId] = vector.cvssInstance.calculateScores(false);
+            calculatedNormalizedVectorScores[vector.uniqueId] = vector.cvssInstance.calculateScores(true);
+        }
+
+        for (let vector of cvssVectors) {
+            const scores = calculatedVectorScores[vector.uniqueId];
+            const normalizedScores = calculatedNormalizedVectorScores[vector.uniqueId];
             const vectorName = vector.cvssInstance.getVectorName();
 
             if (vector.cvssInstance instanceof CvssCalculator.Cvss4P0) {
-                scores.base = scores.overall;
-                scores.impact = scores.overall;
-                scores.exploitability = scores.overall;
-                scores.modifiedImpact = scores.overall;
-                scores.temporal = scores.overall;
-                scores.environmental = scores.overall;
+                normalizedScores.base = normalizedScores.overall;
+                normalizedScores.impact = normalizedScores.overall;
+                normalizedScores.exploitability = normalizedScores.overall;
+                normalizedScores.modifiedImpact = normalizedScores.overall;
+                normalizedScores.temporal = normalizedScores.overall;
+                normalizedScores.environmental = normalizedScores.overall;
             }
 
-            if (!isNotDefined(scores.overall)) {
-                const severityRange = severityRangeColorFinder(scores.overall);
+            if (!isNotDefined(normalizedScores.overall)) {
+                const severityRange = severityRangeColorFinder(normalizedScores.overall);
                 vector.scoreDisplayButton.classList.remove('bg-pastel-gray', 'bg-strong-yellow', 'bg-strong-light-orange', 'bg-strong-dark-orange', 'bg-strong-red');
                 vector.scoreDisplayButton.classList.add('bg-' + severityRange.color);
                 vector.scoreDisplayButton.setAttribute('data-bs-toggle', 'popover');
@@ -883,11 +906,11 @@ function updateScores() {
                 vector.scoreDisplayButton.setAttribute('data-bs-content', '<b>' + severityRange.severity + '</b><br><small>Drag to reorder</small>');
                 vector.scoreDisplayButton.setAttribute('data-bs-trigger', 'hover');
 
-                if (scores.overall === 0 && !vector.cvssInstance.isBaseFullyDefined()) {
+                if (normalizedScores.overall === 0 && !vector.cvssInstance.isBaseFullyDefined()) {
                     vector.scoreDisplayButton.innerHTML = '<i class="bi bi-exclamation-triangle-fill"></i>';
                     vector.scoreDisplayButton.setAttribute('data-bs-content', 'All base metrics must be defined to calculate CVSS scores.');
-                } else if (scores.overall !== 10) {
-                    vector.scoreDisplayButton.innerText = scores.overall.toFixed(1);
+                } else if (normalizedScores.overall !== 10) {
+                    vector.scoreDisplayButton.innerText = normalizedScores.overall.toFixed(1);
                 } else {
                     vector.scoreDisplayButton.innerText = '10';
                 }
@@ -897,9 +920,13 @@ function updateScores() {
             }
 
             // chart
-            const isPointDefined = [scores.base, scores.modifiedImpact, scores.impact, scores.temporal, scores.exploitability, scores.environmental].map(v => isNaN(v) ? 0 : 3);
+            const isPointDefined = [normalizedScores.base, normalizedScores.modifiedImpact, normalizedScores.impact, normalizedScores.temporal, normalizedScores.exploitability, normalizedScores.environmental].map(v => isNaN(v) ? 0 : (selectedVector === vector.cvssInstance ? 3 : 4));
 
-            interpolateChartScores(scores);
+            if (chartInterpolationMethod === 'interpolated') {
+                interpolateChartScores(normalizedScores);
+            } else {
+                interpolateChartScoresBaseScores(normalizedScores);
+            }
 
             let color = [180, 48, 52];
             if (vectorName === 'CVSS:2.0') {
@@ -911,15 +938,13 @@ function updateScores() {
             }
 
             // modify the color a bit randomly seeded based on the vector.getName() to make it more distinguishable
-            let seed = vector.name.split('').reduce((acc, cur) => acc + cur.charCodeAt(0), 0);
-            seed += 1;
-            seed = seed % 30;
-            if (seed % 2 === 0) seed *= -1;
-            color[0] = (color[0] + seed) % 360;
+            let seed = vector.uniqueId.split('').reduce((acc, cur) => acc + cur.charCodeAt(0), 0);
+            seed = ((seed % 60) - 30);
+            color[0] = (color[0] + seed + 360) % 360;
 
             const dataset = {
                 label: vector.name,
-                data: [scores.base, scores.modifiedImpact, scores.impact, scores.temporal, scores.exploitability, scores.environmental],
+                data: [normalizedScores.base, normalizedScores.modifiedImpact, normalizedScores.impact, normalizedScores.temporal, normalizedScores.exploitability, normalizedScores.environmental],
                 backgroundColor: `hsla(${color[0]},${color[1]}%,${color[2]}%,0.1)`,
                 borderColor: `hsl(${color[0]},${color[1]}%,${color[2]}%)`,
                 pointRadius: isPointDefined,
@@ -1032,7 +1057,7 @@ Security requirements: ${securityRequirements}`;
         let hasEnvironmental = false;
         let hasModifiedImpact = false;
         for (let vector of cvssVectors) {
-            const scores = vector.cvssInstance.calculateScores();
+            const scores = calculatedVectorScores[vector.uniqueId];
             if (!hasOverall && scores.overall !== undefined) hasOverall = true;
             if (!hasBase && scores.base !== undefined) hasBase = true;
             if (!hasImpact && scores.impact !== undefined) hasImpact = true;
@@ -1090,8 +1115,8 @@ Security requirements: ${securityRequirements}`;
         appendHeaderCellIfPresent('Adj. Impact', hasModifiedImpact);
 
         for (let vector of cvssVectors) {
-            const scores = vector.cvssInstance.calculateScores(false);
-            const normalizedScores = vector.cvssInstance.calculateScores(true);
+            const scores = calculatedVectorScores[vector.uniqueId];
+            const normalizedScores = calculatedNormalizedVectorScores[vector.uniqueId];
             const row = document.createElement('tr');
             tbody.appendChild(row);
 
