@@ -71,7 +71,18 @@ limitations under the License.
 
 <body>
 
-<div class="container mt-5">
+<noscript>
+    <div class="container mt-5">
+        <div class="alert alert-danger mt-3" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            <span class="fw-bold">JavaScript is disabled!</span><br>
+            This application requires JavaScript to be enabled in order to function.
+            Please reload the page after enabling JavaScript.
+        </div>
+    </div>
+</noscript>
+
+<div class="container mt-5" id="mainCvssCalculatorContainer">
     <h2 class="mb-4" id="siteTitle">
         <span class="me-2">Universal CVSS Calculator</span>
         <a class="fs-4 by-metaeffekt-header" href="https://metaeffekt.com" target="_blank">by {metæffekt}</a>
@@ -127,7 +138,7 @@ limitations under the License.
                     </div>
                 </div>
 
-                <div class="input-group mb-3 only-if-vectors-present" style="width: fit-content;">
+                <div class="input-group mb-3 only-if-vectors-present d-none" style="width: fit-content;">
                     <button type="button" class="btn btn-outline-success"
                             onclick="copyVectors();"
                             data-bs-toggle="popover" data-bs-placement="top"
@@ -178,7 +189,7 @@ limitations under the License.
         </div>
 
         <div class="col-lg-4 col-md-8 col-12 mb-4">
-            <div id="additionalRadarChartContainer" class="position-sticky" style="top:10px;">
+            <div id="additionalRadarChartContainer" class="position-sticky d-none" style="top:10px;">
                 <div class="card mb-3" id="defaultSeverityRadarContainer">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <span>Severity Radar</span>
@@ -262,7 +273,7 @@ limitations under the License.
             <div class="col-lg-2 mb-2">
                 <i class="bi bi-braces-asterisk me-1"></i>
                 <a data-bs-toggle="modal" data-bs-target="#changelogModal" href="#" class="footer-link">
-                    1.0.11 <span style="opacity: 40%">&nbsp;(2024-01-26)</span>
+                    1.0.12 <span style="opacity: 40%">&nbsp;(2024-01-29)</span>
                 </a>
             </div>
         </div>
@@ -633,6 +644,12 @@ Copyright:
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
+                <h5>Version 1.0.12 <span class="fs-6 text-secondary ms-2">2024-01-29</span></h5>
+                <ul>
+                    <li>Radar chart element will no longer flash on application load if no vectors are defined.</li>
+                    <li>Added banner warning for disabled JS.</li>
+                </ul>
+                <hr>
                 <h5>Version 1.0.11 <span class="fs-6 text-secondary ms-2">2024-01-26</span></h5>
                 <ul>
                     <li>

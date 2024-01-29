@@ -455,6 +455,7 @@ const cvssVersionConstructors = {
     'CVSS:4.0': CvssCalculator.Cvss4P0
 }
 
+const mainCvssCalculatorContainerElement = document.getElementById('mainCvssCalculatorContainer');
 const cvssVectorListContainerElement = document.getElementById('cvss-vector-list');
 const cvssComponentsContainerElement = document.getElementById('cvss-component-details');
 const cvssScoreDetailsContainerElement = document.getElementById('cvss-score-details');
@@ -1931,6 +1932,11 @@ if (cvssVectors.length === 0) {
     // appendVectorByVulnerability('CVE-2020-3453');
     expandedComponentCategories.push('base');
     updateScores();
+    setTimeout(() => {
+        additionalRadarChartContainer.classList.remove('d-none');
+    }, 50);
+} else {
+    additionalRadarChartContainer.classList.remove('d-none');
 }
 
 function loadDemo() {
