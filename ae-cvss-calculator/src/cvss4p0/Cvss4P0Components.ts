@@ -17,21 +17,85 @@ import {ComponentCategory, VectorComponent, VectorComponentValue} from "../CvssV
 
 export class Cvss4P0Components {
 
-    public static readonly TEMPLATE_CIA_BASE_VALUES = {
+    public static readonly VULNERABLE_SYSTEM_CONFIDENTIALITY_BASE_VALUES = {
         X: {shortName: 'X', name: 'Not Defined', abbreviatedName: 'Not Def.', description: 'Component is not defined.'},
-        H: {shortName: 'H', name: 'High', description: ''},
-        L: {shortName: 'L', name: 'Low', description: ''},
-        N: {shortName: 'N', name: 'None', description: ''}
+        H: {
+            shortName: 'H',
+            name: 'High',
+            description: 'There is a total loss of confidentiality, resulting in all information within the Vulnerable System being divulged to the attacker. Alternatively, access to only some restricted information is obtained, but the disclosed information presents a direct, serious impact.'
+        },
+        L: {
+            shortName: 'L',
+            name: 'Low',
+            description: 'There is some loss of confidentiality. Access to some restricted information is obtained, but the attacker does not have control over what information is obtained, or the amount or kind of loss is limited. The information disclosure does not cause a direct, serious loss to the Vulnerable System.'
+        },
+        N: {
+            shortName: 'N',
+            name: 'None',
+            description: 'There is no loss of confidentiality within the Vulnerable System.'
+        }
     };
 
-    public static readonly TEMPLATE_CIA_BASE = [
-        Cvss4P0Components.TEMPLATE_CIA_BASE_VALUES.X,
-        Cvss4P0Components.TEMPLATE_CIA_BASE_VALUES.H,
-        Cvss4P0Components.TEMPLATE_CIA_BASE_VALUES.L,
-        Cvss4P0Components.TEMPLATE_CIA_BASE_VALUES.N
+    public static readonly VULNERABLE_SYSTEM_CONFIDENTIALITY_BASE = [
+        Cvss4P0Components.VULNERABLE_SYSTEM_CONFIDENTIALITY_BASE_VALUES.X,
+        Cvss4P0Components.VULNERABLE_SYSTEM_CONFIDENTIALITY_BASE_VALUES.H,
+        Cvss4P0Components.VULNERABLE_SYSTEM_CONFIDENTIALITY_BASE_VALUES.L,
+        Cvss4P0Components.VULNERABLE_SYSTEM_CONFIDENTIALITY_BASE_VALUES.N
     ] as VectorComponentValue[];
 
-    public static readonly TEMPLATE_CIA_SUBSEQUENT_BASE_VALUES = {
+    public static readonly VULNERABLE_SYSTEM_INTEGRITY_BASE_VALUES = {
+        X: {shortName: 'X', name: 'Not Defined', abbreviatedName: 'Not Def.', description: 'Component is not defined.'},
+        H: {
+            shortName: 'H',
+            name: 'High',
+            description: 'There is a total loss of integrity, or a complete loss of protection. For example, the attacker is able to modify any/all files protected by the Vulnerable System. Alternatively, only some files can be modified, but malicious modification would present a direct, serious consequence to the Vulnerable System.'
+        },
+        L: {
+            shortName: 'L',
+            name: 'Low',
+            description: 'Modification of data is possible, but the attacker does not have control over the consequence of a modification, or the amount of modification is limited. The data modification does not have a direct, serious impact to the Vulnerable System.'
+        },
+        N: {
+            shortName: 'N',
+            name: 'None',
+            description: 'There is no loss of integrity within the Vulnerable System.'
+        }
+    };
+
+    public static readonly VULNERABLE_SYSTEM_INTEGRITY_BASE = [
+        Cvss4P0Components.VULNERABLE_SYSTEM_INTEGRITY_BASE_VALUES.X,
+        Cvss4P0Components.VULNERABLE_SYSTEM_INTEGRITY_BASE_VALUES.H,
+        Cvss4P0Components.VULNERABLE_SYSTEM_INTEGRITY_BASE_VALUES.L,
+        Cvss4P0Components.VULNERABLE_SYSTEM_INTEGRITY_BASE_VALUES.N
+    ] as VectorComponentValue[];
+
+    public static readonly VULNERABLE_SYSTEM_AVAILABILITY_BASE_VALUES = {
+        X: {shortName: 'X', name: 'Not Defined', abbreviatedName: 'Not Def.', description: 'Component is not defined.'},
+        H: {
+            shortName: 'H',
+            name: 'High',
+            description: 'There is a total loss of availability, resulting in the attacker being able to fully deny access to resources in the Vulnerable System; this loss is either sustained (while the attacker continues to deliver the attack) or persistent (the condition persists even after the attack has completed). Alternatively, the attacker has the ability to deny some availability, but the loss of availability presents a direct, serious consequence to the Vulnerable System (e.g., the attacker cannot disrupt existing connections, but can prevent new connections; the attacker can repeatedly exploit a vulnerability that, in each instance of a successful attack, leaks a only small amount of memory, but after repeated exploitation causes a service to become completely unavailable).'
+        },
+        L: {
+            shortName: 'L',
+            name: 'Low',
+            description: 'Performance is reduced or there are interruptions in resource availability. Even if repeated exploitation of the vulnerability is possible, the attacker does not have the ability to completely deny service to legitimate users. The resources in the Vulnerable System are either partially available all of the time, or fully available only some of the time, but overall there is no direct, serious consequence to the Vulnerable System.'
+        },
+        N: {
+            shortName: 'N',
+            name: 'None',
+            description: 'There is no impact to availability within the Vulnerable System.'
+        }
+    };
+
+    public static readonly VULNERABLE_SYSTEM_AVAILABILITY_BASE = [
+        Cvss4P0Components.VULNERABLE_SYSTEM_AVAILABILITY_BASE_VALUES.X,
+        Cvss4P0Components.VULNERABLE_SYSTEM_AVAILABILITY_BASE_VALUES.H,
+        Cvss4P0Components.VULNERABLE_SYSTEM_AVAILABILITY_BASE_VALUES.L,
+        Cvss4P0Components.VULNERABLE_SYSTEM_AVAILABILITY_BASE_VALUES.N
+    ] as VectorComponentValue[];
+
+    public static readonly SUBSEQUENT_SYSTEM_CONFIDENTIALITY_BASE_VALUES = {
         X: {shortName: 'X', name: 'Not Defined', abbreviatedName: 'Not Def.', description: 'Component is not defined.'},
         S: {
             shortName: 'S',
@@ -39,73 +103,298 @@ export class Cvss4P0Components {
             description: '! NOT A VALID VALUE FOR Safety (S), REQUIRED FOR CALCULATION OF SCORE !',
             hide: true
         },
-        H: {shortName: 'H', name: 'High', description: ''},
-        L: {shortName: 'L', name: 'Low', description: ''},
-        N: {shortName: 'N', name: 'None', description: ''}
+        H: {
+            shortName: 'H',
+            name: 'High',
+            description: 'There is a total loss of confidentiality, resulting in all resources within the Subsequent System being divulged to the attacker. Alternatively, access to only some restricted information is obtained, but the disclosed information presents a direct, serious impact.'
+        },
+        L: {
+            shortName: 'L',
+            name: 'Low',
+            description: 'There is some loss of confidentiality. Access to some restricted information is obtained, but the attacker does not have control over what information is obtained, or the amount or kind of loss is limited. The information disclosure does not cause a direct, serious loss to the Subsequent System.'
+        },
+        N: {
+            shortName: 'N',
+            name: 'None',
+            description: 'There is no loss of confidentiality within the Subsequent System or all confidentiality impact is constrained to the Vulnerable System.'
+        }
     };
 
-    public static readonly TEMPLATE_CIA_SUBSEQUENT_BASE = [
-        Cvss4P0Components.TEMPLATE_CIA_SUBSEQUENT_BASE_VALUES.X,
-        Cvss4P0Components.TEMPLATE_CIA_SUBSEQUENT_BASE_VALUES.S,
-        Cvss4P0Components.TEMPLATE_CIA_SUBSEQUENT_BASE_VALUES.H,
-        Cvss4P0Components.TEMPLATE_CIA_SUBSEQUENT_BASE_VALUES.L,
-        Cvss4P0Components.TEMPLATE_CIA_SUBSEQUENT_BASE_VALUES.N
+    public static readonly SUBSEQUENT_SYSTEM_CONFIDENTIALITY_BASE = [
+        Cvss4P0Components.SUBSEQUENT_SYSTEM_CONFIDENTIALITY_BASE_VALUES.X,
+        Cvss4P0Components.SUBSEQUENT_SYSTEM_CONFIDENTIALITY_BASE_VALUES.S,
+        Cvss4P0Components.SUBSEQUENT_SYSTEM_CONFIDENTIALITY_BASE_VALUES.H,
+        Cvss4P0Components.SUBSEQUENT_SYSTEM_CONFIDENTIALITY_BASE_VALUES.L,
+        Cvss4P0Components.SUBSEQUENT_SYSTEM_CONFIDENTIALITY_BASE_VALUES.N
     ] as VectorComponentValue[];
 
-    private static readonly TEMPLATE_CIA_SUBSEQUENT_MODIFIED = [
-        {shortName: 'X', name: 'Not Defined', abbreviatedName: 'Not Def.', description: 'Component is not defined.'},
-        {shortName: 'H', name: 'High', description: ''},
-        {shortName: 'L', name: 'Low', description: ''},
-        {shortName: 'N', name: 'Negligible', abbreviatedName: 'Negl.', description: ''}
+    public static readonly SUBSEQUENT_SYSTEM_INTEGRITY_BASE_VALUES = {
+        X: {shortName: 'X', name: 'Not Defined', abbreviatedName: 'Not Def.', description: 'Component is not defined.'},
+        S: {
+            shortName: 'S',
+            name: 'Safety',
+            description: '! NOT A VALID VALUE FOR Safety (S), REQUIRED FOR CALCULATION OF SCORE !',
+            hide: true
+        },
+        H: {
+            shortName: 'H',
+            name: 'High',
+            description: 'There is a total loss of integrity, or a complete loss of protection. For example, the attacker is able to modify any/all files protected by the Subsequent System. Alternatively, only some files can be modified, but malicious modification would present a direct, serious consequence to the Subsequent System.'
+        },
+        L: {
+            shortName: 'L',
+            name: 'Low',
+            description: 'Modification of data is possible, but the attacker does not have control over the consequence of a modification, or the amount of modification is limited. The data modification does not have a direct, serious impact to the Subsequent System.'
+        },
+        N: {
+            shortName: 'N',
+            name: 'None',
+            description: 'There is no loss of integrity within the Subsequent System or all integrity impact is constrained to the Vulnerable System.'
+        }
+    };
+
+    public static readonly SUBSEQUENT_SYSTEM_INTEGRITY_BASE = [
+        Cvss4P0Components.SUBSEQUENT_SYSTEM_INTEGRITY_BASE_VALUES.X,
+        Cvss4P0Components.SUBSEQUENT_SYSTEM_INTEGRITY_BASE_VALUES.S,
+        Cvss4P0Components.SUBSEQUENT_SYSTEM_INTEGRITY_BASE_VALUES.H,
+        Cvss4P0Components.SUBSEQUENT_SYSTEM_INTEGRITY_BASE_VALUES.L,
+        Cvss4P0Components.SUBSEQUENT_SYSTEM_INTEGRITY_BASE_VALUES.N
     ] as VectorComponentValue[];
 
-    public static readonly TEMPLATE_CIA_SUBSEQUENT_MODIFIED_VALUES = {
+    public static readonly SUBSEQUENT_SYSTEM_AVAILABILITY_BASE_VALUES = {
         X: {shortName: 'X', name: 'Not Defined', abbreviatedName: 'Not Def.', description: 'Component is not defined.'},
-        H: {shortName: 'H', name: 'High', description: ''},
-        L: {shortName: 'L', name: 'Low', description: ''},
-        N: {shortName: 'N', name: 'Negligible', abbreviatedName: 'Negl.', description: ''}
+        S: {
+            shortName: 'S',
+            name: 'Safety',
+            description: '! NOT A VALID VALUE FOR Safety (S), REQUIRED FOR CALCULATION OF SCORE !',
+            hide: true
+        },
+        H: {
+            shortName: 'H',
+            name: 'High',
+            description: 'There is a total loss of availability, resulting in the attacker being able to fully deny access to resources in the Subsequent System; this loss is either sustained (while the attacker continues to deliver the attack) or persistent (the condition persists even after the attack has completed). Alternatively, the attacker has the ability to deny some availability, but the loss of availability presents a direct, serious consequence to the Subsequent System (e.g., the attacker cannot disrupt existing connections, but can prevent new connections; the attacker can repeatedly exploit a vulnerability that, in each instance of a successful attack, leaks a only small amount of memory, but after repeated exploitation causes a service to become completely unavailable).'
+        },
+        L: {
+            shortName: 'L',
+            name: 'Low',
+            description: 'Performance is reduced or there are interruptions in resource availability. Even if repeated exploitation of the vulnerability is possible, the attacker does not have the ability to completely deny service to legitimate users. The resources in the Subsequent System are either partially available all of the time, or fully available only some of the time, but overall there is no direct, serious consequence to the Subsequent System.'
+        },
+        N: {
+            shortName: 'N',
+            name: 'None',
+            description: 'There is no impact to availability within the Subsequent System or all availability impact is constrained to the Vulnerable System.'
+        }
     };
 
-    public static readonly TEMPLATE_CIA_SUBSEQUENT_SAFETY_MODIFIED_VALUES = {
-        X: {shortName: 'X', name: 'Not Defined', abbreviatedName: 'Not Def.', description: 'Component is not defined.'},
-        S: {shortName: 'S', name: 'Safety', description: ''},
-        H: {shortName: 'H', name: 'High', description: ''},
-        L: {shortName: 'L', name: 'Low', description: ''},
-        N: {shortName: 'N', name: 'Negligible', abbreviatedName: 'Negl.', description: ''}
-    };
-
-    public static readonly TEMPLATE_CIA_SUBSEQUENT_SAFETY_MODIFIED = [
-        Cvss4P0Components.TEMPLATE_CIA_SUBSEQUENT_SAFETY_MODIFIED_VALUES.X,
-        Cvss4P0Components.TEMPLATE_CIA_SUBSEQUENT_SAFETY_MODIFIED_VALUES.S,
-        Cvss4P0Components.TEMPLATE_CIA_SUBSEQUENT_SAFETY_MODIFIED_VALUES.H,
-        Cvss4P0Components.TEMPLATE_CIA_SUBSEQUENT_SAFETY_MODIFIED_VALUES.L,
-        Cvss4P0Components.TEMPLATE_CIA_SUBSEQUENT_SAFETY_MODIFIED_VALUES.N
-    ] as VectorComponentValue[]
-
-
-    public static readonly TEMPLATE_CIA_REQUIREMENT_MODIFIED_VALUES = {
-        X: {shortName: 'X', name: 'Not Defined', abbreviatedName: 'Not Def.', description: 'Component is not defined.'},
-        H: {shortName: 'H', name: 'High', description: ''},
-        M: {shortName: 'M', name: 'Medium', description: ''},
-        L: {shortName: 'L', name: 'Low', description: ''}
-    };
-
-    public static readonly TEMPLATE_CIA_REQUIREMENT_MODIFIED = [
-        Cvss4P0Components.TEMPLATE_CIA_REQUIREMENT_MODIFIED_VALUES.X,
-        Cvss4P0Components.TEMPLATE_CIA_REQUIREMENT_MODIFIED_VALUES.H,
-        Cvss4P0Components.TEMPLATE_CIA_REQUIREMENT_MODIFIED_VALUES.M,
-        Cvss4P0Components.TEMPLATE_CIA_REQUIREMENT_MODIFIED_VALUES.L
+    public static readonly SUBSEQUENT_SYSTEM_AVAILABILITY_BASE = [
+        Cvss4P0Components.SUBSEQUENT_SYSTEM_AVAILABILITY_BASE_VALUES.X,
+        Cvss4P0Components.SUBSEQUENT_SYSTEM_AVAILABILITY_BASE_VALUES.S,
+        Cvss4P0Components.SUBSEQUENT_SYSTEM_AVAILABILITY_BASE_VALUES.H,
+        Cvss4P0Components.SUBSEQUENT_SYSTEM_AVAILABILITY_BASE_VALUES.L,
+        Cvss4P0Components.SUBSEQUENT_SYSTEM_AVAILABILITY_BASE_VALUES.N
     ] as VectorComponentValue[];
 
+    // SUBSEQUENT SYSTEM MODIFIED
+
+    public static readonly SUBSEQUENT_SYSTEM_CONFIDENTIALITY_MODIFIED_VALUES = {
+        X: {shortName: 'X', name: 'Not Defined', abbreviatedName: 'Not Def.', description: 'Component is not defined.'},
+        H: {
+            shortName: 'H',
+            name: 'High',
+            description: 'There is a total loss of confidentiality, resulting in all resources within the Subsequent System being divulged to the attacker. Alternatively, access to only some restricted information is obtained, but the disclosed information presents a direct, serious impact.'
+        },
+        L: {
+            shortName: 'L',
+            name: 'Low',
+            description: 'There is some loss of confidentiality. Access to some restricted information is obtained, but the attacker does not have control over what information is obtained, or the amount or kind of loss is limited. The information disclosure does not cause a direct, serious loss to the Subsequent System.'
+        },
+        N: {
+            shortName: 'N',
+            name: 'Negligible',
+            abbreviatedName: 'Negl.',
+            description: 'There is no loss of confidentiality within the Subsequent System or all confidentiality impact is constrained to the Vulnerable System.'
+        },
+    };
+
+    private static readonly SUBSEQUENT_SYSTEM_CONFIDENTIALITY_MODIFIED = [
+        Cvss4P0Components.SUBSEQUENT_SYSTEM_CONFIDENTIALITY_MODIFIED_VALUES.X,
+        Cvss4P0Components.SUBSEQUENT_SYSTEM_CONFIDENTIALITY_MODIFIED_VALUES.H,
+        Cvss4P0Components.SUBSEQUENT_SYSTEM_CONFIDENTIALITY_MODIFIED_VALUES.L,
+        Cvss4P0Components.SUBSEQUENT_SYSTEM_CONFIDENTIALITY_MODIFIED_VALUES.N
+    ] as VectorComponentValue[];
+
+    public static readonly SUBSEQUENT_SYSTEM_INTEGRITY_MODIFIED_VALUES = {
+        X: {shortName: 'X', name: 'Not Defined', abbreviatedName: 'Not Def.', description: 'Component is not defined.'},
+        S: {
+            shortName: 'S',
+            name: 'Safety',
+            description: 'The exploited vulnerability will result in integrity impacts that could cause serious injury or worse (categories of "Marginal" or worse as described in IEC 61508) to a human actor or participant.'
+        },
+        H: {
+            shortName: 'H',
+            name: 'High',
+            description: 'There is a total loss of integrity, or a complete loss of protection. For example, the attacker is able to modify any/all files protected by the Subsequent System. Alternatively, only some files can be modified, but malicious modification would present a direct, serious consequence to the Subsequent System.'
+        },
+        L: {
+            shortName: 'L',
+            name: 'Low',
+            description: 'Modification of data is possible, but the attacker does not have control over the consequence of a modification, or the amount of modification is limited. The data modification does not have a direct, serious impact to the Subsequent System.'
+        },
+        N: {
+            shortName: 'N',
+            name: 'Negligible',
+            abbreviatedName: 'Negl.',
+            description: 'There is no loss of integrity within the Subsequent System or all integrity impact is constrained to the Vulnerable System.'
+        }
+    };
+
+    private static readonly SUBSEQUENT_SYSTEM_INTEGRITY_MODIFIED = [
+        Cvss4P0Components.SUBSEQUENT_SYSTEM_INTEGRITY_MODIFIED_VALUES.X,
+        Cvss4P0Components.SUBSEQUENT_SYSTEM_INTEGRITY_MODIFIED_VALUES.S,
+        Cvss4P0Components.SUBSEQUENT_SYSTEM_INTEGRITY_MODIFIED_VALUES.H,
+        Cvss4P0Components.SUBSEQUENT_SYSTEM_INTEGRITY_MODIFIED_VALUES.L,
+        Cvss4P0Components.SUBSEQUENT_SYSTEM_INTEGRITY_MODIFIED_VALUES.N
+    ] as VectorComponentValue[];
+
+    public static readonly SUBSEQUENT_SYSTEM_AVAILABILITY_MODIFIED_VALUES = {
+        X: {shortName: 'X', name: 'Not Defined', abbreviatedName: 'Not Def.', description: 'Component is not defined.'},
+        S: {
+            shortName: 'S',
+            name: 'Safety',
+            description: 'The exploited vulnerability will result in availability impacts that could cause serious injury or worse (categories of "Marginal" or worse as described in IEC 61508) to a human actor or participant.'
+        },
+        H: {
+            shortName: 'H',
+            name: 'High',
+            description: 'There is a total loss of availability, resulting in the attacker being able to fully deny access to resources in the Subsequent System; this loss is either sustained (while the attacker continues to deliver the attack) or persistent (the condition persists even after the attack has completed). Alternatively, the attacker has the ability to deny some availability, but the loss of availability presents a direct, serious consequence to the Subsequent System (e.g., the attacker cannot disrupt existing connections, but can prevent new connections; the attacker can repeatedly exploit a vulnerability that, in each instance of a successful attack, leaks a only small amount of memory, but after repeated exploitation causes a service to become completely unavailable).'
+        },
+        L: {
+            shortName: 'L',
+            name: 'Low',
+            description: 'Performance is reduced or there are interruptions in resource availability. Even if repeated exploitation of the vulnerability is possible, the attacker does not have the ability to completely deny service to legitimate users. The resources in the Subsequent System are either partially available all of the time, or fully available only some of the time, but overall there is no direct, serious consequence to the Subsequent System.'
+        },
+        N: {
+            shortName: 'N',
+            name: 'Negligible',
+            abbreviatedName: 'Negl.',
+            description: 'There is no impact to availability within the Subsequent System or all availability impact is constrained to the Vulnerable System.'
+        }
+    };
+
+    private static readonly SUBSEQUENT_SYSTEM_AVAILABILITY_MODIFIED = [
+        Cvss4P0Components.SUBSEQUENT_SYSTEM_AVAILABILITY_MODIFIED_VALUES.X,
+        Cvss4P0Components.SUBSEQUENT_SYSTEM_AVAILABILITY_MODIFIED_VALUES.S,
+        Cvss4P0Components.SUBSEQUENT_SYSTEM_AVAILABILITY_MODIFIED_VALUES.H,
+        Cvss4P0Components.SUBSEQUENT_SYSTEM_AVAILABILITY_MODIFIED_VALUES.L,
+        Cvss4P0Components.SUBSEQUENT_SYSTEM_AVAILABILITY_MODIFIED_VALUES.N
+    ] as VectorComponentValue[];
+
+    // REQUIREMENT
+
+    public static readonly REQUIREMENT_CONFIDENTIALITY_MODIFIED_VALUES = {
+        X: {shortName: 'X', name: 'Not Defined', abbreviatedName: 'Not Def.', description: 'Component is not defined.'},
+        H: {
+            shortName: 'H',
+            name: 'High',
+            description: 'Loss of Confidentiality is likely to have a catastrophic adverse effect on the organization or individuals associated with the organization (e.g., employees, customers).'
+        },
+        M: {
+            shortName: 'M',
+            name: 'Medium',
+            description: 'Loss of Confidentiality is likely to have a serious adverse effect on the organization or individuals associated with the organization (e.g., employees, customers).'
+        },
+        L: {
+            shortName: 'L',
+            name: 'Low',
+            description: 'Loss of Confidentiality is likely to have only a limited adverse effect on the organization or individuals associated with the organization (e.g., employees, customers).'
+        }
+    };
+
+    public static readonly REQUIREMENT_CONFIDENTIALITY_MODIFIED = [
+        Cvss4P0Components.REQUIREMENT_CONFIDENTIALITY_MODIFIED_VALUES.X,
+        Cvss4P0Components.REQUIREMENT_CONFIDENTIALITY_MODIFIED_VALUES.H,
+        Cvss4P0Components.REQUIREMENT_CONFIDENTIALITY_MODIFIED_VALUES.M,
+        Cvss4P0Components.REQUIREMENT_CONFIDENTIALITY_MODIFIED_VALUES.L
+    ] as VectorComponentValue[];
+
+    public static readonly REQUIREMENT_INTEGRITY_MODIFIED_VALUES = {
+        X: {shortName: 'X', name: 'Not Defined', abbreviatedName: 'Not Def.', description: 'Component is not defined.'},
+        H: {
+            shortName: 'H',
+            name: 'High',
+            description: 'Loss of Integrity is likely to have a catastrophic adverse effect on the organization or individuals associated with the organization (e.g., employees, customers).'
+        },
+        M: {
+            shortName: 'M',
+            name: 'Medium',
+            description: 'Loss of Integrity is likely to have a serious adverse effect on the organization or individuals associated with the organization (e.g., employees, customers).'
+        },
+        L: {
+            shortName: 'L',
+            name: 'Low',
+            description: 'Loss of Integrity is likely to have only a limited adverse effect on the organization or individuals associated with the organization (e.g., employees, customers).'
+        }
+    };
+
+    public static readonly REQUIREMENT_INTEGRITY_MODIFIED = [
+        Cvss4P0Components.REQUIREMENT_INTEGRITY_MODIFIED_VALUES.X,
+        Cvss4P0Components.REQUIREMENT_INTEGRITY_MODIFIED_VALUES.H,
+        Cvss4P0Components.REQUIREMENT_INTEGRITY_MODIFIED_VALUES.M,
+        Cvss4P0Components.REQUIREMENT_INTEGRITY_MODIFIED_VALUES.L
+    ] as VectorComponentValue[];
+
+    public static readonly REQUIREMENT_AVAILABILITY_MODIFIED_VALUES = {
+        X: {shortName: 'X', name: 'Not Defined', abbreviatedName: 'Not Def.', description: 'Component is not defined.'},
+        H: {
+            shortName: 'H',
+            name: 'High',
+            description: 'Loss of Availability is likely to have a catastrophic adverse effect on the organization or individuals associated with the organization (e.g., employees, customers).'
+        },
+        M: {
+            shortName: 'M',
+            name: 'Medium',
+            description: 'Loss of Availability is likely to have a serious adverse effect on the organization or individuals associated with the organization (e.g., employees, customers).'
+        },
+        L: {
+            shortName: 'L',
+            name: 'Low',
+            description: 'Loss of Availability is likely to have only a limited adverse effect on the organization or individuals associated with the organization (e.g., employees, customers).'
+        }
+    };
+
+    public static readonly REQUIREMENT_AVAILABILITY_MODIFIED = [
+        Cvss4P0Components.REQUIREMENT_AVAILABILITY_MODIFIED_VALUES.X,
+        Cvss4P0Components.REQUIREMENT_AVAILABILITY_MODIFIED_VALUES.H,
+        Cvss4P0Components.REQUIREMENT_AVAILABILITY_MODIFIED_VALUES.M,
+        Cvss4P0Components.REQUIREMENT_AVAILABILITY_MODIFIED_VALUES.L
+    ] as VectorComponentValue[];
 
     /* base metrics */
 
     public static readonly AV_VALUES = {
         X: {shortName: 'X', name: 'Not Defined', abbreviatedName: 'Not Def.', description: 'Not Defined'},
-        N: {shortName: 'N', name: 'Network', description: ''},
-        A: {shortName: 'A', name: 'Adjacent Network', abbreviatedName: 'Adj. Network', description: ''},
-        L: {shortName: 'L', name: 'Local', description: ''},
-        P: {shortName: 'P', name: 'Physical', abbreviatedName: 'Phys.', description: ''}
+        N: {
+            shortName: 'N',
+            name: 'Network',
+            description: 'The vulnerable system is bound to the network stack and the set of possible attackers extends beyond the other options listed below, up to and including the entire Internet. Such a vulnerability is often termed “remotely exploitable” and can be thought of as an attack being exploitable at the protocol level one or more network hops away (e.g., across one or more routers). An example of a network attack is an attacker causing a denial of service (DoS) by sending a specially crafted TCP packet across a wide area network.'
+        },
+        A: {
+            shortName: 'A',
+            name: 'Adjacent Network',
+            abbreviatedName: 'Adj. Network',
+            description: 'The vulnerable system is bound to a protocol stack, but the attack is limited at the protocol level to a logically adjacent topology. This can mean an attack must be launched from the same shared proximity (e.g., Bluetooth, NFC, or IEEE 802.11) or logical network (e.g., local IP subnet), or from within a secure or otherwise limited administrative domain (e.g., MPLS, secure VPN within an administrative network zone). One example of an Adjacent attack would be an ARP (IPv4) or neighbor discovery (IPv6) flood leading to a denial of service on the local LAN segment.'
+        },
+        L: {
+            shortName: 'L',
+            name: 'Local',
+            description: 'The vulnerable system is not bound to the network stack and the attacker’s path is via read/write/execute capabilities. Either: the attacker exploits the vulnerability by accessing the target system locally (e.g., keyboard, console), or through terminal emulation (e.g., SSH); or the attacker relies on User Interaction by another person to perform actions required to exploit the vulnerability (e.g., using social engineering techniques to trick a legitimate user into opening a malicious document).'
+        },
+        P: {
+            shortName: 'P',
+            name: 'Physical',
+            abbreviatedName: 'Phys.',
+            description: 'The attack requires the attacker to physically touch or manipulate the vulnerable system. Physical interaction may be brief (e.g., evil maid attack) or persistent. An example of such an attack is a cold boot attack in which an attacker gains access to disk encryption keys after physically accessing the target system. Other examples include peripheral attacks via FireWire/USB Direct Memory Access (DMA).'
+        }
     };
 
     public static readonly AV = {
@@ -125,8 +414,16 @@ export class Cvss4P0Components {
 
     public static readonly AC_VALUES = {
         X: {shortName: 'X', name: 'Not Defined', abbreviatedName: 'Not Def.', description: 'Not Defined'},
-        L: {shortName: 'L', name: 'Low', description: ''},
-        H: {shortName: 'H', name: 'High', description: ''}
+        L: {
+            shortName: 'L',
+            name: 'Low',
+            description: 'The attacker must take no measurable action to exploit the vulnerability. The attack requires no target-specific circumvention to exploit the vulnerability. An attacker can expect repeatable success against the vulnerable system.'
+        },
+        H: {
+            shortName: 'H',
+            name: 'High',
+            description: 'successful attack depends on the evasion or circumvention of security-enhancing techniques in place that would otherwise hinder the attack. The attacker must have additional methods available to bypass security measures in place.'
+        }
     };
 
     public static readonly AC = {
@@ -144,8 +441,16 @@ export class Cvss4P0Components {
 
     public static readonly AT_VALUES = {
         X: {shortName: 'X', name: 'Not Defined', abbreviatedName: 'Not Def.', description: 'Not Defined'},
-        N: {shortName: 'N', name: 'None', description: ''},
-        P: {shortName: 'P', name: 'Present', description: ''}
+        N: {
+            shortName: 'N',
+            name: 'None',
+            description: 'The successful attack does not depend on the deployment and execution conditions of the vulnerable system. The attacker can expect to be able to reach the vulnerability and execute the exploit under all or most instances of the vulnerability.'
+        },
+        P: {
+            shortName: 'P',
+            name: 'Present',
+            description: 'The successful attack depends on the presence of specific deployment and execution conditions of the vulnerable system that enable the attack. The successfulness of the attack is conditioned on execution conditions that are not under full control of the attacker. The attack may need to be launched multiple times against a single target before being successful. Network injection. The attacker must inject themselves into the logical network path between the target and the resource requested by the victim (e.g. vulnerabilities requiring an on-path attacker).'
+        }
     };
 
     public static readonly AT = {
@@ -163,9 +468,21 @@ export class Cvss4P0Components {
 
     public static readonly PR_VALUES = {
         X: {shortName: 'X', name: 'Not Defined', abbreviatedName: 'Not Def.', description: 'Not Defined'},
-        N: {shortName: 'N', name: 'None', description: ''},
-        L: {shortName: 'L', name: 'Low', description: ''},
-        H: {shortName: 'H', name: 'High', description: ''}
+        N: {
+            shortName: 'N',
+            name: 'None',
+            description: 'The attacker is unauthenticated prior to attack, and therefore does not require any access to settings or files of the vulnerable system to carry out an attack.'
+        },
+        L: {
+            shortName: 'L',
+            name: 'Low',
+            description: 'The attacker requires privileges that provide basic capabilities that are typically limited to settings and resources owned by a single low-privileged user. Alternatively, an attacker with Low privileges has the ability to access only non-sensitive resources.'
+        },
+        H: {
+            shortName: 'H',
+            name: 'High',
+            description: 'The attacker requires privileges that provide significant (e.g., administrative) control over the vulnerable system allowing full access to the vulnerable system’s settings and files.'
+        }
     };
 
     public static readonly PR = {
@@ -184,9 +501,21 @@ export class Cvss4P0Components {
 
     public static readonly UI_VALUES = {
         X: {shortName: 'X', name: 'Not Defined', abbreviatedName: 'Not Def.', description: 'Not Defined'},
-        N: {shortName: 'N', name: 'None', description: ''},
-        P: {shortName: 'P', name: 'Passive', description: ''},
-        A: {shortName: 'A', name: 'Active', description: ''}
+        N: {
+            shortName: 'N',
+            name: 'None',
+            description: 'The vulnerable system can be exploited without interaction from any human user, other than the attacker. Examples include: a remote attacker is able to send packets to a target system a locally authenticated attacker executes code to elevate privileges'
+        },
+        P: {
+            shortName: 'P',
+            name: 'Passive',
+            description: 'Successful exploitation of this vulnerability requires limited interaction by the targeted user with the vulnerable system and the attacker’s payload. These interactions would be considered involuntary and do not require that the user actively subvert protections built into the vulnerable system.'
+        },
+        A: {
+            shortName: 'A',
+            name: 'Active',
+            description: 'Successful exploitation of this vulnerability requires a targeted user to perform specific, conscious interactions with the vulnerable system and the attacker’s payload, or the user’s interactions would actively subvert protection mechanisms which would lead to exploitation of the vulnerability.'
+        }
     };
 
     public static readonly UI = {
@@ -208,8 +537,8 @@ export class Cvss4P0Components {
         shortName: 'VC',
         subCategory: 'Vulnerable System Impact',
         description: '',
-        values: Cvss4P0Components.TEMPLATE_CIA_BASE,
-        worseCaseValue: Cvss4P0Components.TEMPLATE_CIA_BASE_VALUES.H
+        values: Cvss4P0Components.VULNERABLE_SYSTEM_CONFIDENTIALITY_BASE,
+        worseCaseValue: Cvss4P0Components.VULNERABLE_SYSTEM_CONFIDENTIALITY_BASE_VALUES.H
     };
 
     public static readonly VI = {
@@ -217,8 +546,8 @@ export class Cvss4P0Components {
         shortName: 'VI',
         subCategory: 'Vulnerable System Impact',
         description: '',
-        values: Cvss4P0Components.TEMPLATE_CIA_BASE,
-        worseCaseValue: Cvss4P0Components.TEMPLATE_CIA_BASE_VALUES.H
+        values: Cvss4P0Components.VULNERABLE_SYSTEM_INTEGRITY_BASE,
+        worseCaseValue: Cvss4P0Components.VULNERABLE_SYSTEM_INTEGRITY_BASE_VALUES.H
     };
 
     public static readonly VA = {
@@ -226,8 +555,8 @@ export class Cvss4P0Components {
         shortName: 'VA',
         subCategory: 'Vulnerable System Impact',
         description: '',
-        values: Cvss4P0Components.TEMPLATE_CIA_BASE,
-        worseCaseValue: Cvss4P0Components.TEMPLATE_CIA_BASE_VALUES.H
+        values: Cvss4P0Components.VULNERABLE_SYSTEM_AVAILABILITY_BASE,
+        worseCaseValue: Cvss4P0Components.VULNERABLE_SYSTEM_AVAILABILITY_BASE_VALUES.H
     };
 
     public static readonly SC = {
@@ -235,8 +564,8 @@ export class Cvss4P0Components {
         shortName: 'SC',
         subCategory: 'Subsequent System Impact',
         description: '',
-        values: Cvss4P0Components.TEMPLATE_CIA_SUBSEQUENT_BASE,
-        worseCaseValue: Cvss4P0Components.TEMPLATE_CIA_SUBSEQUENT_BASE_VALUES.H
+        values: Cvss4P0Components.SUBSEQUENT_SYSTEM_CONFIDENTIALITY_BASE,
+        worseCaseValue: Cvss4P0Components.SUBSEQUENT_SYSTEM_CONFIDENTIALITY_BASE_VALUES.H
     };
 
     public static readonly SI = {
@@ -244,8 +573,8 @@ export class Cvss4P0Components {
         shortName: 'SI',
         subCategory: 'Subsequent System Impact',
         description: '',
-        values: Cvss4P0Components.TEMPLATE_CIA_SUBSEQUENT_BASE,
-        worseCaseValue: Cvss4P0Components.TEMPLATE_CIA_SUBSEQUENT_BASE_VALUES.H
+        values: Cvss4P0Components.SUBSEQUENT_SYSTEM_INTEGRITY_BASE,
+        worseCaseValue: Cvss4P0Components.SUBSEQUENT_SYSTEM_INTEGRITY_BASE_VALUES.H
     };
 
     public static readonly SA = {
@@ -253,16 +582,30 @@ export class Cvss4P0Components {
         shortName: 'SA',
         subCategory: 'Subsequent System Impact',
         description: '',
-        values: Cvss4P0Components.TEMPLATE_CIA_SUBSEQUENT_BASE,
-        worseCaseValue: Cvss4P0Components.TEMPLATE_CIA_SUBSEQUENT_BASE_VALUES.H
+        values: Cvss4P0Components.SUBSEQUENT_SYSTEM_AVAILABILITY_BASE,
+        worseCaseValue: Cvss4P0Components.SUBSEQUENT_SYSTEM_AVAILABILITY_BASE_VALUES.H
     };
 
     /* supplemental metrics */
 
     public static readonly S_VALUES = {
-        X: {shortName: 'X', name: 'Not Defined', abbreviatedName: 'Not Def.', description: 'Not Defined'},
-        N: {shortName: 'N', name: 'Negligible', abbreviatedName: 'Negl.', description: ''},
-        P: {shortName: 'P', name: 'Present', description: ''}
+        X: {
+            shortName: 'X',
+            name: 'Not Defined',
+            abbreviatedName: 'Not Def.',
+            description: 'The metric has not been evaluated.'
+        },
+        N: {
+            shortName: 'N',
+            name: 'Negligible',
+            abbreviatedName: 'Negl.',
+            description: 'Consequences of the vulnerability meet definition of IEC 61508 consequence categories of "marginal," "critical," or "catastrophic."'
+        },
+        P: {
+            shortName: 'P',
+            name: 'Present',
+            description: 'Consequences of the vulnerability meet definition of IEC 61508 consequence category "negligible."'
+        }
     };
 
     public static readonly S = {
@@ -278,9 +621,22 @@ export class Cvss4P0Components {
     };
 
     public static readonly AU_VALUES = {
-        X: {shortName: 'X', name: 'Not Defined', abbreviatedName: 'Not Def.', description: 'Not Defined'},
-        N: {shortName: 'N', name: 'No', description: ''},
-        Y: {shortName: 'Y', name: 'Yes', description: ''}
+        X: {
+            shortName: 'X',
+            name: 'Not Defined',
+            abbreviatedName: 'Not Def.',
+            description: 'The metric has not been evaluated.'
+        },
+        N: {
+            shortName: 'N',
+            name: 'No',
+            description: 'Attackers cannot reliably automate all 4 steps of the kill chain for this vulnerability for some reason. These steps are reconnaissance, weaponization, delivery, and exploitation.'
+        },
+        Y: {
+            shortName: 'Y',
+            name: 'Yes',
+            description: 'Attackers can reliably automate all 4 steps of the kill chain. These steps are reconnaissance, weaponization, delivery, and exploitation (e.g., the vulnerability is “wormable”).'
+        }
     };
 
     public static readonly AU = {
@@ -296,10 +652,29 @@ export class Cvss4P0Components {
     };
 
     public static readonly R_VALUES = {
-        X: {shortName: 'X', name: 'Not Defined', abbreviatedName: 'Not Def.', description: 'Not Defined'},
-        A: {shortName: 'A', name: 'Automatic', abbreviatedName: 'Automat.', description: ''},
-        U: {shortName: 'U', name: 'User', description: ''},
-        I: {shortName: 'I', name: 'Irrecoverable', abbreviatedName: 'Irrecov.', description: ''}
+        X: {
+            shortName: 'X',
+            name: 'Not Defined',
+            abbreviatedName: 'Not Def.',
+            description: 'The metric has not been evaluated.'
+        },
+        A: {
+            shortName: 'A',
+            name: 'Automatic',
+            abbreviatedName: 'Automat.',
+            description: 'The system recovers services automatically after an attack has been performed.'
+        },
+        U: {
+            shortName: 'U',
+            name: 'User',
+            description: 'The system requires manual intervention by the user to recover services, after an attack has been performed.'
+        },
+        I: {
+            shortName: 'I',
+            name: 'Irrecoverable',
+            abbreviatedName: 'Irrecov.',
+            description: 'The system services are irrecoverable by the user, after an attack has been performed.'
+        }
     };
 
     public static readonly R = {
@@ -316,9 +691,23 @@ export class Cvss4P0Components {
     };
 
     public static readonly V_VALUES = {
-        X: {shortName: 'X', name: 'Not Defined', abbreviatedName: 'Not Def.', description: 'Not Defined'},
-        D: {shortName: 'D', name: 'Diffuse', description: ''},
-        C: {shortName: 'C', name: 'Concentrated', abbreviatedName: 'Concentr.', description: ''}
+        X: {
+            shortName: 'X',
+            name: 'Not Defined',
+            abbreviatedName: 'Not Def.',
+            description: 'The metric has not been evaluated.'
+        },
+        D: {
+            shortName: 'D',
+            name: 'Diffuse',
+            description: 'The vulnerable system has limited resources. That is, the resources that the attacker will gain control over with a single exploitation event are relatively small. An example of Diffuse (think: limited) Value Density would be an attack on a single email client vulnerability.'
+        },
+        C: {
+            shortName: 'C',
+            name: 'Concentrated',
+            abbreviatedName: 'Concentr.',
+            description: 'The vulnerable system is rich in resources. Heuristically, such systems are often the direct responsibility of “system operators” rather than users. An example of Concentrated (think: broad) Value Density would be an attack on a central email server.'
+        }
     };
 
     public static readonly V = {
@@ -334,10 +723,28 @@ export class Cvss4P0Components {
     };
 
     public static readonly RE_VALUES = {
-        X: {shortName: 'X', name: 'Not Defined', abbreviatedName: 'Not Def.', description: 'Not Defined'},
-        L: {shortName: 'L', name: 'Low', description: ''},
-        M: {shortName: 'M', name: 'Moderate', abbreviatedName: 'Moder.', description: ''},
-        H: {shortName: 'H', name: 'High', description: ''}
+        X: {
+            shortName: 'X',
+            name: 'Not Defined',
+            abbreviatedName: 'Not Def.',
+            description: 'The metric has not been evaluated.'
+        },
+        L: {
+            shortName: 'L',
+            name: 'Low',
+            description: 'The effort required to respond to a vulnerability is low/trivial. Examples include: communication on better documentation, configuration workarounds, or guidance from the vendor that does not require an immediate update, upgrade, or replacement by the consuming entity, such as firewall filter configuration.'
+        },
+        M: {
+            shortName: 'M',
+            name: 'Moderate',
+            abbreviatedName: 'Moder.',
+            description: 'The actions required to respond to a vulnerability require some effort on behalf of the consumer and could cause minimal service impact to implement. Examples include: simple remote update, disabling of a subsystem, or a low-touch software upgrade such as a driver update.'
+        },
+        H: {
+            shortName: 'H',
+            name: 'High',
+            description: 'The actions required to respond to a vulnerability are significant and/or difficult, and may possibly lead to an extended, scheduled service impact. This would need to be considered for scheduling purposes including honoring any embargo on deployment of the selected response. Alternatively, response to the vulnerability in the field is not possible remotely. The only resolution to the vulnerability involves physical replacement (e.g. units deployed would have to be recalled for a depot level repair or replacement).'
+        }
     };
 
     public static readonly RE = {
@@ -354,11 +761,32 @@ export class Cvss4P0Components {
     };
 
     public static readonly U_VALUES = {
-        X: {shortName: 'X', name: 'Not Defined', abbreviatedName: 'Not Def.', description: 'Not Defined'},
-        Clear: {shortName: 'Clear', name: 'Clear', description: ''},
-        Green: {shortName: 'Green', name: 'Green', description: ''},
-        Amber: {shortName: 'Amber', name: 'Amber', description: ''},
-        Red: {shortName: 'Red', name: 'Red', description: ''}
+        X: {
+            shortName: 'X',
+            name: 'Not Defined',
+            abbreviatedName: 'Not Def.',
+            description: 'The metric has not been evaluated.'
+        },
+        Clear: {
+            shortName: 'Clear',
+            name: 'Clear',
+            description: 'Provider has assessed the impact of this vulnerability as having the highest urgency.'
+        },
+        Green: {
+            shortName: 'Green',
+            name: 'Green',
+            description: 'Provider has assessed the impact of this vulnerability as having a moderate urgency.'
+        },
+        Amber: {
+            shortName: 'Amber',
+            name: 'Amber',
+            description: 'Provider has assessed the impact of this vulnerability as having a reduced urgency.'
+        },
+        Red: {
+            shortName: 'Red',
+            name: 'Red',
+            description: 'Provider has assessed the impact of this vulnerability as having no urgency (Informational).'
+        }
     };
 
     public static readonly U = {
@@ -382,6 +810,7 @@ export class Cvss4P0Components {
         shortName: 'MAV',
         subCategory: 'Exploitability Metrics',
         description: '',
+        baseMetricEquivalent: Cvss4P0Components.AV,
         values: Cvss4P0Components.AV.values,
         worseCaseValue: Cvss4P0Components.AV_VALUES.N
     };
@@ -391,6 +820,7 @@ export class Cvss4P0Components {
         shortName: 'MAC',
         subCategory: 'Exploitability Metrics',
         description: '',
+        baseMetricEquivalent: Cvss4P0Components.AC,
         values: Cvss4P0Components.AC.values,
         worseCaseValue: Cvss4P0Components.AC_VALUES.L
     };
@@ -400,6 +830,7 @@ export class Cvss4P0Components {
         shortName: 'MAT',
         subCategory: 'Exploitability Metrics',
         description: '',
+        baseMetricEquivalent: Cvss4P0Components.AT,
         values: Cvss4P0Components.AT.values,
         worseCaseValue: Cvss4P0Components.AT_VALUES.P
     };
@@ -409,6 +840,7 @@ export class Cvss4P0Components {
         shortName: 'MPR',
         subCategory: 'Exploitability Metrics',
         description: '',
+        baseMetricEquivalent: Cvss4P0Components.PR,
         values: Cvss4P0Components.PR.values,
         worseCaseValue: Cvss4P0Components.PR_VALUES.N
     };
@@ -418,6 +850,7 @@ export class Cvss4P0Components {
         shortName: 'MUI',
         subCategory: 'Exploitability Metrics',
         description: '',
+        baseMetricEquivalent: Cvss4P0Components.UI,
         values: Cvss4P0Components.UI.values,
         worseCaseValue: Cvss4P0Components.UI_VALUES.N
     };
@@ -427,8 +860,9 @@ export class Cvss4P0Components {
         shortName: 'MVC',
         subCategory: 'Vulnerable System Impact',
         description: '',
-        values: Cvss4P0Components.TEMPLATE_CIA_BASE,
-        worseCaseValue: Cvss4P0Components.TEMPLATE_CIA_BASE_VALUES.H
+        baseMetricEquivalent: Cvss4P0Components.VC,
+        values: Cvss4P0Components.VULNERABLE_SYSTEM_CONFIDENTIALITY_BASE,
+        worseCaseValue: Cvss4P0Components.VULNERABLE_SYSTEM_CONFIDENTIALITY_BASE_VALUES.H
     };
 
     public static readonly MVI = {
@@ -436,8 +870,9 @@ export class Cvss4P0Components {
         shortName: 'MVI',
         subCategory: 'Vulnerable System Impact',
         description: '',
-        values: Cvss4P0Components.TEMPLATE_CIA_BASE,
-        worseCaseValue: Cvss4P0Components.TEMPLATE_CIA_BASE_VALUES.H
+        baseMetricEquivalent: Cvss4P0Components.VI,
+        values: Cvss4P0Components.VULNERABLE_SYSTEM_INTEGRITY_BASE,
+        worseCaseValue: Cvss4P0Components.VULNERABLE_SYSTEM_INTEGRITY_BASE_VALUES.H
     };
 
     public static readonly MVA = {
@@ -445,8 +880,9 @@ export class Cvss4P0Components {
         shortName: 'MVA',
         subCategory: 'Vulnerable System Impact',
         description: '',
-        values: Cvss4P0Components.TEMPLATE_CIA_BASE,
-        worseCaseValue: Cvss4P0Components.TEMPLATE_CIA_BASE_VALUES.H
+        baseMetricEquivalent: Cvss4P0Components.VA,
+        values: Cvss4P0Components.VULNERABLE_SYSTEM_AVAILABILITY_BASE,
+        worseCaseValue: Cvss4P0Components.VULNERABLE_SYSTEM_AVAILABILITY_BASE_VALUES.H
     };
 
     public static readonly MSC = {
@@ -454,8 +890,9 @@ export class Cvss4P0Components {
         shortName: 'MSC',
         subCategory: 'Subsequent System Impact',
         description: '',
-        values: Cvss4P0Components.TEMPLATE_CIA_SUBSEQUENT_MODIFIED,
-        worseCaseValue: Cvss4P0Components.TEMPLATE_CIA_SUBSEQUENT_MODIFIED_VALUES.H
+        baseMetricEquivalent: Cvss4P0Components.SC,
+        values: Cvss4P0Components.SUBSEQUENT_SYSTEM_CONFIDENTIALITY_MODIFIED,
+        worseCaseValue: Cvss4P0Components.SUBSEQUENT_SYSTEM_CONFIDENTIALITY_MODIFIED_VALUES.H
     };
 
     public static readonly MSI = {
@@ -463,8 +900,15 @@ export class Cvss4P0Components {
         shortName: 'MSI',
         subCategory: 'Subsequent System Impact',
         description: '',
-        values: Cvss4P0Components.TEMPLATE_CIA_SUBSEQUENT_SAFETY_MODIFIED,
-        worseCaseValue: Cvss4P0Components.TEMPLATE_CIA_SUBSEQUENT_SAFETY_MODIFIED_VALUES.H
+        baseMetricEquivalent: Cvss4P0Components.SI,
+        baseMetricEquivalentMapper: (value: VectorComponentValue) => {
+            if (value === Cvss4P0Components.SUBSEQUENT_SYSTEM_INTEGRITY_MODIFIED_VALUES.S) {
+                return Cvss4P0Components.SUBSEQUENT_SYSTEM_INTEGRITY_MODIFIED_VALUES.H;
+            }
+            return value;
+        },
+        values: Cvss4P0Components.SUBSEQUENT_SYSTEM_INTEGRITY_MODIFIED,
+        worseCaseValue: Cvss4P0Components.SUBSEQUENT_SYSTEM_INTEGRITY_MODIFIED_VALUES.H
     };
 
     public static readonly MSA = {
@@ -472,39 +916,63 @@ export class Cvss4P0Components {
         shortName: 'MSA',
         subCategory: 'Subsequent System Impact',
         description: '',
-        values: Cvss4P0Components.TEMPLATE_CIA_SUBSEQUENT_SAFETY_MODIFIED,
-        worseCaseValue: Cvss4P0Components.TEMPLATE_CIA_SUBSEQUENT_SAFETY_MODIFIED_VALUES.H
+        baseMetricEquivalent: Cvss4P0Components.SA,
+        baseMetricEquivalentMapper: (value: VectorComponentValue) => {
+            if (value === Cvss4P0Components.SUBSEQUENT_SYSTEM_AVAILABILITY_MODIFIED_VALUES.S) {
+                return Cvss4P0Components.SUBSEQUENT_SYSTEM_AVAILABILITY_MODIFIED_VALUES.H;
+            }
+            return value;
+        },
+        values: Cvss4P0Components.SUBSEQUENT_SYSTEM_AVAILABILITY_MODIFIED,
+        worseCaseValue: Cvss4P0Components.SUBSEQUENT_SYSTEM_AVAILABILITY_MODIFIED_VALUES.H
     };
 
     public static readonly CR = {
         name: 'Confidentiality Requirement',
         shortName: 'CR',
         description: '',
-        values: Cvss4P0Components.TEMPLATE_CIA_REQUIREMENT_MODIFIED,
-        worseCaseValue: Cvss4P0Components.TEMPLATE_CIA_REQUIREMENT_MODIFIED_VALUES.H
+        values: Cvss4P0Components.REQUIREMENT_CONFIDENTIALITY_MODIFIED,
+        worseCaseValue: Cvss4P0Components.REQUIREMENT_CONFIDENTIALITY_MODIFIED_VALUES.H
     };
 
     public static readonly IR = {
         name: 'Integrity Requirement',
         shortName: 'IR',
         description: '',
-        values: Cvss4P0Components.TEMPLATE_CIA_REQUIREMENT_MODIFIED,
-        worseCaseValue: Cvss4P0Components.TEMPLATE_CIA_REQUIREMENT_MODIFIED_VALUES.H
+        values: Cvss4P0Components.REQUIREMENT_INTEGRITY_MODIFIED,
+        worseCaseValue: Cvss4P0Components.REQUIREMENT_INTEGRITY_MODIFIED_VALUES.H
     };
 
     public static readonly AR = {
         name: 'Availability Requirement',
         shortName: 'AR',
         description: '',
-        values: Cvss4P0Components.TEMPLATE_CIA_REQUIREMENT_MODIFIED,
-        worseCaseValue: Cvss4P0Components.TEMPLATE_CIA_REQUIREMENT_MODIFIED_VALUES.H
+        values: Cvss4P0Components.REQUIREMENT_AVAILABILITY_MODIFIED,
+        worseCaseValue: Cvss4P0Components.REQUIREMENT_AVAILABILITY_MODIFIED_VALUES.H
     };
 
     public static readonly E_VALUES = {
-        X: {shortName: 'X', name: 'Not Defined', abbreviatedName: 'Not Def.', description: 'Not Defined'},
-        A: {shortName: 'A', name: 'Attacked', description: ''},
-        P: {shortName: 'P', name: 'POC', description: ''},
-        U: {shortName: 'U', name: 'Unreported', description: ''}
+        X: {
+            shortName: 'X',
+            name: 'Not Defined',
+            abbreviatedName: 'Not Def.',
+            description: 'Reliable threat intelligence is not available to determine Exploit Maturity characteristics. This is the default value and is equivalent to Attacked (A) for the purposes of the calculation of the score by assuming the worst case.'
+        },
+        A: {
+            shortName: 'A',
+            name: 'Attacked',
+            description: 'Based on available threat intelligence either of the following must apply: Attacks targeting this vulnerability (attempted or successful) have been reported Solutions to simplify attempts to exploit the vulnerability are publicly or privately available (such as exploit toolkits)'
+        },
+        P: {
+            shortName: 'P',
+            name: 'POC',
+            description: 'Based on available threat intelligence each of the following must apply: Proof-of-concept exploit code is publicly available No knowledge of reported attempts to exploit this vulnerability No knowledge of publicly available solutions used to simplify attempts to exploit the vulnerability (i.e., the “Attacked” value does not apply)'
+        },
+        U: {
+            shortName: 'U',
+            name: 'Unreported',
+            description: 'Based on available threat intelligence each of the following must apply: No knowledge of publicly available proof-of-concept exploit code No knowledge of reported attempts to exploit this vulnerability No knowledge of publicly available solutions used to simplify attempts to exploit the vulnerability (i.e., neither the “POC” nor “Attacked” values apply)'
+        }
     };
 
     public static readonly E = {

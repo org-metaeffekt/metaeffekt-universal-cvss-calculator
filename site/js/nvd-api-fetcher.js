@@ -42,6 +42,8 @@ const fetchVulnerabilityData = async (vulnerability) => {
     }, 10000);
 
     inputAddVectorByString.classList.remove('btn-success');
+    inputAddVectorByString.classList.remove('btn-warning');
+    inputAddVectorByString.classList.remove('btn-danger');
     inputAddVectorByString.classList.add('btn-secondary');
 
     inputAddVectorByString.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> &nbsp;NVD';
@@ -52,9 +54,18 @@ const fetchVulnerabilityData = async (vulnerability) => {
     try {
         const response = await fetch(url);
         if (!response.ok) {
+            console.log(response.status)
+            const isServerError = response.status >= 500 && response.status < 600;
             inputAddVectorByString.classList.remove('btn-secondary');
             inputAddVectorByString.classList.remove('btn-success');
-            inputAddVectorByString.classList.add('btn-danger');
+            inputAddVectorByString.classList.remove('btn-warning');
+            inputAddVectorByString.classList.remove('btn-danger');
+            if (isServerError) {
+                inputAddVectorByString.classList.add('btn-warning');
+            } else {
+                inputAddVectorByString.classList.add('btn-danger');
+            }
+
             removeCurrentlyFetchingVulnerabilityData(vulnerability);
             if (currentlyFetchingVulnerabilityData.length === 0) {
                 inputAddVectorByString.innerHTML = inputLabelDefaultContent;
@@ -72,15 +83,21 @@ const fetchVulnerabilityData = async (vulnerability) => {
         }
 
         inputAddVectorByString.classList.remove('btn-danger');
+        inputAddVectorByString.classList.remove('btn-warning');
         inputAddVectorByString.classList.add('btn-success');
+
+        console.log(json)
 
         return json;
     } catch (error) {
-        console.error('Error fetching data: ', error);
+        console.error('Error fetching data:', error);
 
         inputAddVectorByString.classList.remove('btn-secondary');
         inputAddVectorByString.classList.remove('btn-success');
+        inputAddVectorByString.classList.remove('btn-warning');
+        inputAddVectorByString.classList.remove('btn-danger');
         inputAddVectorByString.classList.add('btn-danger');
+
         removeCurrentlyFetchingVulnerabilityData(vulnerability);
         if (currentlyFetchingVulnerabilityData.length === 0) {
             inputAddVectorByString.innerHTML = inputLabelDefaultContent;
@@ -101,7 +118,7 @@ const extractCvssVectors = (json) => {
     if (json && json.vulnerabilities) {
         json.vulnerabilities.forEach(vuln => {
             if (vuln.cve && vuln.cve.metrics) {
-                ['cvssMetricV40', 'cvssMetricV4', 'cvssMetricV4.0', 'cvssMetricV31', 'cvssMetricV2'].forEach(metricKey => {
+                ['cvssMetricV40', 'cvssMetricV4', 'cvssMetricV4.0', 'cvssMetricV31', 'cvssMetricV30', 'cvssMetricV2'].forEach(metricKey => {
                     if (vuln.cve.metrics[metricKey]) {
                         vuln.cve.metrics[metricKey].forEach(metric => {
                             if (metric.cvssData) {

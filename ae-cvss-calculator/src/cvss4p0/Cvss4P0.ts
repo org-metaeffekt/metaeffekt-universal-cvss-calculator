@@ -250,8 +250,8 @@ export class Cvss4P0 extends CvssVector<SingleScoreResult> {
             severityDistances.set("IR", this.severityDistanceBetweenComponents(Cvss4P0Components.IR, Cvss4P0MacroVector.getComparisonMetricComponent(this, Cvss4P0Components.IR), Cvss4P0Components.IR, Cvss4P0MacroVector.getComparisonMetricComponent(maxVector, Cvss4P0Components.IR)));
             severityDistances.set("AR", this.severityDistanceBetweenComponents(Cvss4P0Components.AR, Cvss4P0MacroVector.getComparisonMetricComponent(this, Cvss4P0Components.AR), Cvss4P0Components.AR, Cvss4P0MacroVector.getComparisonMetricComponent(maxVector, Cvss4P0Components.AR)));
 
-            const isModifiedSubIntegrityImpactSafety = this.getComponent(Cvss4P0Components.SI) === Cvss4P0Components.TEMPLATE_CIA_SUBSEQUENT_SAFETY_MODIFIED_VALUES.S;
-            const isModifiedSubAvailabilityImpactSafety = this.getComponent(Cvss4P0Components.SA) === Cvss4P0Components.TEMPLATE_CIA_SUBSEQUENT_SAFETY_MODIFIED_VALUES.S;
+            const isModifiedSubIntegrityImpactSafety = this.getComponent(Cvss4P0Components.SI) === Cvss4P0Components.SUBSEQUENT_SYSTEM_INTEGRITY_MODIFIED_VALUES.S;
+            const isModifiedSubAvailabilityImpactSafety = this.getComponent(Cvss4P0Components.SA) === Cvss4P0Components.SUBSEQUENT_SYSTEM_AVAILABILITY_MODIFIED_VALUES.S;
 
             const subIntegrityImpactKey = isModifiedSubIntegrityImpactSafety ? "MSI" : "SI";
             const subAvailabilityImpactKey = isModifiedSubAvailabilityImpactSafety ? "MSA" : "SA";

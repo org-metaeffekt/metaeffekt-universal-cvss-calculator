@@ -216,19 +216,23 @@ export class Cvss4P0MacroVector {
 
         // The three security requirements metrics have X equivalent to H.
         // CR:X, IR:X, AR:X are the same as CR:H, IR:H, AR:H
-        if (("CR" === component || "IR" === component || "AR" === component) && Cvss4P0Components.TEMPLATE_CIA_REQUIREMENT_MODIFIED_VALUES.X === selectedComponentValue) {
-            return Cvss4P0Components.TEMPLATE_CIA_REQUIREMENT_MODIFIED_VALUES.H;
+        if ("CR" === component && Cvss4P0Components.REQUIREMENT_CONFIDENTIALITY_MODIFIED_VALUES.X === selectedComponentValue) {
+            return Cvss4P0Components.REQUIREMENT_CONFIDENTIALITY_MODIFIED_VALUES.H;
+        } else if ("IR" === component && Cvss4P0Components.REQUIREMENT_INTEGRITY_MODIFIED_VALUES.X === selectedComponentValue) {
+            return Cvss4P0Components.REQUIREMENT_INTEGRITY_MODIFIED_VALUES.H;
+        } else if ("AR" === component && Cvss4P0Components.REQUIREMENT_AVAILABILITY_MODIFIED_VALUES.X === selectedComponentValue) {
+            return Cvss4P0Components.REQUIREMENT_AVAILABILITY_MODIFIED_VALUES.H;
         }
 
         // Special cases for MSI and MSA
         // the SI:S cannot happen in reality, but the reference implementation checks for it, so we do too
-        if ("MSI" === component && Cvss4P0Components.TEMPLATE_CIA_SUBSEQUENT_SAFETY_MODIFIED_VALUES.X === selectedComponentValue
+        if ("MSI" === component && Cvss4P0Components.SUBSEQUENT_SYSTEM_INTEGRITY_MODIFIED_VALUES.X === selectedComponentValue
             && "S" === vector.getComponentByString("SI").shortName) {
-            return Cvss4P0Components.TEMPLATE_CIA_SUBSEQUENT_SAFETY_MODIFIED_VALUES.H;
+            return Cvss4P0Components.SUBSEQUENT_SYSTEM_INTEGRITY_MODIFIED_VALUES.H;
         }
-        if ("MSA" === component && Cvss4P0Components.TEMPLATE_CIA_SUBSEQUENT_SAFETY_MODIFIED_VALUES.X === selectedComponentValue
+        if ("MSA" === component && Cvss4P0Components.SUBSEQUENT_SYSTEM_AVAILABILITY_MODIFIED_VALUES.X === selectedComponentValue
             && "S" === vector.getComponentByString("SA").shortName) {
-            return Cvss4P0Components.TEMPLATE_CIA_SUBSEQUENT_SAFETY_MODIFIED_VALUES.H;
+            return Cvss4P0Components.SUBSEQUENT_SYSTEM_AVAILABILITY_MODIFIED_VALUES.H;
         }
 
         // All other environmental metrics just overwrite base score values,

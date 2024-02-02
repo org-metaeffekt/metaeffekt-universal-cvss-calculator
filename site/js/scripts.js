@@ -206,11 +206,16 @@ class CvssVectorRepresentation {
             }
         });
 
-        this.visibilityToggleButton.addEventListener('click', () => {
+        this.visibilityToggleButton.addEventListener('click', e => {
             if (this.hasBeenDestroyed) {
                 return;
             }
-            this.shown = !this.shown;
+            // check if shift or command (meta) is pressed
+            if (e.altKey || e.metaKey || e.ctrlKey || e.shiftKey) {
+                this.cvssInstance.applyEnvironmentalMetricsOntoBase();
+            } else {
+                this.shown = !this.shown;
+            }
             updateScores();
             storeInGet();
         });
@@ -294,6 +299,8 @@ class CvssVectorRepresentation {
             copyVectorToClipboardButton.setAttribute('data-bs-placement', 'left');
             copyVectorToClipboardButton.setAttribute('data-bs-content', 'Copy vector to clipboard or shift-click to copy only components that changed since adding them to this page.');
             copyVectorToClipboardButton.setAttribute('data-bs-trigger', 'hover');
+            copyVectorToClipboardButton.setAttribute('data-cvss-shift-action', 'true');
+            copyVectorToClipboardButton.setAttribute('data-cvss-shift-action-replacement-icon', 'clipboard-pulse');
             const copyIcon = document.createElement('i');
             copyIcon.classList.add('bi', 'bi-clipboard');
             copyVectorToClipboardButton.appendChild(copyIcon);
@@ -306,8 +313,10 @@ class CvssVectorRepresentation {
             visibilityToggleButton.classList.add('btn', 'btn-outline-secondary', 'cvss-vector-button-toggle-visibility');
             visibilityToggleButton.setAttribute('data-bs-toggle', 'popover');
             visibilityToggleButton.setAttribute('data-bs-placement', 'bottom');
-            visibilityToggleButton.setAttribute('data-bs-content', 'Toggle visibility');
+            visibilityToggleButton.setAttribute('data-bs-content', 'Toggle visibility or shift-click to apply the environmental metrics back onto the base metrics.');
             visibilityToggleButton.setAttribute('data-bs-trigger', 'hover');
+            visibilityToggleButton.setAttribute('data-cvss-shift-action', 'true');
+            visibilityToggleButton.setAttribute('data-cvss-shift-action-replacement-icon', 'layer-forward');
             const visibilityIcon = document.createElement('i');
             visibilityIcon.classList.add('bi', 'bi-eye');
             visibilityToggleButton.appendChild(visibilityIcon);
@@ -336,6 +345,8 @@ class CvssVectorRepresentation {
             removeButton.setAttribute('data-bs-placement', 'right');
             removeButton.setAttribute('data-bs-content', 'Remove vector or shift-click to clear all vector components.');
             removeButton.setAttribute('data-bs-trigger', 'hover');
+            removeButton.setAttribute('data-cvss-shift-action', 'true');
+            removeButton.setAttribute('data-cvss-shift-action-replacement-icon', 'eraser');
             const removeIcon = document.createElement('i');
             removeIcon.classList.add('bi', 'bi-dash-circle');
             removeButton.appendChild(removeIcon);
@@ -1751,7 +1762,7 @@ function unregisterAllTooltips(element) {
     });
 }
 
-function createBootstrapToast(title, message, type = 'info') {
+function createBootstrapToast(title, message, type = 'info', duration = 4000) {
     let toastContainer = document.getElementById('toast-container');
     if (!toastContainer) {
         toastContainer = document.createElement('div');
@@ -1793,7 +1804,7 @@ function createBootstrapToast(title, message, type = 'info') {
 
     const bootstrapToast = new bootstrap.Toast(toast, {
         autohide: true,
-        delay: 4000
+        delay: duration
     });
     bootstrapToast.show();
 }
@@ -1917,6 +1928,73 @@ function storeInGet() {
     }, 200);
 }
 
+// shift key actions
+const shiftKeyStoredElements = new Map();
+
+function shiftKeyChange(active) {
+    const shiftActionElements = document.querySelectorAll('[data-cvss-shift-action]');
+
+    for (let element of shiftActionElements) {
+        if (active) {
+            shiftKeyStoredElements.set(element, {
+                content: element.innerHTML
+            });
+
+            const replacementIcon = element.getAttribute('data-cvss-shift-action-replacement-icon');
+            const replacementText = element.getAttribute('data-cvss-shift-action-replacement-text');
+            const retainWidth = element.getAttribute('data-cvss-shift-action-retain-width') === 'true';
+
+            if (retainWidth) {
+                const width = element.clientWidth;
+                element.style.width = (width + 2) + 'px';
+            }
+
+            let replacementContent = '';
+            if (replacementIcon && replacementText) {
+                replacementContent = `<i class="bi bi-${replacementIcon}"></i> &nbsp;${replacementText}`;
+            } else if (replacementIcon) {
+                replacementContent = `<i class="bi bi-${replacementIcon}"></i>`;
+            } else if (replacementText) {
+                replacementContent = replacementText;
+            }
+
+            element.innerHTML = replacementContent;
+        } else {
+            const retainWidth = element.getAttribute('data-cvss-shift-action-retain-width') === 'true';
+
+            if (retainWidth) {
+                element.style.width = '';
+            }
+
+            const storedContent = shiftKeyStoredElements.get(element);
+            if (storedContent) {
+                element.innerHTML = storedContent.content;
+            }
+        }
+    }
+}
+
+let shiftKeyDown = false;
+document.addEventListener('keydown', (event) => {
+    if (event.key === 'Shift' || event.key === 'Meta') {
+        if (!shiftKeyDown && document.activeElement.tagName.toLowerCase() !== 'input') {
+            shiftKeyDown = true;
+            shiftKeyChange(true);
+        }
+    }
+});
+
+document.addEventListener('keyup', (event) => {
+    if (event.key === 'Shift' || event.key === 'Meta') {
+        if (shiftKeyDown) {
+            shiftKeyDown = false;
+            shiftKeyChange(false);
+        }
+    }
+});
+
+// load page
+
 updateTooltip(document.body);
 loadFromGet();
 try {
@@ -1945,3 +2023,15 @@ function loadDemo() {
     const decodedDemoString = decodeURIComponent(demoString);
     window.location.href = baseUrl + '?' + decodedDemoString;
 }
+
+setTimeout(() => {
+    const currentHtmlVersion = document.getElementById('cvss-calculator-current-version').innerText;
+    if (currentHtmlVersion !== '1.0.13') {
+        createBootstrapToast('New version available', 'A new version of the CVSS Calculator is available. Please refresh the page to load the new version or clear the cache.', 'info', 10 * 1000);
+    }
+    const changelogBody = document.getElementById('cvss-calculator-changelog-body');
+    const changelogHeader = changelogBody.getElementsByTagName('h5')[0];
+    if (!changelogHeader.innerText.includes(currentHtmlVersion)) {
+        createBootstrapToast('Version mismatch', 'The version of the CVSS Calculator does not match the version of the changelog. This is most likely a developer oversight.', 'warning', 10 * 1000);
+    }
+}, 100);

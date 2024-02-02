@@ -40,6 +40,8 @@ export interface VectorComponent<T extends VectorComponentValue> {
     description: string;
     readonly values: T[];
     worseCaseValue?: T;
+    readonly baseMetricEquivalent?: VectorComponent<VectorComponentValue>;
+    readonly baseMetricEquivalentMapper?: (value: VectorComponentValue) => VectorComponentValue;
 }
 
 export interface ComponentCategory {
@@ -318,6 +320,29 @@ export abstract class CvssVector<R extends BaseScoreResult> {
         }
 
         return diffVector;
+    }
+
+    public applyEnvironmentalMetricsOntoBase() {
+        // iterate over all metrics, use the baseMetricEquivalent to find the base metric and apply the value as string
+        for (const [category, components] of this.getRegisteredComponents()) {
+            for (const component of components) {
+                const value = this.components.get(component);
+                if (value) {
+                    if (component.baseMetricEquivalent) {
+                        if (this.isComponentValueDefined(value)) {
+                            if (component.baseMetricEquivalentMapper) {
+                                this.applyComponentString(component.baseMetricEquivalent.shortName, component.baseMetricEquivalentMapper(value).shortName, false);
+                            } else {
+                                this.applyComponentString(component.baseMetricEquivalent.shortName, value.shortName, false);
+                            }
+                            this.applyComponent(component, component.values[0], false);
+                        }
+                    }
+                }
+            }
+        }
+
+        this.vectorChangedListeners.forEach(listener => listener(this));
     }
 
     protected isComponentValueDefined(component: VectorComponentValue | undefined): boolean {

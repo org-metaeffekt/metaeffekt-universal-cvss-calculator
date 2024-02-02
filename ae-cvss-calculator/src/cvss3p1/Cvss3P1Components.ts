@@ -399,6 +399,7 @@ export class Cvss3P1Components {
         shortName: 'MAV',
         subCategory: 'Exploitability Metrics',
         description: 'This metric reflects the context by which vulnerability exploitation is possible. The more remote an attacker can be to attack a host, the greater the vulnerability score.',
+        baseMetricEquivalent: Cvss3P1Components.AV,
         values: [
             {
                 shortName: 'X',
@@ -440,6 +441,7 @@ export class Cvss3P1Components {
         shortName: 'MAC',
         subCategory: 'Exploitability Metrics',
         description: 'This metric describes the conditions beyond the attacker\'s control that must exist in order to exploit the vulnerability.',
+        baseMetricEquivalent: Cvss3P1Components.AC,
         values: [
             {
                 shortName: 'X',
@@ -468,6 +470,7 @@ export class Cvss3P1Components {
         shortName: 'MPR',
         subCategory: 'Exploitability Metrics',
         description: 'This metric describes the level of privileges an attacker must possess before successfully exploiting the vulnerability.',
+        baseMetricEquivalent: Cvss3P1Components.PR,
         values: [
             {
                 shortName: 'X',
@@ -506,6 +509,7 @@ export class Cvss3P1Components {
         shortName: 'MUI',
         subCategory: 'Exploitability Metrics',
         description: 'This metric captures the requirement for a user, other than the attacker, to participate in the successful compromise of the vulnerable component.',
+        baseMetricEquivalent: Cvss3P1Components.UI,
         values: [
             {
                 shortName: 'X',
@@ -534,6 +538,7 @@ export class Cvss3P1Components {
         shortName: 'MS',
         subCategory: 'Exploitability Metrics',
         description: 'Can an exploit of the vulnerability be accomplished remotely?',
+        baseMetricEquivalent: Cvss3P1Components.S,
         values: [
             {
                 shortName: 'X',
@@ -562,6 +567,7 @@ export class Cvss3P1Components {
         shortName: 'MC',
         subCategory: 'Modified Impact',
         description: 'This metric measures the impact to the confidentiality of the information resources managed by a software component due to a successfully exploited vulnerability.',
+        baseMetricEquivalent: Cvss3P1Components.C,
         values: Cvss3P1Components.TEMPLATE_CIA_IMPACT
     };
 
@@ -570,6 +576,7 @@ export class Cvss3P1Components {
         shortName: 'MI',
         subCategory: 'Modified Impact',
         description: 'This metric measures the impact to integrity of a successfully exploited vulnerability.',
+        baseMetricEquivalent: Cvss3P1Components.I,
         values: Cvss3P1Components.TEMPLATE_CIA_IMPACT
     };
 
@@ -578,6 +585,7 @@ export class Cvss3P1Components {
         shortName: 'MA',
         subCategory: 'Modified Impact',
         description: 'This metric measures the impact to the availability of the impacted component resulting from a successfully exploited vulnerability.',
+        baseMetricEquivalent: Cvss3P1Components.A,
         values: Cvss3P1Components.TEMPLATE_CIA_IMPACT
     };
 
