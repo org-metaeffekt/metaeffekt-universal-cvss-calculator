@@ -18,6 +18,7 @@ import {Cvss4P0MacroVector} from "./Cvss4P0MacroVector";
 import {getEqImplementations} from "./EqOperations";
 import {Cvss4P0Components} from "./Cvss4P0Components";
 import {EQ} from "./EQ";
+import {SeverityType} from "../cvss3p1/Cvss3P1";
 
 export class Cvss4P0 extends CvssVector<SingleScoreResult> {
 
@@ -30,7 +31,11 @@ export class Cvss4P0 extends CvssVector<SingleScoreResult> {
     }
 
     public getRegisteredComponents(): Map<ComponentCategory, VectorComponent<VectorComponentValue>[]> {
-        return Cvss4P0Components.REGISTERED_COMPONENTS;
+        return Cvss4P0Components.REGISTERED_COMPONENTS_EDITOR_ORDER;
+    }
+
+    public getVectorStringOrderProperties(): Map<ComponentCategory, VectorComponent<VectorComponentValue>[]> {
+        return Cvss4P0Components.REGISTERED_COMPONENTS_VECTOR_STRING_ORDER;
     }
 
     getVectorPrefix(): string {
@@ -65,6 +70,10 @@ export class Cvss4P0 extends CvssVector<SingleScoreResult> {
             overall: this.calculateOverallScore(),
             vector: this.toString()
         };
+    }
+
+    public toString(forceAllComponents = false, categories = this.getVectorStringOrderProperties(), showOnlyDefinedComponents = false): string {
+        return super.toString(forceAllComponents, categories, showOnlyDefinedComponents);
     }
 
     calculateOverallScore(): number {
@@ -221,7 +230,7 @@ export class Cvss4P0 extends CvssVector<SingleScoreResult> {
     public severityDistanceToVector(other: Cvss4P0): number {
         let totalDistance = 0;
 
-        Cvss4P0Components.REGISTERED_COMPONENTS.forEach((components) => {
+        Cvss4P0Components.REGISTERED_COMPONENTS_EDITOR_ORDER.forEach((components) => {
             components.forEach((component) => {
                 const part1 = this.getComponent(component);
                 const part2 = other.getComponent(component);
@@ -313,6 +322,67 @@ export class Cvss4P0 extends CvssVector<SingleScoreResult> {
     public isBaseFullyDefined(): boolean {
         return super.isCategoryFullyDefined(Cvss4P0Components.BASE_CATEGORY);
     }
+
+    private getJsonSchemaSeverity(score: number): SeverityType {
+        if (score === 0 || isNaN(score)) {
+            return "NONE";
+        } else if (score <= 3.9) {
+            return "LOW";
+        } else if (score <= 6.9) {
+            return "MEDIUM";
+        } else if (score <= 8.9) {
+            return "HIGH";
+        } else {
+            return "CRITICAL";
+        }
+    }
+
+    public createJsonSchema(): JSONSchemaForCommonVulnerabilityScoringSystemVersion40 {
+        const scores = this.calculateScores();
+        return {
+            version: "4.0",
+            vectorString: this.toString(),
+            baseScore: scores.overall,
+            baseSeverity: this.getJsonSchemaSeverity(scores.overall),
+            environmentalScore: 0.0,
+            environmentalSeverity: "NONE",
+            threatScore: 0.0,
+            threatSeverity: "NONE",
+
+            attackVector: this.getComponent(Cvss4P0Components.AV).jsonSchemaName as AttackVectorType,
+            attackComplexity: this.getComponent(Cvss4P0Components.AC).jsonSchemaName as AttackComplexityType,
+            attackRequirements: this.getComponent(Cvss4P0Components.AT).jsonSchemaName as AttackRequirementsType,
+            privilegesRequired: this.getComponent(Cvss4P0Components.PR).jsonSchemaName as PrivilegesRequiredType,
+            userInteraction: this.getComponent(Cvss4P0Components.UI).jsonSchemaName as UserInteractionType,
+            vulnConfidentialityImpact: this.getComponent(Cvss4P0Components.VC).jsonSchemaName as VulnCiaType,
+            vulnIntegrityImpact: this.getComponent(Cvss4P0Components.VI).jsonSchemaName as VulnCiaType,
+            vulnAvailabilityImpact: this.getComponent(Cvss4P0Components.VA).jsonSchemaName as VulnCiaType,
+            subConfidentialityImpact: this.getComponent(Cvss4P0Components.SC).jsonSchemaName as SubCiaType,
+            subIntegrityImpact: this.getComponent(Cvss4P0Components.SI).jsonSchemaName as SubCiaType,
+            subAvailabilityImpact: this.getComponent(Cvss4P0Components.SA).jsonSchemaName as SubCiaType,
+            exploitMaturity: this.getComponent(Cvss4P0Components.E).jsonSchemaName as ExploitMaturityType,
+            confidentialityRequirement: this.getComponent(Cvss4P0Components.CR).jsonSchemaName as CiaRequirementType,
+            integrityRequirement: this.getComponent(Cvss4P0Components.IR).jsonSchemaName as CiaRequirementType,
+            availabilityRequirement: this.getComponent(Cvss4P0Components.AR).jsonSchemaName as CiaRequirementType,
+            modifiedAttackVector: this.getComponent(Cvss4P0Components.MAV).jsonSchemaName as ModifiedAttackVectorType,
+            modifiedAttackComplexity: this.getComponent(Cvss4P0Components.MAC).jsonSchemaName as ModifiedAttackComplexityType,
+            modifiedAttackRequirements: this.getComponent(Cvss4P0Components.MAT).jsonSchemaName as ModifiedAttackRequirementsType,
+            modifiedPrivilegesRequired: this.getComponent(Cvss4P0Components.MPR).jsonSchemaName as ModifiedPrivilegesRequiredType,
+            modifiedUserInteraction: this.getComponent(Cvss4P0Components.MUI).jsonSchemaName as ModifiedUserInteractionType,
+            modifiedVulnConfidentialityImpact: this.getComponent(Cvss4P0Components.MVC).jsonSchemaName as ModifiedVulnCiaType,
+            modifiedVulnIntegrityImpact: this.getComponent(Cvss4P0Components.MVI).jsonSchemaName as ModifiedVulnCiaType,
+            modifiedVulnAvailabilityImpact: this.getComponent(Cvss4P0Components.MVA).jsonSchemaName as ModifiedVulnCiaType,
+            modifiedSubConfidentialityImpact: this.getComponent(Cvss4P0Components.MSC).jsonSchemaName as ModifiedSubCType,
+            modifiedSubIntegrityImpact: this.getComponent(Cvss4P0Components.MSI).jsonSchemaName as ModifiedSubCType,
+            modifiedSubAvailabilityImpact: this.getComponent(Cvss4P0Components.MSA).jsonSchemaName as ModifiedSubCType,
+            Safety: this.getComponent(Cvss4P0Components.S).jsonSchemaName as SafetyType,
+            Automatable: this.getComponent(Cvss4P0Components.AU).jsonSchemaName as AutomatableType,
+            Recovery: this.getComponent(Cvss4P0Components.R).jsonSchemaName as RecoveryType,
+            valueDensity: this.getComponent(Cvss4P0Components.V).jsonSchemaName as ValueDensityType,
+            vulnerabilityResponseEffort: this.getComponent(Cvss4P0Components.RE).jsonSchemaName as VulnerabilityResponseEffortType,
+            providerUrgency: this.getComponent(Cvss4P0Components.U).jsonSchemaName as ProviderUrgencyType,
+        };
+    }
 }
 
 class Average {
@@ -331,4 +401,200 @@ class Average {
             return this.sum / this.count;
         }
     }
+}
+
+export type JSONSchemaForCommonVulnerabilityScoringSystemVersion40 =
+    JSONSchemaForCommonVulnerabilityScoringSystemVersion401
+    &
+    JSONSchemaForCommonVulnerabilityScoringSystemVersion402
+export type JSONSchemaForCommonVulnerabilityScoringSystemVersion401 = (
+    | {
+    baseScore?: NoneScoreType
+    baseSeverity?: NoneSeverityType
+    [k: string]: unknown
+}
+    | {
+    baseScore?: LowScoreType
+    baseSeverity?: LowSeverityType
+    [k: string]: unknown
+}
+    | {
+    baseScore?: MediumScoreType
+    baseSeverity?: MediumSeverityType
+    [k: string]: unknown
+}
+    | {
+    baseScore?: HighScoreType
+    baseSeverity?: HighSeverityType
+    [k: string]: unknown
+}
+    | {
+    baseScore?: CriticalScoreType
+    baseSeverity?: CriticalSeverityType
+    [k: string]: unknown
+}
+    ) &
+    (
+        | {
+        threatScore?: NoneScoreType
+        threatSeverity?: NoneSeverityType
+        [k: string]: unknown
+    }
+        | {
+        threatScore?: LowScoreType
+        threatSeverity?: LowSeverityType
+        [k: string]: unknown
+    }
+        | {
+        threatScore?: MediumScoreType
+        threatSeverity?: MediumSeverityType
+        [k: string]: unknown
+    }
+        | {
+        threatScore?: HighScoreType
+        threatSeverity?: HighSeverityType
+        [k: string]: unknown
+    }
+        | {
+        threatScore?: CriticalScoreType
+        threatSeverity?: CriticalSeverityType
+        [k: string]: unknown
+    }
+        ) &
+    (
+        | {
+        environmentalScore?: NoneScoreType
+        environmentalSeverity?: NoneSeverityType
+        [k: string]: unknown
+    }
+        | {
+        environmentalScore?: LowScoreType
+        environmentalSeverity?: LowSeverityType
+        [k: string]: unknown
+    }
+        | {
+        environmentalScore?: MediumScoreType
+        environmentalSeverity?: MediumSeverityType
+        [k: string]: unknown
+    }
+        | {
+        environmentalScore?: HighScoreType
+        environmentalSeverity?: HighSeverityType
+        [k: string]: unknown
+    }
+        | {
+        environmentalScore?: CriticalScoreType
+        environmentalSeverity?: CriticalSeverityType
+        [k: string]: unknown
+    }
+        )
+export type NoneScoreType = number
+export type NoneSeverityType = "NONE"
+export type LowScoreType = number
+export type LowSeverityType = "LOW"
+export type MediumScoreType = number
+export type MediumSeverityType = "MEDIUM"
+export type HighScoreType = number
+export type HighSeverityType = "HIGH"
+export type CriticalScoreType = number
+export type CriticalSeverityType = "CRITICAL"
+export type AttackVectorType = "NETWORK" | "ADJACENT" | "LOCAL" | "PHYSICAL"
+export type AttackComplexityType = "HIGH" | "LOW"
+export type AttackRequirementsType = "NONE" | "PRESENT"
+export type PrivilegesRequiredType = "HIGH" | "LOW" | "NONE"
+export type UserInteractionType = "NONE" | "PASSIVE" | "ACTIVE"
+export type VulnCiaType = "NONE" | "LOW" | "HIGH"
+export type SubCiaType = "NONE" | "LOW" | "HIGH"
+export type ExploitMaturityType =
+    | "UNREPORTED"
+    | "PROOF_OF_CONCEPT"
+    | "ATTACKED"
+    | "NOT_DEFINED"
+export type CiaRequirementType = "LOW" | "MEDIUM" | "HIGH" | "NOT_DEFINED"
+export type ModifiedAttackVectorType =
+    | "NETWORK"
+    | "ADJACENT"
+    | "LOCAL"
+    | "PHYSICAL"
+    | "NOT_DEFINED"
+export type ModifiedAttackComplexityType = "HIGH" | "LOW" | "NOT_DEFINED"
+export type ModifiedAttackRequirementsType = "NONE" | "PRESENT" | "NOT_DEFINED"
+export type ModifiedPrivilegesRequiredType =
+    | "HIGH"
+    | "LOW"
+    | "NONE"
+    | "NOT_DEFINED"
+export type ModifiedUserInteractionType =
+    | "NONE"
+    | "PASSIVE"
+    | "ACTIVE"
+    | "NOT_DEFINED"
+export type ModifiedVulnCiaType = "NONE" | "LOW" | "HIGH" | "NOT_DEFINED"
+export type ModifiedSubCType = "NEGLIGIBLE" | "LOW" | "HIGH" | "NOT_DEFINED"
+export type ModifiedSubIaType =
+    | "NEGLIGIBLE"
+    | "LOW"
+    | "HIGH"
+    | "SAFETY"
+    | "NOT_DEFINED"
+export type SafetyType = "NEGLIGIBLE" | "PRESENT" | "NOT_DEFINED"
+export type AutomatableType = "NO" | "YES" | "NOT_DEFINED"
+export type RecoveryType =
+    | "AUTOMATIC"
+    | "USER"
+    | "IRRECOVERABLE"
+    | "NOT_DEFINED"
+export type ValueDensityType = "DIFFUSE" | "CONCENTRATED" | "NOT_DEFINED"
+export type VulnerabilityResponseEffortType =
+    | "LOW"
+    | "MODERATE"
+    | "HIGH"
+    | "NOT_DEFINED"
+export type ProviderUrgencyType =
+    | "CLEAR"
+    | "GREEN"
+    | "AMBER"
+    | "RED"
+    | "NOT_DEFINED"
+
+export interface JSONSchemaForCommonVulnerabilityScoringSystemVersion402 {
+    /**
+     * CVSS Version
+     */
+    version: "4.0"
+    vectorString: string
+    attackVector?: AttackVectorType
+    attackComplexity?: AttackComplexityType
+    attackRequirements?: AttackRequirementsType
+    privilegesRequired?: PrivilegesRequiredType
+    userInteraction?: UserInteractionType
+    vulnConfidentialityImpact?: VulnCiaType
+    vulnIntegrityImpact?: VulnCiaType
+    vulnAvailabilityImpact?: VulnCiaType
+    subConfidentialityImpact?: SubCiaType
+    subIntegrityImpact?: SubCiaType
+    subAvailabilityImpact?: SubCiaType
+    exploitMaturity?: ExploitMaturityType
+    confidentialityRequirement?: CiaRequirementType
+    integrityRequirement?: CiaRequirementType
+    availabilityRequirement?: CiaRequirementType
+    modifiedAttackVector?: ModifiedAttackVectorType
+    modifiedAttackComplexity?: ModifiedAttackComplexityType
+    modifiedAttackRequirements?: ModifiedAttackRequirementsType
+    modifiedPrivilegesRequired?: ModifiedPrivilegesRequiredType
+    modifiedUserInteraction?: ModifiedUserInteractionType
+    modifiedVulnConfidentialityImpact?: ModifiedVulnCiaType
+    modifiedVulnIntegrityImpact?: ModifiedVulnCiaType
+    modifiedVulnAvailabilityImpact?: ModifiedVulnCiaType
+    modifiedSubConfidentialityImpact?: ModifiedSubCType
+    modifiedSubIntegrityImpact?: ModifiedSubIaType
+    modifiedSubAvailabilityImpact?: ModifiedSubIaType
+    Safety?: SafetyType
+    Automatable?: AutomatableType
+    Recovery?: RecoveryType
+    valueDensity?: ValueDensityType
+    vulnerabilityResponseEffort?: VulnerabilityResponseEffortType
+    providerUrgency?: ProviderUrgencyType
+
+    [k: string]: unknown
 }

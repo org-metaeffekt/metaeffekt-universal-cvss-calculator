@@ -22,7 +22,7 @@ import {
     VectorComponentValue
 } from "../CvssVector";
 
-export class Cvss3P1Components {
+export class Cvss3P0Components {
     private static readonly CONFIDENTIALITY_IMPACT = [
         {
             shortName: 'X',
@@ -441,7 +441,7 @@ export class Cvss3P1Components {
         shortName: 'C',
         subCategory: 'Impact Metrics',
         description: 'This metric measures the impact to the confidentiality of the information resources managed by a software component due to a successfully exploited vulnerability.',
-        values: Cvss3P1Components.CONFIDENTIALITY_IMPACT
+        values: Cvss3P0Components.CONFIDENTIALITY_IMPACT
     };
 
     public static readonly I = {
@@ -449,7 +449,7 @@ export class Cvss3P1Components {
         shortName: 'I',
         subCategory: 'Impact Metrics',
         description: 'This metric measures the impact to integrity of a successfully exploited vulnerability.',
-        values: Cvss3P1Components.INTEGRITY_IMPACT
+        values: Cvss3P0Components.INTEGRITY_IMPACT
     };
 
     public static readonly A = {
@@ -457,7 +457,7 @@ export class Cvss3P1Components {
         shortName: 'A',
         subCategory: 'Impact Metrics',
         description: 'This metric measures the impact to the availability of the impacted component resulting from a successfully exploited vulnerability.',
-        values: Cvss3P1Components.AVAILABILITY_IMPACT
+        values: Cvss3P0Components.AVAILABILITY_IMPACT
     };
 
     public static readonly BASE_CATEGORY_VALUES: VectorComponent<VectorComponentValue>[] = [
@@ -605,7 +605,7 @@ export class Cvss3P1Components {
         shortName: 'MAV',
         subCategory: 'Exploitability Metrics',
         description: 'This metric reflects the context by which vulnerability exploitation is possible. The more remote an attacker can be to attack a host, the greater the vulnerability score.',
-        baseMetricEquivalent: Cvss3P1Components.AV,
+        baseMetricEquivalent: Cvss3P0Components.AV,
         values: [
             {
                 shortName: 'X',
@@ -652,7 +652,7 @@ export class Cvss3P1Components {
         shortName: 'MAC',
         subCategory: 'Exploitability Metrics',
         description: 'This metric describes the conditions beyond the attacker\'s control that must exist in order to exploit the vulnerability.',
-        baseMetricEquivalent: Cvss3P1Components.AC,
+        baseMetricEquivalent: Cvss3P0Components.AC,
         values: [
             {
                 shortName: 'X',
@@ -684,7 +684,7 @@ export class Cvss3P1Components {
         shortName: 'MPR',
         subCategory: 'Exploitability Metrics',
         description: 'This metric describes the level of privileges an attacker must possess before successfully exploiting the vulnerability.',
-        baseMetricEquivalent: Cvss3P1Components.PR,
+        baseMetricEquivalent: Cvss3P0Components.PR,
         values: [
             {
                 shortName: 'X',
@@ -727,7 +727,7 @@ export class Cvss3P1Components {
         shortName: 'MUI',
         subCategory: 'Exploitability Metrics',
         description: 'This metric captures the requirement for a user, other than the attacker, to participate in the successful compromise of the vulnerable component.',
-        baseMetricEquivalent: Cvss3P1Components.UI,
+        baseMetricEquivalent: Cvss3P0Components.UI,
         values: [
             {
                 shortName: 'X',
@@ -759,7 +759,7 @@ export class Cvss3P1Components {
         shortName: 'MS',
         subCategory: 'Exploitability Metrics',
         description: 'Can an exploit of the vulnerability be accomplished remotely?',
-        baseMetricEquivalent: Cvss3P1Components.S,
+        baseMetricEquivalent: Cvss3P0Components.S,
         values: [
             {
                 shortName: 'X',
@@ -791,8 +791,8 @@ export class Cvss3P1Components {
         shortName: 'MC',
         subCategory: 'Modified Impact',
         description: 'This metric measures the impact to the confidentiality of the information resources managed by a software component due to a successfully exploited vulnerability.',
-        baseMetricEquivalent: Cvss3P1Components.C,
-        values: Cvss3P1Components.CONFIDENTIALITY_IMPACT
+        baseMetricEquivalent: Cvss3P0Components.C,
+        values: Cvss3P0Components.CONFIDENTIALITY_IMPACT
     };
 
     public static readonly MI = {
@@ -800,8 +800,8 @@ export class Cvss3P1Components {
         shortName: 'MI',
         subCategory: 'Modified Impact',
         description: 'This metric measures the impact to integrity of a successfully exploited vulnerability.',
-        baseMetricEquivalent: Cvss3P1Components.I,
-        values: Cvss3P1Components.INTEGRITY_IMPACT
+        baseMetricEquivalent: Cvss3P0Components.I,
+        values: Cvss3P0Components.INTEGRITY_IMPACT
     };
 
     public static readonly MA = {
@@ -809,8 +809,8 @@ export class Cvss3P1Components {
         shortName: 'MA',
         subCategory: 'Modified Impact',
         description: 'This metric measures the impact to the availability of the impacted component resulting from a successfully exploited vulnerability.',
-        baseMetricEquivalent: Cvss3P1Components.A,
-        values: Cvss3P1Components.AVAILABILITY_IMPACT
+        baseMetricEquivalent: Cvss3P0Components.A,
+        values: Cvss3P0Components.AVAILABILITY_IMPACT
     };
 
     public static readonly CR = {
@@ -818,7 +818,7 @@ export class Cvss3P1Components {
         shortName: 'CR',
         subCategory: 'Modified Requirement (Impact Subscore) Modifiers',
         description: 'This metric describes the remediation level for a vulnerability in an affected resource.',
-        values: Cvss3P1Components.CONFIDENTIALITY_REQUIREMENT
+        values: Cvss3P0Components.CONFIDENTIALITY_REQUIREMENT
     };
 
     public static readonly IR = {
@@ -826,7 +826,7 @@ export class Cvss3P1Components {
         shortName: 'IR',
         subCategory: 'Modified Requirement (Impact Subscore) Modifiers',
         description: 'This metric describes the remediation level for a vulnerability in an affected resource.',
-        values: Cvss3P1Components.INTEGRITY_REQUIREMENT
+        values: Cvss3P0Components.INTEGRITY_REQUIREMENT
     };
 
     public static readonly AR = {
@@ -834,7 +834,7 @@ export class Cvss3P1Components {
         shortName: 'AR',
         subCategory: 'Modified Requirement (Impact Subscore) Modifiers',
         description: 'This metric describes the remediation level for a vulnerability in an affected resource.',
-        values: Cvss3P1Components.AVAILABILITY_REQUIREMENT
+        values: Cvss3P0Components.AVAILABILITY_REQUIREMENT
     };
 
     public static readonly ENVIRONMENTAL_CATEGORY_VALUES: VectorComponent<VectorComponentValue>[] = [
@@ -844,8 +844,8 @@ export class Cvss3P1Components {
     static readonly REGISTERED_COMPONENTS = new Map<ComponentCategory, VectorComponent<VectorComponentValue>[]>();
 
     static {
-        Cvss3P1Components.REGISTERED_COMPONENTS.set(Cvss3P1Components.BASE_CATEGORY, Cvss3P1Components.BASE_CATEGORY_VALUES);
-        Cvss3P1Components.REGISTERED_COMPONENTS.set(Cvss3P1Components.TEMPORAL_CATEGORY, Cvss3P1Components.TEMPORAL_CATEGORY_VALUES);
-        Cvss3P1Components.REGISTERED_COMPONENTS.set(Cvss3P1Components.ENVIRONMENTAL_CATEGORY, Cvss3P1Components.ENVIRONMENTAL_CATEGORY_VALUES);
+        Cvss3P0Components.REGISTERED_COMPONENTS.set(Cvss3P0Components.BASE_CATEGORY, Cvss3P0Components.BASE_CATEGORY_VALUES);
+        Cvss3P0Components.REGISTERED_COMPONENTS.set(Cvss3P0Components.TEMPORAL_CATEGORY, Cvss3P0Components.TEMPORAL_CATEGORY_VALUES);
+        Cvss3P0Components.REGISTERED_COMPONENTS.set(Cvss3P0Components.ENVIRONMENTAL_CATEGORY, Cvss3P0Components.ENVIRONMENTAL_CATEGORY_VALUES);
     }
 }

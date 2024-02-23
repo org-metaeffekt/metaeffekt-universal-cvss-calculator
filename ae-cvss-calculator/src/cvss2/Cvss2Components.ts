@@ -32,12 +32,14 @@ export class Cvss2Components {
                 value: 1.0,
                 name: 'Not Defined',
                 abbreviatedName: 'Not Def.',
+                jsonSchemaName: 'NOT_DEFINED',
                 description: 'Assigning this value to the metric will result in no score being calculated.'
             },
             {
                 shortName: 'L',
                 value: 0.395,
                 name: 'Local',
+                jsonSchemaName: 'LOCAL',
                 description: 'A vulnerability exploitable with only local access requires the attacker to have either physical access to the vulnerable system or a local (shell) account. Examples of locally exploitable vulnerabilities are peripheral attacks such as Firewire/USB DMA attacks, and local privilege escalations (e.g., sudo).'
             },
             {
@@ -45,12 +47,14 @@ export class Cvss2Components {
                 value: 0.646,
                 name: 'Adjacent Network',
                 abbreviatedName: 'Adj. Network',
+                jsonSchemaName: 'ADJACENT_NETWORK',
                 description: 'A vulnerability exploitable with adjacent network access requires the attacker to have access to either the broadcast or collision domain of the vulnerable software.  Examples of local networks include local IP subnet, Bluetooth, IEEE 802.11, and local Ethernet segment.'
             },
             {
                 shortName: 'N',
                 value: 1.000,
                 name: 'Network',
+                jsonSchemaName: 'NETWORK',
                 description: 'A vulnerability exploitable with network access means the vulnerable software is bound to the network stack and the attacker does not require local network access or local access. Such a vulnerability is often termed "remotely exploitable". An example of a network attack is an RPC buffer overflow.'
             },
         ] as NumberVectorComponentValue[]
@@ -67,24 +71,28 @@ export class Cvss2Components {
                 value: 1.0,
                 name: 'Not Defined',
                 abbreviatedName: 'Not Def.',
+                jsonSchemaName: 'NOT_DEFINED',
                 description: 'Assigning this value to the metric will result in no score being calculated.'
             },
             {
                 shortName: 'H',
                 value: 0.35,
                 name: 'High',
+                jsonSchemaName: 'HIGH',
                 description: 'Requires specialized conditions to be present: elevated privileges, system spoofing (e.g., DNS hijacking), easily detected social engineering, or rare configurations. Race conditions, if present, have a very narrow window.'
             },
             {
                 shortName: 'M',
                 value: 0.61,
                 name: 'Medium',
+                jsonSchemaName: 'MEDIUM',
                 description: 'The access conditions are somewhat specialized: limited to certain systems/users, requires prior information gathering, non-default configurations, or minor social engineering (e.g., deceptive phishing attacks).'
             },
             {
                 shortName: 'L',
                 value: 0.71,
                 name: 'Low',
+                jsonSchemaName: 'LOW',
                 description: 'Specialized access conditions or extenuating circumstances do not exist: wide system/user access (e.g., Internet-facing servers), default configurations, manual attacks requiring little skill, or easily winnable race conditions.'
             },
         ] as NumberVectorComponentValue[]
@@ -100,24 +108,28 @@ export class Cvss2Components {
                 value: 1.0,
                 name: 'Not Defined',
                 abbreviatedName: 'Not Def.',
+                jsonSchemaName: 'NOT_DEFINED',
                 description: 'Assigning this value to the metric will result in no score being calculated.'
             },
             {
                 shortName: 'M',
                 value: 0.45,
                 name: 'Multiple',
+                jsonSchemaName: 'MULTIPLE',
                 description: 'Exploiting the vulnerability requires that the attacker authenticate two or more times, even if the same credentials are used each time. An example is an attacker authenticating to an operating system in addition to providing credentials to access an application hosted on that system.'
             },
             {
                 shortName: 'S',
                 value: 0.56,
                 name: 'Single',
+                jsonSchemaName: 'SINGLE',
                 description: 'The vulnerability requires an attacker to be logged into the system (such as at a command line or via a desktop session or web interface).'
             },
             {
                 shortName: 'N',
                 value: 0.704,
                 name: 'None',
+                jsonSchemaName: 'NONE',
                 description: 'Authentication is not required to exploit the vulnerability.'
             },
         ] as NumberVectorComponentValue[]
@@ -133,25 +145,29 @@ export class Cvss2Components {
                 value: 1.0,
                 name: 'Not Defined',
                 abbreviatedName: 'Not Def.',
+                jsonSchemaName: 'NOT_DEFINED',
                 description: 'Assigning this value to the metric will result in no score being calculated.'
             },
             {
                 shortName: 'N',
                 value: 0.0,
                 name: 'None',
+                jsonSchemaName: 'NONE',
                 description: 'There is no impact to the confidentiality of the system.'
             },
             {
                 shortName: 'P',
                 value: 0.275,
                 name: 'Partial',
+                jsonSchemaName: 'PARTIAL',
                 description: 'There is considerable informational disclosure. Access to some system files is possible, but the attacker does not have control over what is obtained, or the scope of the loss is constrained. An example is a vulnerability that divulges only certain tables in a database.'
             },
             {
                 shortName: 'C',
                 value: 0.660,
                 name: 'Complete',
-                description: 'There is total information disclosure, resulting in all system files being revealed. The attacker is able to read all of the system\'s data (memory, files, etc.).'
+                jsonSchemaName: 'COMPLETE',
+                description: 'There is total information disclosure, resulting in all system files being revealed. The attacker is able to read all of the system\'s data (memory, files, etc.)'
             },
         ] as NumberVectorComponentValue[]
     }
@@ -166,24 +182,28 @@ export class Cvss2Components {
                 value: 1.0,
                 name: 'Not Defined',
                 abbreviatedName: 'Not Def.',
+                jsonSchemaName: 'NOT_DEFINED',
                 description: 'Assigning this value to the metric will result in no score being calculated.'
             },
             {
                 shortName: 'N',
                 value: 0.0,
                 name: 'None',
+                jsonSchemaName: 'NONE',
                 description: 'There is no impact to the integrity of the system.'
             },
             {
                 shortName: 'P',
                 value: 0.275,
                 name: 'Partial',
+                jsonSchemaName: 'PARTIAL',
                 description: 'Modification of some system files or information is possible, but the attacker does not have control over what can be modified, or the scope of what the attacker can affect is limited. For example, system or application files may be overwritten or modified, but either the attacker has no control over which files are affected or the attacker can modify files within only a limited context or scope.'
             },
             {
                 shortName: 'C',
                 value: 0.660,
                 name: 'Complete',
+                jsonSchemaName: 'COMPLETE',
                 description: 'There is a total compromise of system integrity. There is a complete loss of system protection, resulting in the entire system being compromised. The attacker is able to modify any files on the target system.'
             },
         ] as NumberVectorComponentValue[]
@@ -199,24 +219,28 @@ export class Cvss2Components {
                 value: 1.0,
                 name: 'Not Defined',
                 abbreviatedName: 'Not Def.',
+                jsonSchemaName: 'NOT_DEFINED',
                 description: 'Assigning this value to the metric will result in no score being calculated.'
             },
             {
                 shortName: 'N',
                 value: 0.0,
                 name: 'None',
+                jsonSchemaName: 'NONE',
                 description: 'There is no impact to availability within the impacted component.'
             },
             {
                 shortName: 'P',
                 value: 0.275,
                 name: 'Partial',
+                jsonSchemaName: 'PARTIAL',
                 description: 'There is reduced performance or interruptions in resource availability. An example is a network-based flood attack that permits a limited number of successful connections to an Internet service.'
             },
             {
                 shortName: 'C',
                 value: 0.660,
                 name: 'Complete',
+                jsonSchemaName: 'COMPLETE',
                 description: 'There is a total shutdown of the affected resource. The attacker can render the resource completely unavailable.'
             },
         ] as NumberVectorComponentValue[]
@@ -241,12 +265,14 @@ export class Cvss2Components {
                 value: 1.0,
                 name: 'Not Defined',
                 abbreviatedName: 'Not Def.',
+                jsonSchemaName: 'NOT_DEFINED',
                 description: 'Assigning this value to the metric will not influence the score. It is a signal to the equation to skip this metric.'
             },
             {
                 shortName: 'U',
                 value: 0.85,
                 name: 'Unproven',
+                jsonSchemaName: 'UNPROVEN',
                 description: 'No exploit code is available, or an exploit is entirely theoretical.'
             },
             {
@@ -254,18 +280,21 @@ export class Cvss2Components {
                 value: 0.9,
                 name: 'Proof-of-concept',
                 abbreviatedName: 'Proof-of-conc.',
+                jsonSchemaName: 'PROOF_OF_CONCEPT',
                 description: 'Proof-of-concept exploit code or an attack demonstration that is not practical for most systems is available. The code or technique is not functional in all situations and may require substantial modification by a skilled attacker.'
             },
             {
                 shortName: 'F',
                 value: 0.95,
                 name: 'Functional',
+                jsonSchemaName: 'FUNCTIONAL',
                 description: 'Functional exploit code is available. The code works in most situations where the vulnerability exists.'
             },
             {
                 shortName: 'H',
                 value: 1.0,
                 name: 'High',
+                jsonSchemaName: 'HIGH',
                 description: 'Either the vulnerability is exploitable by functional mobile autonomous code, or no exploit is required (manual trigger) and details are widely available. The code works in every situation, or is actively being delivered via a mobile autonomous agent (such as a worm or virus).'
             },
         ] as NumberVectorComponentValue[]
@@ -280,6 +309,7 @@ export class Cvss2Components {
                 value: 1.0,
                 name: 'Not Defined',
                 abbreviatedName: 'Not Def.',
+                jsonSchemaName: 'NOT_DEFINED',
                 description: 'Assigning this value to the metric will not influence the score. It is a signal to the equation to skip this metric.'
             },
             {
@@ -287,6 +317,7 @@ export class Cvss2Components {
                 value: 0.87,
                 name: 'Official Fix',
                 abbreviatedName: 'Off. Fix',
+                jsonSchemaName: 'OFFICIAL_FIX',
                 description: 'A complete vendor solution is available. Either the vendor has issued an official patch, or an upgrade is available.'
             },
             {
@@ -294,18 +325,21 @@ export class Cvss2Components {
                 value: 0.9,
                 name: 'Temporary Fix',
                 abbreviatedName: 'Temp. Fix',
+                jsonSchemaName: 'TEMPORARY_FIX',
                 description: 'There is an official but temporary fix available. This includes instances where the vendor issues a temporary hotfix, tool, or workaround.'
             },
             {
                 shortName: 'W',
                 value: 0.95,
                 name: 'Workaround',
+                jsonSchemaName: 'WORKAROUND',
                 description: 'There is an unofficial, non-vendor solution available. In some cases, users of the affected technology will create a patch of their own or provide steps to work around or otherwise mitigate the vulnerability.'
             },
             {
                 shortName: 'U',
                 value: 1.0,
                 name: 'Unavailable',
+                jsonSchemaName: 'UNAVAILABLE',
                 description: 'There is either no solution available or it is impossible to apply.'
             },
         ] as NumberVectorComponentValue[]
@@ -320,24 +354,28 @@ export class Cvss2Components {
                 value: 1.0,
                 name: 'Not Defined',
                 abbreviatedName: 'Not Def.',
+                jsonSchemaName: 'NOT_DEFINED',
                 description: 'Assigning this value to the metric will not influence the score. It is a signal to the equation to skip this metric.'
             },
             {
                 shortName: 'UC',
                 value: 0.9,
                 name: 'Unconfirmed',
+                jsonSchemaName: 'UNCONFIRMED',
                 description: 'There is little confidence in the existence of this vulnerability. The report is unconfirmed, or the source is not known.'
             },
             {
                 shortName: 'UR',
                 value: 0.95,
                 name: 'Uncorroborated',
+                jsonSchemaName: 'UNCORROBORATED',
                 description: 'There is reasonable confidence in the existence of this vulnerability, but the technical details are not known publicly. The report is unconfirmed.'
             },
             {
                 shortName: 'C',
                 value: 1.0,
                 name: 'Confirmed',
+                jsonSchemaName: 'CONFIRMED',
                 description: 'The existence of this vulnerability is confirmed, but the details are not known publicly. An exploit has been observed, or proof-of-concept exploit code is available. The bugtraq ID or CVE ID has been made public.'
             },
         ] as NumberVectorComponentValue[]
@@ -363,18 +401,21 @@ export class Cvss2Components {
                 value: 0.0,
                 name: 'Not Defined',
                 abbreviatedName: 'Not Def.',
+                jsonSchemaName: 'NOT_DEFINED',
                 description: 'Assigning this value to the metric will not influence the score. It is a signal to the equation to skip this metric.'
             },
             {
                 shortName: 'N',
                 value: 0.0,
                 name: 'None',
+                jsonSchemaName: 'NONE',
                 description: 'There is no potential for loss of life, physical assets, productivity or revenue.'
             },
             {
                 shortName: 'L',
                 value: 0.1,
                 name: 'Low',
+                jsonSchemaName: 'LOW',
                 description: 'A successful exploit of this vulnerability may result in slight physical or property damage. Or, there may be a slight loss of revenue or productivity to the organization.'
             },
             {
@@ -382,6 +423,7 @@ export class Cvss2Components {
                 value: 0.3,
                 name: 'Low-Medium',
                 abbreviatedName: 'Low-Med.',
+                jsonSchemaName: 'LOW_MEDIUM',
                 description: 'A successful exploit of this vulnerability may result in moderate physical or property damage. Or, there may be a moderate loss of revenue or productivity to the organization.'
             },
             {
@@ -389,12 +431,14 @@ export class Cvss2Components {
                 value: 0.4,
                 name: 'Medium-High',
                 abbreviatedName: 'Med.-High',
+                jsonSchemaName: 'MEDIUM_HIGH',
                 description: 'A successful exploit of this vulnerability may result in significant physical or property damage or loss. Or, there may be a significant loss of revenue or productivity.'
             },
             {
                 shortName: 'H',
                 value: 0.5,
                 name: 'High',
+                jsonSchemaName: 'HIGH',
                 description: 'A successful exploit of this vulnerability may result in catastrophic physical or property damage and loss. Or, there may be a catastrophic loss of revenue or productivity.'
             },
         ] as NumberVectorComponentValue[]
@@ -410,14 +454,28 @@ export class Cvss2Components {
                 value: 1.0,
                 name: 'Not Defined',
                 abbreviatedName: 'Not Def.',
+                jsonSchemaName: 'NOT_DEFINED',
                 description: 'Assigning this value to the metric will not influence the score. It is a signal to the equation to skip this metric.'
             },
-            {shortName: 'N', value: 0.0, name: 'None', description: 'There is no (0%) target distribution.'},
-            {shortName: 'L', value: 0.25, name: 'Low', description: 'There is a small (< 25%) target distribution.'},
+            {
+                shortName: 'N',
+                value: 0.0,
+                name: 'None',
+                jsonSchemaName: 'NONE',
+                description: 'There is no (0%) target distribution.'
+            },
+            {
+                shortName: 'L',
+                value: 0.25,
+                name: 'Low',
+                jsonSchemaName: 'LOW',
+                description: 'There is a small (< 25%) target distribution.'
+            },
             {
                 shortName: 'M',
                 value: 0.75,
                 name: 'Medium',
+                jsonSchemaName: 'MEDIUM',
                 description: 'There is a medium (26-75%) target distribution.'
             },
             {shortName: 'H', value: 1.0, name: 'High', description: 'There is a high (> 75%) target distribution.'},
@@ -434,24 +492,28 @@ export class Cvss2Components {
                 value: 1.0,
                 name: 'Not Defined',
                 abbreviatedName: 'Not Def.',
+                jsonSchemaName: 'NOT_DEFINED',
                 description: 'Assigning this value to the metric will not influence the score. It is a signal to the equation to skip this metric.'
             },
             {
                 shortName: 'L',
                 value: 0.5,
                 name: 'Low',
+                jsonSchemaName: 'LOW',
                 description: 'Loss of confidentiality is likely to have only a limited adverse effect on the organization or individuals associated with the organization (e.g., employees, customers).'
             },
             {
                 shortName: 'M',
                 value: 1.0,
                 name: 'Medium',
+                jsonSchemaName: 'MEDIUM',
                 description: 'Loss of confidentiality is likely to have a serious adverse effect on the organization or individuals associated with the organization (e.g., employees, customers).'
             },
             {
                 shortName: 'H',
                 value: 1.51,
                 name: 'High',
+                jsonSchemaName: 'HIGH',
                 description: 'Loss of confidentiality is likely to have a catastrophic adverse effect on the organization or individuals associated with the organization (e.g., employees, customers).'
             },
         ] as NumberVectorComponentValue[]
@@ -467,24 +529,28 @@ export class Cvss2Components {
                 value: 1.0,
                 name: 'Not Defined',
                 abbreviatedName: 'Not Def.',
+                jsonSchemaName: 'NOT_DEFINED',
                 description: 'Assigning this value to the metric will not influence the score. It is a signal to the equation to skip this metric.'
             },
             {
                 shortName: 'L',
                 value: 0.5,
                 name: 'Low',
+                jsonSchemaName: 'LOW',
                 description: 'Loss of integrity is likely to have only a limited adverse effect on the organization or individuals associated with the organization (e.g., employees, customers).'
             },
             {
                 shortName: 'M',
                 value: 1.0,
                 name: 'Medium',
+                jsonSchemaName: 'MEDIUM',
                 description: 'Loss of integrity is likely to have a serious adverse effect on the organization or individuals associated with the organization (e.g., employees, customers).'
             },
             {
                 shortName: 'H',
                 value: 1.51,
                 name: 'High',
+                jsonSchemaName: 'HIGH',
                 description: 'Loss of integrity is likely to have a catastrophic adverse effect on the organization or individuals associated with the organization (e.g., employees, customers).'
             },
         ] as NumberVectorComponentValue[]
@@ -500,24 +566,28 @@ export class Cvss2Components {
                 value: 1.0,
                 name: 'Not Defined',
                 abbreviatedName: 'Not Def.',
+                jsonSchemaName: 'NOT_DEFINED',
                 description: 'Assigning this value to the metric will not influence the score. It is a signal to the equation to skip this metric.'
             },
             {
                 shortName: 'L',
                 value: 0.5,
                 name: 'Low',
+                jsonSchemaName: 'LOW',
                 description: 'Loss of availability is likely to have only a limited adverse effect on the organization or individuals associated with the organization (e.g., employees, customers).'
             },
             {
                 shortName: 'M',
                 value: 1.0,
                 name: 'Medium',
+                jsonSchemaName: 'MEDIUM',
                 description: 'Loss of availability is likely to have a serious adverse effect on the organization or individuals associated with the organization (e.g., employees, customers).'
             },
             {
                 shortName: 'H',
                 value: 1.51,
                 name: 'High',
+                jsonSchemaName: 'HIGH',
                 description: 'Loss of availability is likely to have a catastrophic adverse effect on the organization or individuals associated with the organization (e.g., employees, customers).'
             },
         ] as NumberVectorComponentValue[]

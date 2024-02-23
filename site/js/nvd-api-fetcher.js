@@ -52,7 +52,14 @@ const fetchVulnerabilityData = async (vulnerability) => {
     const url = `https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=${vulnerability}`;
     console.log('Fetching data from:', url)
     try {
-        const response = await fetch(url);
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:104.0) Gecko/20100101 Firefox/104.0',
+                'Accept': 'application/json',
+                'Access-Control-Allow-Origin': '*', // I know this is no use, but I want to believe that the NVD just stays online some day for more than 5 minutes at a time.
+            }
+        });
         if (!response.ok) {
             console.log(response.status)
             const isServerError = response.status >= 500 && response.status < 600;

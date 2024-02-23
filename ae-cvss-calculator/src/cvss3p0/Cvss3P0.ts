@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 import {ComponentCategory, CvssVector, MultiScoreResult, VectorComponent, VectorComponentValue} from "../CvssVector";
-import {Cvss3P1Components} from "./Cvss3P1Components";
+import {Cvss3P0Components} from "./Cvss3P0Components";
 
-export class Cvss3P1 extends CvssVector<MultiScoreResult> {
+export class Cvss3P0 extends CvssVector<MultiScoreResult> {
 
     private static readonly SCOPE_CHANGED_FACTOR = 7.52;
     private static readonly SCOPE_UNCHANGED_FACTOR = 6.42;
@@ -28,15 +28,15 @@ export class Cvss3P1 extends CvssVector<MultiScoreResult> {
     }
 
     public getRegisteredComponents(): Map<ComponentCategory, VectorComponent<VectorComponentValue>[]> {
-        return Cvss3P1Components.REGISTERED_COMPONENTS;
+        return Cvss3P0Components.REGISTERED_COMPONENTS;
     }
 
     getVectorPrefix(): string {
-        return "CVSS:3.1/";
+        return "CVSS:3.0/";
     }
 
     getVectorName(): string {
-        return "CVSS:3.1";
+        return "CVSS:3.0";
     }
 
     fillAverageVector(): void {
@@ -44,19 +44,19 @@ export class Cvss3P1 extends CvssVector<MultiScoreResult> {
     }
 
     fillRandomBaseVector(): void {
-        this.fillRandomComponentsForCategory(Cvss3P1Components.BASE_CATEGORY);
+        this.fillRandomComponentsForCategory(Cvss3P0Components.BASE_CATEGORY);
     }
 
     fillRandomTemporalVector(): void {
-        this.fillRandomComponentsForCategory(Cvss3P1Components.TEMPORAL_CATEGORY);
+        this.fillRandomComponentsForCategory(Cvss3P0Components.TEMPORAL_CATEGORY);
     }
 
     fillRandomEnvironmentalVector(): void {
-        this.fillRandomComponentsForCategory(Cvss3P1Components.ENVIRONMENTAL_CATEGORY);
+        this.fillRandomComponentsForCategory(Cvss3P0Components.ENVIRONMENTAL_CATEGORY);
     }
 
     fillRandomComponentsForCategory(category: ComponentCategory): void {
-        const categoryComponents = Cvss3P1Components.REGISTERED_COMPONENTS.get(category);
+        const categoryComponents = Cvss3P0Components.REGISTERED_COMPONENTS.get(category);
         if (!categoryComponents) {
             console.warn('Failed to pick random vector components for', category);
             return;
@@ -97,12 +97,12 @@ export class Cvss3P1 extends CvssVector<MultiScoreResult> {
         if (impact <= 0) return 0;
 
         let exploitabilityScore = this.calculateExactExploitabilityScore();
-        let scope = this.getComponent(Cvss3P1Components.S).value;
+        let scope = this.getComponent(Cvss3P0Components.S).value;
 
         if (!scope) {
-            return super.roundUp(Math.min(impact + exploitabilityScore, 10));
+            return this.roundUp1(Math.min(impact + exploitabilityScore, 10));
         } else {
-            return super.roundUp(Math.min(Cvss3P1.SCOPE_COEFFICIENT * (impact + exploitabilityScore), 10));
+            return this.roundUp1(Math.min(Cvss3P0.SCOPE_COEFFICIENT * (impact + exploitabilityScore), 10));
         }
     }
 
@@ -114,19 +114,19 @@ export class Cvss3P1 extends CvssVector<MultiScoreResult> {
 
     public calculateExactImpactScore(): number {
         let iss = this.calculateExactISSScore();
-        let scope = this.getComponent(Cvss3P1Components.S).value;
+        let scope = this.getComponent(Cvss3P0Components.S).value;
 
         if (scope) {
-            return Cvss3P1.SCOPE_CHANGED_FACTOR * (iss - 0.029) - 3.25 * Math.pow(iss - 0.02, 15);
+            return Cvss3P0.SCOPE_CHANGED_FACTOR * (iss - 0.029) - 3.25 * Math.pow(iss - 0.02, 15);
         } else {
-            return Cvss3P1.SCOPE_UNCHANGED_FACTOR * iss;
+            return Cvss3P0.SCOPE_UNCHANGED_FACTOR * iss;
         }
     }
 
     public calculateExactISSScore(): number {
-        let confidentiality = this.getComponent(Cvss3P1Components.C).value;
-        let integrity = this.getComponent(Cvss3P1Components.I).value;
-        let availability = this.getComponent(Cvss3P1Components.A).value;
+        let confidentiality = this.getComponent(Cvss3P0Components.C).value;
+        let integrity = this.getComponent(Cvss3P0Components.I).value;
+        let availability = this.getComponent(Cvss3P0Components.A).value;
 
         return 1 - ((1 - confidentiality) * (1 - integrity) * (1 - availability));
     }
@@ -135,45 +135,45 @@ export class Cvss3P1 extends CvssVector<MultiScoreResult> {
         let mci, mii, mai;
         let crFactor, irFactor, arFactor;
 
-        let confidentialityImpactModified = this.getComponent(Cvss3P1Components.MC);
-        let integrityImpactModified = this.getComponent(Cvss3P1Components.MI);
-        let availabilityImpactModified = this.getComponent(Cvss3P1Components.MA);
+        let confidentialityImpactModified = this.getComponent(Cvss3P0Components.MC);
+        let integrityImpactModified = this.getComponent(Cvss3P0Components.MI);
+        let availabilityImpactModified = this.getComponent(Cvss3P0Components.MA);
 
-        let confidentialityImpact = this.getComponent(Cvss3P1Components.C);
-        let integrityImpact = this.getComponent(Cvss3P1Components.I);
-        let availabilityImpact = this.getComponent(Cvss3P1Components.A);
+        let confidentialityImpact = this.getComponent(Cvss3P0Components.C);
+        let integrityImpact = this.getComponent(Cvss3P0Components.I);
+        let availabilityImpact = this.getComponent(Cvss3P0Components.A);
 
-        let confidentialityRequirement = this.getComponent(Cvss3P1Components.CR);
-        let integrityRequirement = this.getComponent(Cvss3P1Components.IR);
-        let availabilityRequirement = this.getComponent(Cvss3P1Components.AR);
+        let confidentialityRequirement = this.getComponent(Cvss3P0Components.CR);
+        let integrityRequirement = this.getComponent(Cvss3P0Components.IR);
+        let availabilityRequirement = this.getComponent(Cvss3P0Components.AR);
 
-        if (confidentialityImpactModified === Cvss3P1Components.MC.values[0]) {
+        if (confidentialityImpactModified === Cvss3P0Components.MC.values[0]) {
             mci = confidentialityImpact.value;
         } else {
             mci = confidentialityImpactModified.value;
         }
-        if (integrityImpactModified === Cvss3P1Components.MI.values[0]) {
+        if (integrityImpactModified === Cvss3P0Components.MI.values[0]) {
             mii = integrityImpact.value;
         } else {
             mii = integrityImpactModified.value;
         }
-        if (availabilityImpactModified === Cvss3P1Components.MA.values[0]) {
+        if (availabilityImpactModified === Cvss3P0Components.MA.values[0]) {
             mai = availabilityImpact.value;
         } else {
             mai = availabilityImpactModified.value;
         }
 
-        if (confidentialityRequirement === Cvss3P1Components.CR.values[0]) {
+        if (confidentialityRequirement === Cvss3P0Components.CR.values[0]) {
             crFactor = confidentialityRequirement.value;
         } else {
             crFactor = confidentialityRequirement.value;
         }
-        if (integrityRequirement === Cvss3P1Components.IR.values[0]) {
+        if (integrityRequirement === Cvss3P0Components.IR.values[0]) {
             irFactor = integrityRequirement.value;
         } else {
             irFactor = integrityRequirement.value;
         }
-        if (availabilityRequirement === Cvss3P1Components.AR.values[0]) {
+        if (availabilityRequirement === Cvss3P0Components.AR.values[0]) {
             arFactor = availabilityRequirement.value;
         } else {
             arFactor = availabilityRequirement.value;
@@ -187,31 +187,31 @@ export class Cvss3P1 extends CvssVector<MultiScoreResult> {
     }
 
     public calculateExactExploitabilityScore(): number {
-        const attackVector = this.getComponent(Cvss3P1Components.AV).value;
-        const attackComplexity = this.getComponent(Cvss3P1Components.AC).value;
-        const userInteraction = this.getComponent(Cvss3P1Components.UI).value;
-        const scope = this.getComponent(Cvss3P1Components.S).value;
+        const attackVector = this.getComponent(Cvss3P0Components.AV).value;
+        const attackComplexity = this.getComponent(Cvss3P0Components.AC).value;
+        const userInteraction = this.getComponent(Cvss3P0Components.UI).value;
+        const scope = this.getComponent(Cvss3P0Components.S).value;
 
         let privilegesRequired;
         if (scope) {
-            privilegesRequired = this.getComponent(Cvss3P1Components.PR).changedValue;
+            privilegesRequired = this.getComponent(Cvss3P0Components.PR).changedValue;
         } else {
-            privilegesRequired = this.getComponent(Cvss3P1Components.PR).value;
+            privilegesRequired = this.getComponent(Cvss3P0Components.PR).value;
         }
 
-        return Cvss3P1.EXPLOITABILITY_COEFFICIENT * attackVector * attackComplexity * privilegesRequired * userInteraction;
+        return Cvss3P0.EXPLOITABILITY_COEFFICIENT * attackVector * attackComplexity * privilegesRequired * userInteraction;
     }
 
     public calculateExactTemporalScore(): number {
         if (!this.isBaseFullyDefined()) return 0;
         if (!this.isAnyTemporalDefined()) return 0;
 
-        let exploitCodeMaturityFactor = this.getComponent(Cvss3P1Components.E).value;
-        let remediationLevelFactor = this.getComponent(Cvss3P1Components.RL).value;
-        let reportConfidenceFactor = this.getComponent(Cvss3P1Components.RC).value;
+        let exploitCodeMaturityFactor = this.getComponent(Cvss3P0Components.E).value;
+        let remediationLevelFactor = this.getComponent(Cvss3P0Components.RL).value;
+        let reportConfidenceFactor = this.getComponent(Cvss3P0Components.RC).value;
         let baseScore = this.calculateExactBaseScore();
 
-        return super.roundUp(baseScore * exploitCodeMaturityFactor * remediationLevelFactor * reportConfidenceFactor);
+        return this.roundUp1(baseScore * exploitCodeMaturityFactor * remediationLevelFactor * reportConfidenceFactor);
     }
 
     public calculateExactEnvironmentalScore(): number {
@@ -222,16 +222,16 @@ export class Cvss3P1 extends CvssVector<MultiScoreResult> {
         if (modifiedImpact <= 0) return 0;
 
         let modifiedExploitability = this.calculateAdjustedExploitability();
-        let exploitCodeMaturityFactor = this.getComponent(Cvss3P1Components.E).value;
-        let remediationLevelFactor = this.getComponent(Cvss3P1Components.RL).value;
-        let reportConfidenceFactor = this.getComponent(Cvss3P1Components.RC).value;
+        let exploitCodeMaturityFactor = this.getComponent(Cvss3P0Components.E).value;
+        let remediationLevelFactor = this.getComponent(Cvss3P0Components.RL).value;
+        let reportConfidenceFactor = this.getComponent(Cvss3P0Components.RC).value;
 
         if (this.isModifiedScope()) {
-            let modifiedFactor = super.roundUp(Math.min((modifiedImpact + modifiedExploitability), 10));
-            return super.roundUp(modifiedFactor * exploitCodeMaturityFactor * remediationLevelFactor * reportConfidenceFactor);
+            let modifiedFactor = this.roundUp1(Math.min((modifiedImpact + modifiedExploitability), 10));
+            return this.roundUp1(modifiedFactor * exploitCodeMaturityFactor * remediationLevelFactor * reportConfidenceFactor);
         } else {
-            let modifiedFactor = super.roundUp(Math.min(Cvss3P1.SCOPE_COEFFICIENT * (modifiedImpact + modifiedExploitability), 10));
-            return super.roundUp(modifiedFactor * exploitCodeMaturityFactor * remediationLevelFactor * reportConfidenceFactor);
+            let modifiedFactor = this.roundUp1(Math.min(Cvss3P0.SCOPE_COEFFICIENT * (modifiedImpact + modifiedExploitability), 10));
+            return this.roundUp1(modifiedFactor * exploitCodeMaturityFactor * remediationLevelFactor * reportConfidenceFactor);
         }
     }
 
@@ -242,18 +242,18 @@ export class Cvss3P1 extends CvssVector<MultiScoreResult> {
         let miss = this.calculateExactMISSScore();
 
         if (this.isModifiedScope()) {
-            return Cvss3P1.SCOPE_UNCHANGED_FACTOR * miss;
+            return Cvss3P0.SCOPE_UNCHANGED_FACTOR * miss;
         } else {
-            return Cvss3P1.SCOPE_CHANGED_FACTOR * (miss - 0.029) - 3.25 * Math.pow(miss * 0.9731 - 0.02, 13);
+            return Cvss3P0.SCOPE_CHANGED_FACTOR * (miss - 0.029) - 3.25 * Math.pow(miss - 0.02, 15);
         }
     }
 
     public calculateAdjustedExploitability(): number {
-        let mav = this.getFirstDefinedComponent([Cvss3P1Components.MAV, Cvss3P1Components.AV]).value;
-        let mac = this.getFirstDefinedComponent([Cvss3P1Components.MAC, Cvss3P1Components.AC]).value;
-        let mui = this.getFirstDefinedComponent([Cvss3P1Components.MUI, Cvss3P1Components.UI]).value;
+        let mav = this.getFirstDefinedComponent([Cvss3P0Components.MAV, Cvss3P0Components.AV]).value;
+        let mac = this.getFirstDefinedComponent([Cvss3P0Components.MAC, Cvss3P0Components.AC]).value;
+        let mui = this.getFirstDefinedComponent([Cvss3P0Components.MUI, Cvss3P0Components.UI]).value;
 
-        let mprComponent = this.getFirstDefinedComponent([Cvss3P1Components.MPR, Cvss3P1Components.PR]);
+        let mprComponent = this.getFirstDefinedComponent([Cvss3P0Components.MPR, Cvss3P0Components.PR]);
         let mpr;
         if (this.isModifiedScope()) {
             mpr = mprComponent.value;
@@ -261,14 +261,14 @@ export class Cvss3P1 extends CvssVector<MultiScoreResult> {
             mpr = mprComponent.changedValue;
         }
 
-        return Cvss3P1.EXPLOITABILITY_COEFFICIENT * mav * mac * mpr * mui;
+        return Cvss3P0.EXPLOITABILITY_COEFFICIENT * mav * mac * mpr * mui;
     }
 
     public isModifiedScope(): boolean {
-        let scopeComponent = this.getComponent(Cvss3P1Components.S);
-        let modifiedScopeComponent = this.getComponent(Cvss3P1Components.MS);
+        let scopeComponent = this.getComponent(Cvss3P0Components.S);
+        let modifiedScopeComponent = this.getComponent(Cvss3P0Components.MS);
 
-        if (modifiedScopeComponent === Cvss3P1Components.MS.values[0]) {
+        if (modifiedScopeComponent === Cvss3P0Components.MS.values[0]) {
             return !scopeComponent.value;
         } else {
             return !modifiedScopeComponent.value;
@@ -283,27 +283,31 @@ export class Cvss3P1 extends CvssVector<MultiScoreResult> {
 
 
     public isBaseFullyDefined(): boolean {
-        return super.isCategoryFullyDefined(Cvss3P1Components.BASE_CATEGORY);
+        return super.isCategoryFullyDefined(Cvss3P0Components.BASE_CATEGORY);
     }
 
     public isTemporalFullyDefined(): boolean {
-        return super.isCategoryFullyDefined(Cvss3P1Components.TEMPORAL_CATEGORY);
+        return super.isCategoryFullyDefined(Cvss3P0Components.TEMPORAL_CATEGORY);
     }
 
     public isEnvironmentalFullyDefined(): boolean {
-        return super.isCategoryFullyDefined(Cvss3P1Components.ENVIRONMENTAL_CATEGORY);
+        return super.isCategoryFullyDefined(Cvss3P0Components.ENVIRONMENTAL_CATEGORY);
     }
 
     public isAnyBaseDefined(): boolean {
-        return super.isCategoryPartiallyDefined(Cvss3P1Components.BASE_CATEGORY);
+        return super.isCategoryPartiallyDefined(Cvss3P0Components.BASE_CATEGORY);
     }
 
     public isAnyTemporalDefined(): boolean {
-        return super.isCategoryPartiallyDefined(Cvss3P1Components.TEMPORAL_CATEGORY);
+        return super.isCategoryPartiallyDefined(Cvss3P0Components.TEMPORAL_CATEGORY);
     }
 
     public isAnyEnvironmentalDefined(): boolean {
-        return super.isCategoryPartiallyDefined(Cvss3P1Components.ENVIRONMENTAL_CATEGORY);
+        return super.isCategoryPartiallyDefined(Cvss3P0Components.ENVIRONMENTAL_CATEGORY);
+    }
+
+    protected roundUp1(d: number) {
+        return Math.ceil(d * 10) / 10;
     }
 
     private getJsonSchemaSeverity(score: number): SeverityType {
@@ -320,10 +324,10 @@ export class Cvss3P1 extends CvssVector<MultiScoreResult> {
         }
     }
 
-    public createJsonSchema(): JSONSchemaForCommonVulnerabilityScoringSystemVersion31 {
+    public createJsonSchema(): JSONSchemaForCommonVulnerabilityScoringSystemVersion30 {
         const scores = this.calculateScores();
         return {
-            version: "3.1",
+            version: "3.0",
             vectorString: this.toString(),
             baseScore: scores.base!,
             temporalScore: scores.temporal,
@@ -332,28 +336,28 @@ export class Cvss3P1 extends CvssVector<MultiScoreResult> {
             temporalSeverity: scores.temporal ? this.getJsonSchemaSeverity(scores.temporal) : undefined,
             environmentalSeverity: scores.environmental ? this.getJsonSchemaSeverity(scores.environmental) : undefined,
 
-            attackVector: this.getComponent(Cvss3P1Components.AV).jsonSchemaName as AttackVectorType,
-            attackComplexity: this.getComponent(Cvss3P1Components.AC).jsonSchemaName as AttackComplexityType,
-            privilegesRequired: this.getComponent(Cvss3P1Components.PR).jsonSchemaName as PrivilegesRequiredType,
-            userInteraction: this.getComponent(Cvss3P1Components.UI).jsonSchemaName as UserInteractionType,
-            scope: this.getComponent(Cvss3P1Components.S).jsonSchemaName as ScopeType,
-            confidentialityImpact: this.getComponent(Cvss3P1Components.C).jsonSchemaName as CiaType,
-            integrityImpact: this.getComponent(Cvss3P1Components.I).jsonSchemaName as CiaType,
-            availabilityImpact: this.getComponent(Cvss3P1Components.A).jsonSchemaName as CiaType,
-            exploitCodeMaturity: this.getComponent(Cvss3P1Components.E).jsonSchemaName as ExploitCodeMaturityType,
-            remediationLevel: this.getComponent(Cvss3P1Components.RL).jsonSchemaName as RemediationLevelType,
-            reportConfidence: this.getComponent(Cvss3P1Components.RC).jsonSchemaName as ConfidenceType,
-            confidentialityRequirement: this.getComponent(Cvss3P1Components.CR).jsonSchemaName as CiaRequirementType,
-            integrityRequirement: this.getComponent(Cvss3P1Components.IR).jsonSchemaName as CiaRequirementType,
-            availabilityRequirement: this.getComponent(Cvss3P1Components.AR).jsonSchemaName as CiaRequirementType,
-            modifiedAttackVector: this.getComponent(Cvss3P1Components.MAV).jsonSchemaName as ModifiedAttackVectorType,
-            modifiedAttackComplexity: this.getComponent(Cvss3P1Components.MAC).jsonSchemaName as ModifiedAttackComplexityType,
-            modifiedPrivilegesRequired: this.getComponent(Cvss3P1Components.MPR).jsonSchemaName as ModifiedPrivilegesRequiredType,
-            modifiedUserInteraction: this.getComponent(Cvss3P1Components.MUI).jsonSchemaName as ModifiedUserInteractionType,
-            modifiedScope: this.getComponent(Cvss3P1Components.MS).jsonSchemaName as ModifiedScopeType,
-            modifiedConfidentialityImpact: this.getComponent(Cvss3P1Components.MC).jsonSchemaName as ModifiedCiaType,
-            modifiedIntegrityImpact: this.getComponent(Cvss3P1Components.MI).jsonSchemaName as ModifiedCiaType,
-            modifiedAvailabilityImpact: this.getComponent(Cvss3P1Components.MA).jsonSchemaName as ModifiedCiaType
+            attackVector: this.getComponent(Cvss3P0Components.AV).jsonSchemaName as AttackVectorType,
+            attackComplexity: this.getComponent(Cvss3P0Components.AC).jsonSchemaName as AttackComplexityType,
+            privilegesRequired: this.getComponent(Cvss3P0Components.PR).jsonSchemaName as PrivilegesRequiredType,
+            userInteraction: this.getComponent(Cvss3P0Components.UI).jsonSchemaName as UserInteractionType,
+            scope: this.getComponent(Cvss3P0Components.S).jsonSchemaName as ScopeType,
+            confidentialityImpact: this.getComponent(Cvss3P0Components.C).jsonSchemaName as CiaType,
+            integrityImpact: this.getComponent(Cvss3P0Components.I).jsonSchemaName as CiaType,
+            availabilityImpact: this.getComponent(Cvss3P0Components.A).jsonSchemaName as CiaType,
+            exploitCodeMaturity: this.getComponent(Cvss3P0Components.E).jsonSchemaName as ExploitCodeMaturityType,
+            remediationLevel: this.getComponent(Cvss3P0Components.RL).jsonSchemaName as RemediationLevelType,
+            reportConfidence: this.getComponent(Cvss3P0Components.RC).jsonSchemaName as ConfidenceType,
+            confidentialityRequirement: this.getComponent(Cvss3P0Components.CR).jsonSchemaName as CiaRequirementType,
+            integrityRequirement: this.getComponent(Cvss3P0Components.IR).jsonSchemaName as CiaRequirementType,
+            availabilityRequirement: this.getComponent(Cvss3P0Components.AR).jsonSchemaName as CiaRequirementType,
+            modifiedAttackVector: this.getComponent(Cvss3P0Components.MAV).jsonSchemaName as ModifiedAttackVectorType,
+            modifiedAttackComplexity: this.getComponent(Cvss3P0Components.MAC).jsonSchemaName as ModifiedAttackComplexityType,
+            modifiedPrivilegesRequired: this.getComponent(Cvss3P0Components.MPR).jsonSchemaName as ModifiedPrivilegesRequiredType,
+            modifiedUserInteraction: this.getComponent(Cvss3P0Components.MUI).jsonSchemaName as ModifiedUserInteractionType,
+            modifiedScope: this.getComponent(Cvss3P0Components.MS).jsonSchemaName as ModifiedScopeType,
+            modifiedConfidentialityImpact: this.getComponent(Cvss3P0Components.MC).jsonSchemaName as ModifiedCiaType,
+            modifiedIntegrityImpact: this.getComponent(Cvss3P0Components.MI).jsonSchemaName as ModifiedCiaType,
+            modifiedAvailabilityImpact: this.getComponent(Cvss3P0Components.MA).jsonSchemaName as ModifiedCiaType
         };
     }
 }
@@ -404,12 +408,18 @@ export type ModifiedUserInteractionType = "NONE" | "REQUIRED" | "NOT_DEFINED"
 export type ModifiedScopeType = "UNCHANGED" | "CHANGED" | "NOT_DEFINED"
 export type ModifiedCiaType = "NONE" | "LOW" | "HIGH" | "NOT_DEFINED"
 
-export interface JSONSchemaForCommonVulnerabilityScoringSystemVersion31 {
+export interface JSONSchemaForCommonVulnerabilityScoringSystemVersion30 {
     /**
      * CVSS Version
      */
-    version: "3.1"
+    version: "3.0"
     vectorString: string
+    baseScore: ScoreType
+    temporalScore?: ScoreType
+    environmentalScore?: ScoreType
+    baseSeverity: SeverityType
+    temporalSeverity?: SeverityType
+    environmentalSeverity?: SeverityType
     attackVector?: AttackVectorType
     attackComplexity?: AttackComplexityType
     privilegesRequired?: PrivilegesRequiredType
@@ -418,13 +428,9 @@ export interface JSONSchemaForCommonVulnerabilityScoringSystemVersion31 {
     confidentialityImpact?: CiaType
     integrityImpact?: CiaType
     availabilityImpact?: CiaType
-    baseScore: ScoreType
-    baseSeverity: SeverityType
     exploitCodeMaturity?: ExploitCodeMaturityType
     remediationLevel?: RemediationLevelType
     reportConfidence?: ConfidenceType
-    temporalScore?: ScoreType
-    temporalSeverity?: SeverityType
     confidentialityRequirement?: CiaRequirementType
     integrityRequirement?: CiaRequirementType
     availabilityRequirement?: CiaRequirementType
@@ -436,8 +442,6 @@ export interface JSONSchemaForCommonVulnerabilityScoringSystemVersion31 {
     modifiedConfidentialityImpact?: ModifiedCiaType
     modifiedIntegrityImpact?: ModifiedCiaType
     modifiedAvailabilityImpact?: ModifiedCiaType
-    environmentalScore?: ScoreType
-    environmentalSeverity?: SeverityType
 
     [k: string]: unknown
 }
