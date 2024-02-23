@@ -15,8 +15,9 @@
  */
 export interface VectorComponentValue {
     name: string;
-    abbreviatedName?: string;
     shortName: string;
+    abbreviatedName?: string;
+    jsonSchemaName?: string;
     description: string;
     hide?: boolean;
 }
@@ -86,6 +87,8 @@ export abstract class CvssVector<R extends BaseScoreResult> {
     public abstract getVectorName(): string;
 
     public abstract getRegisteredComponents(): Map<ComponentCategory, VectorComponent<VectorComponentValue>[]>;
+
+    public abstract createJsonSchema(): any;
 
     public fillBaseMetrics() {
         for (const [category, components] of this.getRegisteredComponents()) {

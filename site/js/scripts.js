@@ -166,13 +166,18 @@ class CvssVectorRepresentation {
             if (this.hasBeenDestroyed) {
                 return;
             }
-            this.cloneAndAppendVector();
-            updateScores();
 
-            setTimeout(() => {
-                const lastVector = cvssVectors[cvssVectors.length - 1];
-                setSelectedVector(lastVector.cvssInstance);
-            }, 1);
+            if (event.altKey || event.metaKey || event.ctrlKey || event.shiftKey) {
+                downloadText('cvss-vector-' + this.name + '.json', JSON.stringify(this.createJsonSchema()));
+            } else {
+                this.cloneAndAppendVector();
+                updateScores();
+
+                setTimeout(() => {
+                    const lastVector = cvssVectors[cvssVectors.length - 1];
+                    setSelectedVector(lastVector.cvssInstance);
+                }, 1);
+            }
         });
 
         // remove button
@@ -331,8 +336,10 @@ class CvssVectorRepresentation {
             cloneButton.classList.add('btn', 'btn-outline-primary', 'cvss-vector-button-copy-to-clipboard');
             cloneButton.setAttribute('data-bs-toggle', 'popover');
             cloneButton.setAttribute('data-bs-placement', 'bottom');
-            cloneButton.setAttribute('data-bs-content', 'Clone this vector');
+            cloneButton.setAttribute('data-bs-content', 'Clone this vector or shift-click to download this vector\'s data as JSON.');
             cloneButton.setAttribute('data-bs-trigger', 'hover');
+            cloneButton.setAttribute('data-cvss-shift-action', 'true');
+            cloneButton.setAttribute('data-cvss-shift-action-replacement-icon', 'braces');
             const copyIcon = document.createElement('i');
             copyIcon.classList.add('bi', 'bi-copy');
             cloneButton.appendChild(copyIcon);
@@ -403,6 +410,10 @@ class CvssVectorRepresentation {
 
     getCveName() {
         return extractAndFormatCVE(this.name);
+    }
+
+    createJsonSchema() {
+        return this.cvssInstance.createJsonSchema();
     }
 }
 
@@ -1716,6 +1727,32 @@ function appendNewVectorsFromFreeTextInput() {
     freeTextInputParseIntermediate();
 }
 
+function uploadJsonSchemaToAppendMultipleVectors() {
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = '.json';
+    fileInput.onchange = function () {
+        const file = fileInput.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                try {
+                    const contents = e.target.result;
+                    const json = JSON.parse(contents);
+                    console.log(json);
+                    document.getElementById('inputAddVectorByMultipleStrings').value = JSON.stringify(json, null, 2);
+                    freeTextInputParseIntermediate();
+                } catch (e) {
+                    console.error(e);
+                    createBootstrapToast('Failed to parse JSON', 'The uploaded file could not be parsed as JSON.', 'error');
+                }
+            };
+            reader.readAsText(file);
+        }
+    };
+    fileInput.click();
+}
+
 function copyVectors() {
     const vectors = [];
     for (let vector of cvssVectors) {
@@ -1961,6 +1998,30 @@ function storeInGet() {
     }, 200);
 }
 
+function downloadAllJsonSchema() {
+    const allSchema = cvssVectors.map(vector => vector.createJsonSchema());
+    const stringifySchema = JSON.stringify(allSchema);
+    downloadText('cvss-vectors.json', stringifySchema);
+}
+
+function downloadText(filename, text) {
+    filename = filename.toLowerCase()
+        .replace(/[^a-z0-9._+]/g, '-')
+        .replaceAll(/-+/g, '-')
+        .replace(/^-/, '')
+        .replaceAll(/-\./g, '\.');
+    const element = document.createElement('a');
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+    element.setAttribute('download', filename);
+
+    element.style.display = 'none';
+    document.body.appendChild(element);
+
+    element.click();
+
+    document.body.removeChild(element);
+}
+
 // shift key actions
 const shiftKeyStoredElements = new Map();
 
@@ -2026,6 +2087,13 @@ document.addEventListener('keyup', (event) => {
     }
 });
 
+document.addEventListener('blur', () => {
+    if (shiftKeyDown) {
+        shiftKeyDown = false;
+        shiftKeyChange(false);
+    }
+});
+
 // load page
 
 updateTooltip(document.body);
@@ -2059,7 +2127,7 @@ function loadDemo() {
 
 setTimeout(() => {
     const currentHtmlVersion = document.getElementById('cvss-calculator-current-version').innerText;
-    if (currentHtmlVersion !== '1.0.13') {
+    if (currentHtmlVersion !== '1.0.14') {
         createBootstrapToast('New version available', 'A new version of the CVSS Calculator is available. Please refresh the page to load the new version or clear the cache.', 'info', 10 * 1000);
     }
     const changelogBody = document.getElementById('cvss-calculator-changelog-body');

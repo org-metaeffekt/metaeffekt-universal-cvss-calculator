@@ -305,4 +305,139 @@ export class Cvss3P1 extends CvssVector<MultiScoreResult> {
     public isAnyEnvironmentalDefined(): boolean {
         return super.isCategoryPartiallyDefined(Cvss3P1Components.ENVIRONMENTAL_CATEGORY);
     }
+
+    private getJsonSchemaSeverity(score: number): SeverityType {
+        if (score === 0 || isNaN(score)) {
+            return "NONE";
+        } else if (score <= 3.9) {
+            return "LOW";
+        } else if (score <= 6.9) {
+            return "MEDIUM";
+        } else if (score <= 8.9) {
+            return "HIGH";
+        } else {
+            return "CRITICAL";
+        }
+    }
+
+    public createJsonSchema(): JSONSchemaForCommonVulnerabilityScoringSystemVersion31 {
+        const scores = this.calculateScores();
+        return {
+            version: "3.1",
+            vectorString: this.toString(),
+            baseScore: scores.base!,
+            temporalScore: scores.temporal,
+            environmentalScore: scores.environmental,
+            baseSeverity: this.getJsonSchemaSeverity(scores.base!),
+            temporalSeverity: scores.temporal ? this.getJsonSchemaSeverity(scores.temporal) : undefined,
+            environmentalSeverity: scores.environmental ? this.getJsonSchemaSeverity(scores.environmental) : undefined,
+
+            attackVector: this.getComponent(Cvss3P1Components.AV).jsonSchemaName as AttackVectorType,
+            attackComplexity: this.getComponent(Cvss3P1Components.AC).jsonSchemaName as AttackComplexityType,
+            privilegesRequired: this.getComponent(Cvss3P1Components.PR).jsonSchemaName as PrivilegesRequiredType,
+            userInteraction: this.getComponent(Cvss3P1Components.UI).jsonSchemaName as UserInteractionType,
+            scope: this.getComponent(Cvss3P1Components.S).jsonSchemaName as ScopeType,
+            confidentialityImpact: this.getComponent(Cvss3P1Components.C).jsonSchemaName as CiaType,
+            integrityImpact: this.getComponent(Cvss3P1Components.I).jsonSchemaName as CiaType,
+            availabilityImpact: this.getComponent(Cvss3P1Components.A).jsonSchemaName as CiaType,
+            exploitCodeMaturity: this.getComponent(Cvss3P1Components.E).jsonSchemaName as ExploitCodeMaturityType,
+            remediationLevel: this.getComponent(Cvss3P1Components.RL).jsonSchemaName as RemediationLevelType,
+            reportConfidence: this.getComponent(Cvss3P1Components.RC).jsonSchemaName as ConfidenceType,
+            confidentialityRequirement: this.getComponent(Cvss3P1Components.CR).jsonSchemaName as CiaRequirementType,
+            integrityRequirement: this.getComponent(Cvss3P1Components.IR).jsonSchemaName as CiaRequirementType,
+            availabilityRequirement: this.getComponent(Cvss3P1Components.AR).jsonSchemaName as CiaRequirementType,
+            modifiedAttackVector: this.getComponent(Cvss3P1Components.MAV).jsonSchemaName as ModifiedAttackVectorType,
+            modifiedAttackComplexity: this.getComponent(Cvss3P1Components.MAC).jsonSchemaName as ModifiedAttackComplexityType,
+            modifiedPrivilegesRequired: this.getComponent(Cvss3P1Components.MPR).jsonSchemaName as ModifiedPrivilegesRequiredType,
+            modifiedUserInteraction: this.getComponent(Cvss3P1Components.MUI).jsonSchemaName as ModifiedUserInteractionType,
+            modifiedScope: this.getComponent(Cvss3P1Components.MS).jsonSchemaName as ModifiedScopeType,
+            modifiedConfidentialityImpact: this.getComponent(Cvss3P1Components.MC).jsonSchemaName as ModifiedCiaType,
+            modifiedIntegrityImpact: this.getComponent(Cvss3P1Components.MI).jsonSchemaName as ModifiedCiaType,
+            modifiedAvailabilityImpact: this.getComponent(Cvss3P1Components.MA).jsonSchemaName as ModifiedCiaType
+        };
+    }
+}
+
+export type AttackVectorType =
+    | "NETWORK"
+    | "ADJACENT_NETWORK"
+    | "LOCAL"
+    | "PHYSICAL"
+export type AttackComplexityType = "HIGH" | "LOW"
+export type PrivilegesRequiredType = "HIGH" | "LOW" | "NONE"
+export type UserInteractionType = "NONE" | "REQUIRED"
+export type ScopeType = "UNCHANGED" | "CHANGED"
+export type CiaType = "NONE" | "LOW" | "HIGH"
+export type ScoreType = number
+export type SeverityType = "NONE" | "LOW" | "MEDIUM" | "HIGH" | "CRITICAL"
+export type ExploitCodeMaturityType =
+    | "UNPROVEN"
+    | "PROOF_OF_CONCEPT"
+    | "FUNCTIONAL"
+    | "HIGH"
+    | "NOT_DEFINED"
+export type RemediationLevelType =
+    | "OFFICIAL_FIX"
+    | "TEMPORARY_FIX"
+    | "WORKAROUND"
+    | "UNAVAILABLE"
+    | "NOT_DEFINED"
+export type ConfidenceType =
+    | "UNKNOWN"
+    | "REASONABLE"
+    | "CONFIRMED"
+    | "NOT_DEFINED"
+export type CiaRequirementType = "LOW" | "MEDIUM" | "HIGH" | "NOT_DEFINED"
+export type ModifiedAttackVectorType =
+    | "NETWORK"
+    | "ADJACENT_NETWORK"
+    | "LOCAL"
+    | "PHYSICAL"
+    | "NOT_DEFINED"
+export type ModifiedAttackComplexityType = "HIGH" | "LOW" | "NOT_DEFINED"
+export type ModifiedPrivilegesRequiredType =
+    | "HIGH"
+    | "LOW"
+    | "NONE"
+    | "NOT_DEFINED"
+export type ModifiedUserInteractionType = "NONE" | "REQUIRED" | "NOT_DEFINED"
+export type ModifiedScopeType = "UNCHANGED" | "CHANGED" | "NOT_DEFINED"
+export type ModifiedCiaType = "NONE" | "LOW" | "HIGH" | "NOT_DEFINED"
+
+export interface JSONSchemaForCommonVulnerabilityScoringSystemVersion31 {
+    /**
+     * CVSS Version
+     */
+    version: "3.1"
+    vectorString: string
+    attackVector?: AttackVectorType
+    attackComplexity?: AttackComplexityType
+    privilegesRequired?: PrivilegesRequiredType
+    userInteraction?: UserInteractionType
+    scope?: ScopeType
+    confidentialityImpact?: CiaType
+    integrityImpact?: CiaType
+    availabilityImpact?: CiaType
+    baseScore: ScoreType
+    baseSeverity: SeverityType
+    exploitCodeMaturity?: ExploitCodeMaturityType
+    remediationLevel?: RemediationLevelType
+    reportConfidence?: ConfidenceType
+    temporalScore?: ScoreType
+    temporalSeverity?: SeverityType
+    confidentialityRequirement?: CiaRequirementType
+    integrityRequirement?: CiaRequirementType
+    availabilityRequirement?: CiaRequirementType
+    modifiedAttackVector?: ModifiedAttackVectorType
+    modifiedAttackComplexity?: ModifiedAttackComplexityType
+    modifiedPrivilegesRequired?: ModifiedPrivilegesRequiredType
+    modifiedUserInteraction?: ModifiedUserInteractionType
+    modifiedScope?: ModifiedScopeType
+    modifiedConfidentialityImpact?: ModifiedCiaType
+    modifiedIntegrityImpact?: ModifiedCiaType
+    modifiedAvailabilityImpact?: ModifiedCiaType
+    environmentalScore?: ScoreType
+    environmentalSeverity?: SeverityType
+
+    [k: string]: unknown
 }

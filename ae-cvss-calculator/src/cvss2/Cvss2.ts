@@ -177,4 +177,93 @@ export class Cvss2 extends CvssVector<MultiScoreResult> {
         if (impact === 0) return 0;
         return 1.176;
     }
+
+    public createJsonSchema(): JSONSchemaForCommonVulnerabilityScoringSystemVersion20 {
+        const scores = this.calculateScores();
+        return {
+            version: "2.0",
+            vectorString: this.toString(),
+            baseScore: scores.base!,
+            temporalScore: scores.temporal,
+            environmentalScore: scores.environmental,
+            accessVector: this.getComponent(Cvss2Components.AV).jsonSchemaName as AccessVectorType,
+            accessComplexity: this.getComponent(Cvss2Components.AC).jsonSchemaName as AccessComplexityType,
+            authentication: this.getComponent(Cvss2Components.Au).jsonSchemaName as AuthenticationType,
+            confidentialityImpact: this.getComponent(Cvss2Components.C).jsonSchemaName as CiaType,
+            integrityImpact: this.getComponent(Cvss2Components.I).jsonSchemaName as CiaType,
+            availabilityImpact: this.getComponent(Cvss2Components.A).jsonSchemaName as CiaType,
+            exploitability: this.getComponent(Cvss2Components.E).jsonSchemaName as ExploitabilityType,
+            remediationLevel: this.getComponent(Cvss2Components.RL).jsonSchemaName as RemediationLevelType,
+            reportConfidence: this.getComponent(Cvss2Components.RC).jsonSchemaName as ReportConfidenceType,
+            collateralDamagePotential: this.getComponent(Cvss2Components.CDP).jsonSchemaName as CollateralDamagePotentialType,
+            targetDistribution: this.getComponent(Cvss2Components.TD).jsonSchemaName as TargetDistributionType,
+            confidentialityRequirement: this.getComponent(Cvss2Components.CR).jsonSchemaName as CiaRequirementType,
+            integrityRequirement: this.getComponent(Cvss2Components.IR).jsonSchemaName as CiaRequirementType,
+            availabilityRequirement: this.getComponent(Cvss2Components.AR).jsonSchemaName as CiaRequirementType,
+        }
+    }
+}
+
+export type AccessVectorType = "NETWORK" | "ADJACENT_NETWORK" | "LOCAL"
+export type AccessComplexityType = "HIGH" | "MEDIUM" | "LOW"
+export type AuthenticationType = "MULTIPLE" | "SINGLE" | "NONE"
+export type CiaType = "NONE" | "PARTIAL" | "COMPLETE"
+export type ScoreType = number
+export type ExploitabilityType =
+    | "UNPROVEN"
+    | "PROOF_OF_CONCEPT"
+    | "FUNCTIONAL"
+    | "HIGH"
+    | "NOT_DEFINED"
+export type RemediationLevelType =
+    | "OFFICIAL_FIX"
+    | "TEMPORARY_FIX"
+    | "WORKAROUND"
+    | "UNAVAILABLE"
+    | "NOT_DEFINED"
+export type ReportConfidenceType =
+    | "UNCONFIRMED"
+    | "UNCORROBORATED"
+    | "CONFIRMED"
+    | "NOT_DEFINED"
+export type CollateralDamagePotentialType =
+    | "NONE"
+    | "LOW"
+    | "LOW_MEDIUM"
+    | "MEDIUM_HIGH"
+    | "HIGH"
+    | "NOT_DEFINED"
+export type TargetDistributionType =
+    | "NONE"
+    | "LOW"
+    | "MEDIUM"
+    | "HIGH"
+    | "NOT_DEFINED"
+export type CiaRequirementType = "LOW" | "MEDIUM" | "HIGH" | "NOT_DEFINED"
+
+export interface JSONSchemaForCommonVulnerabilityScoringSystemVersion20 {
+    /**
+     * CVSS Version
+     */
+    version: "2.0"
+    vectorString: string
+    baseScore: ScoreType
+    temporalScore?: ScoreType
+    environmentalScore?: ScoreType
+    accessVector?: AccessVectorType
+    accessComplexity?: AccessComplexityType
+    authentication?: AuthenticationType
+    confidentialityImpact?: CiaType
+    integrityImpact?: CiaType
+    availabilityImpact?: CiaType
+    exploitability?: ExploitabilityType
+    remediationLevel?: RemediationLevelType
+    reportConfidence?: ReportConfidenceType
+    collateralDamagePotential?: CollateralDamagePotentialType
+    targetDistribution?: TargetDistributionType
+    confidentialityRequirement?: CiaRequirementType
+    integrityRequirement?: CiaRequirementType
+    availabilityRequirement?: CiaRequirementType
+
+    [k: string]: unknown
 }
