@@ -272,6 +272,8 @@ class CvssVectorRepresentation {
             nameElement.classList.add('btn', 'button-no-break', 'cvss-vector-name');
             if (this.cvssInstance instanceof CvssCalculator.Cvss2) {
                 nameElement.classList.add('bg-cvss-2');
+            } else if (this.cvssInstance instanceof CvssCalculator.Cvss3P0) {
+                nameElement.classList.add('bg-cvss-3P0');
             } else if (this.cvssInstance instanceof CvssCalculator.Cvss3P1) {
                 nameElement.classList.add('bg-cvss-3P1');
             } else if (this.cvssInstance instanceof CvssCalculator.Cvss4P0) {
@@ -460,9 +462,11 @@ function appendRadarChartToContainer(container, name) {
 const cvssVersionConstructors = {
     '2.0': CvssCalculator.Cvss2,
     '3.1': CvssCalculator.Cvss3P1,
+    '3.0': CvssCalculator.Cvss3P0,
     '4.0': CvssCalculator.Cvss4P0,
     'CVSS:2.0': CvssCalculator.Cvss2,
     'CVSS:3.1': CvssCalculator.Cvss3P1,
+    'CVSS:3.0': CvssCalculator.Cvss3P0,
     'CVSS:4.0': CvssCalculator.Cvss4P0
 }
 
@@ -484,15 +488,18 @@ cvssScoreDetailsContainerElement.innerText = '';
 
 appendRadarChartToContainer(additionalRadarChartContainer, 'CVSS:4.0');
 appendRadarChartToContainer(additionalRadarChartContainer, 'CVSS:3.1');
+appendRadarChartToContainer(additionalRadarChartContainer, 'CVSS:3.0');
 appendRadarChartToContainer(additionalRadarChartContainer, 'CVSS:2.0');
 const defaultSeverityRadarChart = constructRadarChartInstance('defaultSeverityRadar');
 const cvss4P0SeverityRadarChart = constructRadarChartInstance('CVSS:4.0SeverityRadar');
 const cvss3P1SeverityRadarChart = constructRadarChartInstance('CVSS:3.1SeverityRadar');
+const cvss3P0SeverityRadarChart = constructRadarChartInstance('CVSS:3.0SeverityRadar');
 const cvss2P0SeverityRadarChart = constructRadarChartInstance('CVSS:2.0SeverityRadar');
 
 const defaultSeverityRadarContainer = document.getElementById('defaultSeverityRadarContainer');
 const cvss4P0SeverityRadarContainer = document.getElementById('CVSS:4.0SeverityRadarContainer');
 const cvss3P1SeverityRadarContainer = document.getElementById('CVSS:3.1SeverityRadarContainer');
+const cvss3P0SeverityRadarContainer = document.getElementById('CVSS:3.0SeverityRadarContainer');
 const cvss2P0SeverityRadarContainer = document.getElementById('CVSS:2.0SeverityRadarContainer');
 
 const cvssVectors = [];
@@ -515,6 +522,17 @@ function createInstanceForVector(vectorInput, forceVersion = undefined) {
             return new vectorClass();
         }
         // assume that it is a vector string
+        // - first attempt: try to find a CVSS-prefix using the name of the vector
+        for (let versionName in cvssVersionConstructors) {
+            const specificVectorClass = cvssVersionConstructors[versionName];
+            if (vectorInput.startsWith(versionName)) {
+                try {
+                    return new specificVectorClass(vectorInput);
+                } catch (e) {
+                }
+            }
+        }
+        // - second attempt: just let each class parse the vector string and return the first one that doesn't throw an error
         for (let versionName in cvssVersionConstructors) {
             const specificVectorClass = cvssVersionConstructors[versionName];
             try {
@@ -884,7 +902,7 @@ function updateScores() {
         }
 
         // now update the charts and the score table
-        const datasets = {'default': [], 'CVSS:2.0': [], 'CVSS:3.1': [], 'CVSS:4.0': []};
+        const datasets = {'default': [], 'CVSS:2.0': [], 'CVSS:3.0': [], 'CVSS:3.1': [], 'CVSS:4.0': []};
         const useVersionedCharts = !document.getElementById('severityRadarToggle').checked;
 
         const calculatedVectorScores = {};
@@ -943,6 +961,8 @@ function updateScores() {
             let color = [180, 48, 52];
             if (vectorName === 'CVSS:2.0') {
                 color = [347, 100, 69];
+            } else if (vectorName === 'CVSS:3.0') {
+                color = [204, 82, 40];
             } else if (vectorName === 'CVSS:3.1') {
                 color = [204, 82, 57];
             } else if (vectorName === 'CVSS:4.0') {
@@ -978,6 +998,8 @@ function updateScores() {
         defaultSeverityRadarChart.update();
         cvss2P0SeverityRadarChart.data.datasets = datasets['CVSS:2.0'];
         cvss2P0SeverityRadarChart.update();
+        cvss3P0SeverityRadarChart.data.datasets = datasets['CVSS:3.0'];
+        cvss3P0SeverityRadarChart.update();
         cvss3P1SeverityRadarChart.data.datasets = datasets['CVSS:3.1'];
         cvss3P1SeverityRadarChart.update();
         cvss4P0SeverityRadarChart.data.datasets = datasets['CVSS:4.0'];
@@ -985,12 +1007,14 @@ function updateScores() {
 
         const showCharts = {};
         showCharts['CVSS:2.0'] = useVersionedCharts && datasets['CVSS:2.0'].length > 0;
+        showCharts['CVSS:3.0'] = useVersionedCharts && datasets['CVSS:3.0'].length > 0;
         showCharts['CVSS:3.1'] = useVersionedCharts && datasets['CVSS:3.1'].length > 0;
         showCharts['CVSS:4.0'] = useVersionedCharts && datasets['CVSS:4.0'].length > 0;
-        showCharts['default'] = !showCharts['CVSS:2.0'] && !showCharts['CVSS:3.1'] && !showCharts['CVSS:4.0'];
+        showCharts['default'] = !showCharts['CVSS:2.0'] && !showCharts['CVSS:3.0'] && !showCharts['CVSS:3.1'] && !showCharts['CVSS:4.0'];
 
         defaultSeverityRadarContainer.classList.add('d-none');
         cvss2P0SeverityRadarContainer.classList.add('d-none');
+        cvss3P0SeverityRadarContainer.classList.add('d-none');
         cvss3P1SeverityRadarContainer.classList.add('d-none');
         cvss4P0SeverityRadarContainer.classList.add('d-none');
 
@@ -1000,6 +1024,9 @@ function updateScores() {
             }
             if (showCharts['CVSS:2.0']) {
                 cvss2P0SeverityRadarContainer.classList.remove('d-none');
+            }
+            if (showCharts['CVSS:3.0']) {
+                cvss3P0SeverityRadarContainer.classList.remove('d-none');
             }
             if (showCharts['CVSS:3.1']) {
                 cvss3P1SeverityRadarContainer.classList.remove('d-none');
@@ -1137,6 +1164,8 @@ Security requirements: ${securityRequirements}`;
             nameElement.classList.add('fw-bold');
             if (vector.cvssInstance instanceof CvssCalculator.Cvss2) {
                 nameElement.classList.add('text-cvss-2');
+            } else if (vector.cvssInstance instanceof CvssCalculator.Cvss3P0) {
+                nameElement.classList.add('text-cvss-3P0');
             } else if (vector.cvssInstance instanceof CvssCalculator.Cvss3P1) {
                 nameElement.classList.add('text-cvss-3P1');
             } else if (vector.cvssInstance instanceof CvssCalculator.Cvss4P0) {
@@ -1336,6 +1365,8 @@ function setSelectedVector(vectorInstance) {
         accordionItem.classList.add('accordion-item');
         if (selectedVector.constructor === CvssCalculator.Cvss4P0) {
             accordionItem.classList.add('accordion-cvss-4P0');
+        } else if (selectedVector.constructor === CvssCalculator.Cvss3P0) {
+            accordionItem.classList.add('accordion-cvss-3P0');
         } else if (selectedVector.constructor === CvssCalculator.Cvss3P1) {
             accordionItem.classList.add('accordion-cvss-3P1');
         } else if (selectedVector.constructor === CvssCalculator.Cvss2) {
@@ -1642,6 +1673,8 @@ function freeTextInputParseIntermediate() {
             vectorCssClass = 'bg-cvss-2';
         } else if (cvssInstance instanceof CvssCalculator.Cvss4P0) {
             vectorCssClass = 'bg-cvss-4P0';
+        } else if (cvssInstance instanceof CvssCalculator.Cvss3P0) {
+            vectorCssClass = 'bg-cvss-3P0';
         }
 
         const content = `
