@@ -367,7 +367,7 @@ class CvssVectorRepresentation {
         return [domElement, scoreDisplayButton, nameElement, vectorStringElement, copyVectorToClipboardButton, visibilityToggleButton, cloneButton, removeButton];
     }
 
-    findRealRenderedTextWidthWithFontOfElement(referenceElement, text) {
+    static findRealRenderedTextWidthWithFontOfElement(referenceElement, text) {
         const tempElement = document.createElement('span');
         tempElement.style.visibility = 'hidden';
         tempElement.style.position = 'absolute';
@@ -401,10 +401,12 @@ class CvssVectorRepresentation {
             }
         }
 
-        const actualWidth = this.findRealRenderedTextWidthWithFontOfElement(this.nameElement, maxLengthName);
+        const actualWidth = CvssVectorRepresentation.findRealRenderedTextWidthWithFontOfElement(this.nameElement, maxLengthName);
+        // this calculation should be unnecessary now considering the change with adding the maxWidth attribute below, but I will still include it for now.
         const targetSize = actualWidth / (actualWidth < 100 ? 6 : (actualWidth < 165 ? 5.2 : (actualWidth < 270 ? 5 : (actualWidth < 320 ? 4.4 : (actualWidth < 380 ? 4 : (3))))));
         for (let vector of cvssVectors) {
             vector.nameElement.size = targetSize;
+            vector.nameElement.style.maxWidth = actualWidth + 30 + 'px';
         }
     }
 
@@ -1232,7 +1234,6 @@ Security requirements: ${securityRequirements}`;
         // copy the vector container html content to the duplicated section
         if (selectedVectorContainerInstance) {
             selectedCvssDuplicatedSection.innerHTML = selectedVectorContainerInstance.domElement.outerHTML;
-            selectedCvssDuplicatedSection.getElementsByClassName('cvss-vector-name')[0].value = selectedVectorContainerInstance.name;
             selectedCvssDuplicatedSection.getElementsByClassName('cvss-vector-string')[0].value = selectedVectorContainerInstance.cvssInstance.toString();
             selectedCvssDuplicatedSection.firstChild.classList.remove('cvss-active-selection');
 
@@ -1256,6 +1257,14 @@ Security requirements: ${securityRequirements}`;
                 } else {
                     vectorElement.domElement.classList.remove('upper-vector-selected');
                 }
+            }
+
+            const cvssNameInputElements = selectedCvssDuplicatedSection.getElementsByClassName('cvss-vector-name');
+            if (cvssNameInputElements.length > 0) {
+                const cvssNameInputElement = cvssNameInputElements[0];
+                cvssNameInputElement.value = selectedVectorContainerInstance.name;
+                const cvssNameInputElementTargetWidth = CvssVectorRepresentation.findRealRenderedTextWidthWithFontOfElement(cvssNameInputElement, cvssNameInputElement.value);
+                cvssNameInputElement.style.maxWidth = (cvssNameInputElementTargetWidth + 30) + 'px';
             }
 
             updateTooltip(selectedCvssDuplicatedSection);
@@ -2127,7 +2136,7 @@ function loadDemo() {
 
 setTimeout(() => {
     const currentHtmlVersion = document.getElementById('cvss-calculator-current-version').innerText;
-    if (currentHtmlVersion !== '1.0.14') {
+    if (currentHtmlVersion !== '1.0.15') {
         createBootstrapToast('New version available', 'A new version of the CVSS Calculator is available. Please refresh the page to load the new version or clear the cache.', 'info', 10 * 1000);
     }
     const changelogBody = document.getElementById('cvss-calculator-changelog-body');

@@ -15,12 +15,61 @@
  */
 
 const alreadyFetchedVulnerabilityData = {};
-const currentlyFetchingVulnerabilityData = [];
+const currentlyFetchingVulnerabilityData = new Set();
 
 const inputAddVectorByString = document.getElementById('inputAddVectorByString');
 const inputLabelDefaultContent = inputAddVectorByString.innerHTML;
 
-const fetchVulnerabilityData = async (vulnerability) => {
+function httpGet(url, params, success, failure) {
+    const queryString = Object.entries(params).map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`).join('&');
+    const fullUrl = Object.keys(params).length > 0 ? `${url}?${queryString}` : url;
+
+    console.log('Fetching data from:', fullUrl);
+
+    const xhr = (() => {
+        let xhr = new XMLHttpRequest();
+        if ("withCredentials" in xhr) {
+            xhr.open('GET', fullUrl, true);
+        } else if (typeof XDomainRequest !== "undefined") {
+            xhr = new XDomainRequest();
+            xhr.open('GET', fullUrl);
+        } else {
+            return null;
+        }
+        return xhr;
+    })();
+
+    if (!xhr) {
+        console.error('CORS not supported, cannot fetch data from:', fullUrl);
+        failure('CORS not supported');
+        return;
+    }
+
+    xhr.onload = () => {
+        let response;
+        try {
+            response = JSON.parse(xhr.responseText);
+        } catch (e) {
+            console.error('Error parsing result:', e);
+            failure(e);
+            return;
+        }
+
+        try {
+            console.log('Success:', response);
+            success(response);
+        } catch (e) {
+            console.error('Error processing result:', e);
+            failure(e);
+        }
+    };
+
+    xhr.onerror = () => failure();
+
+    xhr.send();
+}
+
+async function fetchVulnerabilityData(vulnerability) {
     if (!vulnerability || vulnerability === 'null' || vulnerability === 'undefined') {
         return null;
     }
@@ -28,95 +77,63 @@ const fetchVulnerabilityData = async (vulnerability) => {
         return alreadyFetchedVulnerabilityData[vulnerability];
     }
 
-    if (currentlyFetchingVulnerabilityData.includes(vulnerability)) {
+    if (currentlyFetchingVulnerabilityData.has(vulnerability)) {
         console.log('Already fetching data for', vulnerability, '... waiting for it to finish.');
-        while (currentlyFetchingVulnerabilityData.includes(vulnerability)) {
-            await new Promise(resolve => setTimeout(resolve, 100));
-        }
+        await new Promise(resolve => {
+            const check = () => {
+                if (!currentlyFetchingVulnerabilityData.has(vulnerability)) resolve();
+                else setTimeout(check, 100);
+            };
+            check();
+        });
         return alreadyFetchedVulnerabilityData[vulnerability];
     }
-    currentlyFetchingVulnerabilityData.push(vulnerability);
 
-    setTimeout(() => {
-        removeCurrentlyFetchingVulnerabilityData(vulnerability);
-    }, 10000);
+    currentlyFetchingVulnerabilityData.add(vulnerability);
+    changeInputAddVectorByStringState('loading');
 
-    inputAddVectorByString.classList.remove('btn-success');
-    inputAddVectorByString.classList.remove('btn-warning');
-    inputAddVectorByString.classList.remove('btn-danger');
-    inputAddVectorByString.classList.add('btn-secondary');
-
-    inputAddVectorByString.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> &nbsp;NVD';
-
-
-    const url = `https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=${vulnerability}`;
-    console.log('Fetching data from:', url)
-    try {
-        const response = await fetch(url, {
-            method: 'GET',
-            headers: {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:104.0) Gecko/20100101 Firefox/104.0',
-                'Accept': 'application/json',
-                'Access-Control-Allow-Origin': '*', // I know this is no use, but I want to believe that the NVD just stays online some day for more than 5 minutes at a time.
-            }
+    return new Promise((resolve, reject) => {
+        httpGet('https://services.nvd.nist.gov/rest/json/cves/2.0', { cveId: vulnerability }, data => {
+            alreadyFetchedVulnerabilityData[vulnerability] = data;
+            currentlyFetchingVulnerabilityData.delete(vulnerability);
+            changeInputAddVectorByStringState('success');
+            resolve(data);
+        }, error => {
+            currentlyFetchingVulnerabilityData.delete(vulnerability);
+            changeInputAddVectorByStringState('error');
+            createBootstrapToast('Error fetching data', 'Error fetching data for ' + vulnerability + ': ' + error, 'danger');
+            reject(error);
         });
-        if (!response.ok) {
-            console.log(response.status)
-            const isServerError = response.status >= 500 && response.status < 600;
-            inputAddVectorByString.classList.remove('btn-secondary');
-            inputAddVectorByString.classList.remove('btn-success');
-            inputAddVectorByString.classList.remove('btn-warning');
-            inputAddVectorByString.classList.remove('btn-danger');
-            if (isServerError) {
-                inputAddVectorByString.classList.add('btn-warning');
-            } else {
-                inputAddVectorByString.classList.add('btn-danger');
-            }
+    });
+}
 
-            removeCurrentlyFetchingVulnerabilityData(vulnerability);
-            if (currentlyFetchingVulnerabilityData.length === 0) {
-                inputAddVectorByString.innerHTML = inputLabelDefaultContent;
-            }
-
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const json = await response.json();
-        alreadyFetchedVulnerabilityData[vulnerability] = json;
-
-        inputAddVectorByString.classList.remove('btn-secondary');
-        removeCurrentlyFetchingVulnerabilityData(vulnerability);
-        if (currentlyFetchingVulnerabilityData.length === 0) {
-            inputAddVectorByString.innerHTML = inputLabelDefaultContent;
-        }
-
-        inputAddVectorByString.classList.remove('btn-danger');
-        inputAddVectorByString.classList.remove('btn-warning');
-        inputAddVectorByString.classList.add('btn-success');
-
-        console.log(json)
-
-        return json;
-    } catch (error) {
-        console.error('Error fetching data:', error);
-
-        inputAddVectorByString.classList.remove('btn-secondary');
-        inputAddVectorByString.classList.remove('btn-success');
-        inputAddVectorByString.classList.remove('btn-warning');
-        inputAddVectorByString.classList.remove('btn-danger');
-        inputAddVectorByString.classList.add('btn-danger');
-
-        removeCurrentlyFetchingVulnerabilityData(vulnerability);
-        if (currentlyFetchingVulnerabilityData.length === 0) {
-            inputAddVectorByString.innerHTML = inputLabelDefaultContent;
-        }
-    } finally {
-        removeCurrentlyFetchingVulnerabilityData(vulnerability);
+function changeInputAddVectorByStringState(state) {
+    inputAddVectorByString.classList.remove('btn-success', 'btn-warning', 'btn-danger', 'btn-secondary');
+    if (currentlyFetchingVulnerabilityData.size !== 0 && (state === 'success' || state === 'error' || state === 'default')) {
+        state = 'loading';
     }
-};
+    switch (state) {
+        case 'loading':
+            inputAddVectorByString.classList.add('btn-secondary');
+            inputAddVectorByString.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> &nbsp;NVD';
+            break;
+        case 'success':
+            inputAddVectorByString.classList.add('btn-success');
+            inputAddVectorByString.innerHTML = inputLabelDefaultContent;
+            break;
+        case 'error':
+            inputAddVectorByString.classList.add('btn-danger');
+            inputAddVectorByString.innerHTML = inputLabelDefaultContent;
+            break;
+        default:
+            inputAddVectorByString.innerHTML = inputLabelDefaultContent;
+    }
+}
 
 function removeCurrentlyFetchingVulnerabilityData(vulnerability) {
-    if (currentlyFetchingVulnerabilityData.includes(vulnerability)) {
-        currentlyFetchingVulnerabilityData.splice(currentlyFetchingVulnerabilityData.indexOf(vulnerability), 1);
+    currentlyFetchingVulnerabilityData.delete(vulnerability);
+    if (currentlyFetchingVulnerabilityData.size === 0) {
+        changeInputAddVectorByStringState('default');
     }
 }
 
