@@ -5,6 +5,7 @@
 This project implements the following versions of the CVSS standard by FIRST:
 
 - [CVSS:2.0 - https://www.first.org/cvss/v2/guide](https://www.first.org/cvss/v2/guide)
+- [CVSS:3.0 - https://www.first.org/cvss/v3.0/specification-document](https://www.first.org/cvss/v3.0/specification-document)
 - [CVSS:3.1 - https://www.first.org/cvss/v3.1/specification-document](https://www.first.org/cvss/v3.1/specification-document)
 - [CVSS:4.0 - https://www.first.org/cvss/v4.0/specification-document](https://www.first.org/cvss/v4.0/specification-document)
 
@@ -18,13 +19,14 @@ npm install
 npm run build
 ```
 
-The minified `ae-cvss-calculator.js` can be found in the `dist` directory.
+The minified `ae-cvss-calculator.js` can be found in the `/site/js` directory.
 
 ### Usage
 
 The different CVSS versions are implemented in the following classes:
 
 - [Cvss2.ts](src/cvss2/Cvss2.ts)
+- [Cvss3P0.ts](src/cvss3p0/Cvss3P0.ts)
 - [Cvss3P1.ts](src/cvss3p1/Cvss3P1.ts)
 - [Cvss4P0.ts](src/cvss4p0/Cvss4P0.ts)
 

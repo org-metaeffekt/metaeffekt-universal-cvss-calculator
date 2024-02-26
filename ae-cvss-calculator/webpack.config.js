@@ -33,7 +33,7 @@ module.exports = {
     },
     output: {
         filename: 'ae-cvss-calculator.js',
-        path: path.resolve(__dirname, 'dist'),
+        path: path.resolve(__dirname, '../site/js'),
         library: 'CvssCalculator',
         libraryTarget: 'umd',
         globalObject: 'this',

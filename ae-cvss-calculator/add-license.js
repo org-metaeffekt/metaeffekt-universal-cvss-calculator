@@ -19,7 +19,7 @@ const fs = require('fs');
 const path = require('path');
 
 const licensePath = path.join(__dirname, 'res/license-header.txt');
-const bundlePath = path.join(__dirname, 'dist/ae-cvss-calculator.js');
+const bundlePath = path.join(__dirname, '../site/js/ae-cvss-calculator.js');
 
 console.log('Adding license header to bundle:');
 console.log('  license: ' + licensePath);
