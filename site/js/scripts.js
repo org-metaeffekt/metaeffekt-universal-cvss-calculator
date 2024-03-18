@@ -16,8 +16,8 @@
 
 class CvssVectorRepresentation {
 
-    constructor(name, cvssInstance, shown) {
-        this.initialCvssInstance = cvssInstance.clone();
+    constructor(name, cvssInstance, shown, initialCvssInstance) {
+        this.initialCvssInstance = initialCvssInstance;
         this.officialCvssInstance = undefined;
         this.cvssInstance = cvssInstance;
         this.name = name;
@@ -252,7 +252,7 @@ class CvssVectorRepresentation {
     cloneAndAppendVector() {
         const cvssInstance = this.cvssInstance.clone();
         const name = this.name;
-        const vectorRepresentation = new CvssVectorRepresentation(name, cvssInstance);
+        const vectorRepresentation = new CvssVectorRepresentation(name, cvssInstance, true, cvssInstance.clone());
         vectorRepresentation.appendTo(cvssVectorListContainerElement);
         cvssVectors.push(vectorRepresentation);
         vectorRepresentation.adjustNameColumnSize();
@@ -561,8 +561,9 @@ function createInstanceForVector(vectorInput, forceVersion = undefined) {
     }
 }
 
-function appendNewVector(vectorInput, name, shown = true, version = undefined) {
+function appendNewVector(vectorInput, name, shown = true, version = undefined, unmodifiedVector = undefined) {
     const cvssInstance = createInstanceForVector(vectorInput, version);
+    const initialVectorInstance = unmodifiedVector ? createInstanceForVector(unmodifiedVector, cvssInstance.getVectorName()) : cvssInstance.clone();
     if (cvssInstance) {
         if (!name) {
             name = cvssInstance.getVectorName()
@@ -571,7 +572,7 @@ function appendNewVector(vectorInput, name, shown = true, version = undefined) {
                 name = name.replace('CVSS:', '');
             }
         }
-        const vectorRepresentation = new CvssVectorRepresentation(name, cvssInstance, shown);
+        const vectorRepresentation = new CvssVectorRepresentation(name, cvssInstance, shown, initialVectorInstance);
         vectorRepresentation.appendTo(cvssVectorListContainerElement);
         cvssVectors.push(vectorRepresentation);
         vectorRepresentation.adjustNameColumnSize();
@@ -600,7 +601,7 @@ function appendNewEmptyVector(vectorInput, name, prependCvssOnLargeScreens = fal
         if (fillRandomBaseVector) {
             cvssInstance.fillRandomBaseVector();
         }
-        const vectorRepresentation = new CvssVectorRepresentation(name, cvssInstance);
+        const vectorRepresentation = new CvssVectorRepresentation(name, cvssInstance, true, cvssInstance.clone());
         vectorRepresentation.appendTo(cvssVectorListContainerElement);
         cvssVectors.push(vectorRepresentation);
         vectorRepresentation.adjustNameColumnSize();
@@ -1905,7 +1906,7 @@ function loadFromGet() {
     const vector = urlParams.get('vector');
     if (vector) {
         const parsedVectorData = JSON.parse(vector);
-        for (let [name, shown, vector, version] of parsedVectorData) {
+        /*for (let [name, shown, vector, version] of parsedVectorData) {
             if (vector.length === 0) {
                 continue;
             }
@@ -1913,6 +1914,26 @@ function loadFromGet() {
                 name = undefined;
             }
             appendNewVector(vector, name, shown, version);
+        }*/
+        for (vectorData of parsedVectorData) {
+            if (vectorData.length === 0) {
+                continue;
+            }
+
+            let name = vectorData[0];
+            const shown = vectorData[1];
+            const vector = vectorData[2];
+            const version = vectorData[3];
+            let unmodifiedVector = vectorData.length >= 5 ? vectorData[4] : undefined;
+
+            if (!name || name.length === 0) {
+                name = undefined;
+            }
+            if (unmodifiedVector === null || unmodifiedVector === '' || unmodifiedVector === vector) {
+                unmodifiedVector = undefined;
+            }
+
+            appendNewVector(vector, name, shown, version, unmodifiedVector);
         }
     }
 
@@ -1964,7 +1985,9 @@ function storeInGet() {
     storeInGetTimeout = setTimeout(() => {
         let vectorData = [];
         for (let vector of cvssVectors) {
-            vectorData.push([vector.name, vector.shown, vector.cvssInstance.toString(), vector.cvssInstance.getVectorName()]);
+            const vectorString = vector.cvssInstance.toString();
+            const initialVectorString = vector.initialCvssInstance.toString();
+            vectorData.push([vector.name, vector.shown, vectorString, vector.cvssInstance.getVectorName(), vectorString === initialVectorString ? undefined : initialVectorString]);
         }
         const openAccordions = expandedComponentCategories.join(',');
 
@@ -2136,7 +2159,7 @@ function loadDemo() {
 
 setTimeout(() => {
     const currentHtmlVersion = document.getElementById('cvss-calculator-current-version').innerText;
-    if (currentHtmlVersion !== '1.0.15') {
+    if (currentHtmlVersion !== '1.0.16') {
         createBootstrapToast('New version available', 'A new version of the CVSS Calculator is available. Please refresh the page to load the new version or clear the cache.', 'info', 10 * 1000);
     }
     const changelogBody = document.getElementById('cvss-calculator-changelog-body');
