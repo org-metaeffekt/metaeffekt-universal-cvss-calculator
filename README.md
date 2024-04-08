@@ -33,7 +33,8 @@ The `vector` parameter is a JSON array of JSON arrays. Each sub-array is of the 
   "vector name",
   true,
   "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:L/A:N",
-  "CVSS:3.1"
+  "CVSS:3.1",
+  "CVSS:3.1/AV:A/AC:L/PR:N/UI:N/S:C/C:H/I:L/A:L"
 ]
 ```
 
@@ -41,10 +42,13 @@ Where the first element is the name of the vector, the second element is a boole
 visible, the third element is the CVSS vector string and the fourth element is the CVSS version string.
 The CVSS version is one of `CVSS:2.0`, `CVSS:3.1` or `CVSS:4.0`.
 
+The optional fifth element (`null` by default) represents the initial vector that will be used to generate the
+diff-vector when using the 'copy diff vector' button.
+
 Example with a larger amount of vectors:
 
 ```
-vector=[["CVSS:4.0",true,"CVSS:4.0/AV:P/AC:L/AT:N/PR:N/UI:N/VC:H/VI:L/VA:L/SC:H/SI:H/SA:H","CVSS:4.0"],["3.1+2020-5934+(nist.gov)",true,"CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:H/I:L/A:H/E:F/RL:U/RC:R","CVSS:3.1"],["2.0+2020-5934+(nist.gov)",true,"AV:L/AC:H/Au:S/C:C/I:P/A:N/E:U/RL:U/RC:C/CDP:LM/TD:M/CR:H/IR:H/AR:H","CVSS:2.0"]]
+vector=[["CVSS:4.0",true,"CVSS:4.0/AV:P/AC:L/AT:N/PR:N/UI:N/VC:H/VI:L/VA:L/SC:H/SI:H/SA:H","CVSS:4.0","CVSS:4.0/AV:P/AC:L/AT:N/PR:N/UI:N/VC:H/VI:L/VA:L/SC:H/SI:H/SA:L"],["3.1+2020-5934+(nist.gov)",true,"CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:H/I:L/A:H/E:F/RL:U/RC:R","CVSS:3.1"],["2.0+2020-5934+(nist.gov)",true,"AV:L/AC:H/Au:S/C:C/I:P/A:N/E:U/RL:U/RC:C/CDP:LM/TD:M/CR:H/IR:H/AR:H","CVSS:2.0"]]
 ```
 
 #### open
