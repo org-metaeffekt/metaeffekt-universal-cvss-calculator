@@ -2,10 +2,20 @@
   "name": "ae-cvss-calculator",
   "version": "1.0.0",
   "description": "A CVSS vector modeling and score calculation implementation for all CVSS versions by {metæffekt}.",
-  "main": "index.js",
+  "main": "dist/ae-cvss-calculator.js",
+  "types": "dist/types/src/index.d.ts",
+  "homepage": "https://www.metaeffekt.com/security/cvss/calculator",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/org-metaeffekt/metaeffekt-universal-cvss-calculator"
+  },
+  "bugs": {
+    "url": "https://github.com/org-metaeffekt/metaeffekt-universal-cvss-calculator/issues"
+  },
   "scripts": {
     "build": "webpack",
     "postbuild": "node add-license.js",
+    "pack": "webpack && npm pack",
     "test": "jest"
   },
   "keywords": [
@@ -25,5 +35,11 @@
     "typescript": "^5.2.2",
     "webpack": "^5.89.0",
     "webpack-cli": "^5.1.4"
-  }
+  },
+  "files": [
+    "package.json",
+    "README.md",
+    "LICENSE",
+    "dist/*"
+  ]
 }
