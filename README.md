@@ -9,6 +9,12 @@ different versions simultaneously. It is implemented in TypeScript and can be us
 
 ## TypeScript Library
 
+Available on NPM as [ae-cvss-calculator](https://www.npmjs.com/package/ae-cvss-calculator) and installable via:
+
+```bash
+npm install ae-cvss-calculator
+```
+
 See [README.md](ae-cvss-calculator/README.md) in the `ae-cvss-calculator` directory for instructions on how to build and
 use the library.
 
