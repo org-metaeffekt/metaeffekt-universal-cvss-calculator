@@ -9,24 +9,28 @@ This project implements the following versions of the CVSS standard by FIRST:
 - [CVSS:3.1 - https://www.first.org/cvss/v3.1/specification-document](https://www.first.org/cvss/v3.1/specification-document)
 - [CVSS:4.0 - https://www.first.org/cvss/v4.0/specification-document](https://www.first.org/cvss/v4.0/specification-document)
 
-Also:
+Available on NPM as [ae-cvss-calculator](https://www.npmjs.com/package/ae-cvss-calculator) and installable via:
 
-- View the related {metæffekt} CVSS Calculator
-  ([official online version](https://www.metaeffekt.com/security/cvss/calculator/index.html?vector=%5B%5B%22CVSS%3A4.0%22%2Ctrue%2C%22CVSS%3A4.0%2FAV%3AP%2FAC%3AL%2FAT%3AN%2FPR%3AN%2FUI%3AN%2FVC%3AH%2FVI%3AL%2FVA%3AL%2FSC%3AH%2FSI%3AH%2FSA%3AH%22%2C%22CVSS%3A4.0%22%5D%2C%5B%223.1+2020-5934+%28nist.gov%29%22%2Ctrue%2C%22CVSS%3A3.1%2FAV%3AN%2FAC%3AL%2FPR%3AL%2FUI%3AN%2FS%3AC%2FC%3AH%2FI%3AL%2FA%3AH%2FE%3AF%2FRL%3AU%2FRC%3AR%22%2C%22CVSS%3A3.1%22%5D%2C%5B%222.0+2020-5934+%28nist.gov%29%22%2Ctrue%2C%22AV%3AL%2FAC%3AH%2FAu%3AS%2FC%3AC%2FI%3AP%2FA%3AN%2FE%3AU%2FRL%3AU%2FRC%3AC%2FCDP%3ALM%2FTD%3AM%2FCR%3AH%2FIR%3AH%2FAR%3AH%22%2C%22CVSS%3A2.0%22%5D%5D&open=temporal&selected=3.1+2020-5934+%28nist.gov%29)),
-  that allows to calculate CVSS scores for multiple CVSS vectors of
-  different versions simultaneously.
-- See the [build section](#build) for instructions on how to build the library.
+```bash
+npm install ae-cvss-calculator
+```
+
+View the {metæffekt} CVSS Calculator
+([official online version](https://www.metaeffekt.com/security/cvss/calculator/index.html?vector=%5B%5B%22CVSS%3A4.0%22%2Ctrue%2C%22CVSS%3A4.0%2FAV%3AP%2FAC%3AL%2FAT%3AN%2FPR%3AN%2FUI%3AN%2FVC%3AH%2FVI%3AL%2FVA%3AL%2FSC%3AH%2FSI%3AH%2FSA%3AH%22%2C%22CVSS%3A4.0%22%5D%2C%5B%223.1+2020-5934+%28nist.gov%29%22%2Ctrue%2C%22CVSS%3A3.1%2FAV%3AN%2FAC%3AL%2FPR%3AL%2FUI%3AN%2FS%3AC%2FC%3AH%2FI%3AL%2FA%3AH%2FE%3AF%2FRL%3AU%2FRC%3AR%22%2C%22CVSS%3A3.1%22%5D%2C%5B%222.0+2020-5934+%28nist.gov%29%22%2Ctrue%2C%22AV%3AL%2FAC%3AH%2FAu%3AS%2FC%3AC%2FI%3AP%2FA%3AN%2FE%3AU%2FRL%3AU%2FRC%3AC%2FCDP%3ALM%2FTD%3AM%2FCR%3AH%2FIR%3AH%2FAR%3AH%22%2C%22CVSS%3A2.0%22%5D%5D&open=temporal&selected=3.1+2020-5934+%28nist.gov%29)),
+that allows to calculate CVSS scores for multiple CVSS vectors of different versions simultaneously.
 
 ### Usage
 
 The CVSS versions are implemented in the following classes:
 
-- [Cvss2.ts](src/cvss2/Cvss2.ts)
-- [Cvss3P0.ts](src/cvss3p0/Cvss3P0.ts)
-- [Cvss3P1.ts](src/cvss3p1/Cvss3P1.ts)
-- [Cvss4P0.ts](src/cvss4p0/Cvss4P0.ts)
+- [Cvss2.ts](https://github.com/org-metaeffekt/metaeffekt-universal-cvss-calculator/blob/master/ae-cvss-calculator/src/cvss2/Cvss2.ts)
+- [Cvss3P0.ts](https://github.com/org-metaeffekt/metaeffekt-universal-cvss-calculator/blob/master/ae-cvss-calculator/src/cvss3p0/Cvss3P0.ts)
+- [Cvss3P1.ts](https://github.com/org-metaeffekt/metaeffekt-universal-cvss-calculator/blob/master/ae-cvss-calculator/src/cvss3p1/Cvss3P1.ts)
+- [Cvss4P0.ts](https://github.com/org-metaeffekt/metaeffekt-universal-cvss-calculator/blob/master/ae-cvss-calculator/src/cvss4p0/Cvss4P0.ts)
 
-They all inherit base functionality from the [CvssVector.ts](src/CvssVector.ts) class.
+They all inherit base functionality from the
+[CvssVector.ts](https://github.com/org-metaeffekt/metaeffekt-universal-cvss-calculator/blob/master/ae-cvss-calculator/src/CvssVector.ts)
+class.
 
 #### Usage V4.0
 
