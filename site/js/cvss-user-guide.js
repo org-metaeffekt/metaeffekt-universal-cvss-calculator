@@ -16,6 +16,7 @@
 
 const cvssUserGuideData = {
     'CVSS:2.0': {},
+
     'CVSS:3.1': {
         'AV': {
             'type': 'question',
@@ -286,7 +287,86 @@ const cvssUserGuideData = {
                     'description': 'There is either no solution available or it is impossible to apply.'
                 }
             }
+        },
+        'CR': {
+            'type': 'question',
+            'question': 'How important is it to protect the confidentiality of information in the affected component?',
+            'options': {
+                'Not Defined': {
+                    'type': 'metric',
+                    'metric': 'X',
+                    'description': 'There is not enough information to determine the importance of confidentiality protection, so this option is neutral and does not impact the overall score.'
+                },
+                'Low': {
+                    'type': 'metric',
+                    'metric': 'L',
+                    'description': 'Confidentiality is of low importance, and loss of confidentiality would likely have a limited adverse effect on the organization or individuals.'
+                },
+                'Medium': {
+                    'type': 'metric',
+                    'metric': 'M',
+                    'description': 'Confidentiality is of medium importance, and loss of confidentiality could have a serious adverse effect on the organization or individuals.'
+                },
+                'High': {
+                    'type': 'metric',
+                    'metric': 'H',
+                    'description': 'Confidentiality is of high importance, and loss of confidentiality would likely have a catastrophic adverse effect on the organization or individuals.'
+                }
+            }
+        },
+        'IR': {
+            'type': 'question',
+            'question': 'How important is it to maintain the integrity of information in the affected component?',
+            'options': {
+                'Not Defined': {
+                    'type': 'metric',
+                    'metric': 'X',
+                    'description': 'There is not enough information to determine the importance of integrity protection, so this option is neutral and does not impact the overall score.'
+                },
+                'Low': {
+                    'type': 'metric',
+                    'metric': 'L',
+                    'description': 'Integrity is of low importance, and loss of integrity would likely have a limited adverse effect on the organization or individuals.'
+                },
+                'Medium': {
+                    'type': 'metric',
+                    'metric': 'M',
+                    'description': 'Integrity is of medium importance, and loss of integrity could have a serious adverse effect on the organization or individuals.'
+                },
+                'High': {
+                    'type': 'metric',
+                    'metric': 'H',
+                    'description': 'Integrity is of high importance, and loss of integrity would likely have a catastrophic adverse effect on the organization or individuals.'
+                }
+            }
+        },
+        'AR': {
+            'type': 'question',
+            'question': 'How important is it to maintain the availability of the affected component?',
+            'options': {
+                'Not Defined': {
+                    'type': 'metric',
+                    'metric': 'X',
+                    'description': 'There is not enough information to determine the importance of availability, so this option is neutral and does not impact the overall score.'
+                },
+                'Low': {
+                    'type': 'metric',
+                    'metric': 'L',
+                    'description': 'Availability is of low importance, and loss of availability would likely have a limited adverse effect on the organization or individuals.'
+                },
+                'Medium': {
+                    'type': 'metric',
+                    'metric': 'M',
+                    'description': 'Availability is of medium importance, and loss of availability could have a serious adverse effect on the organization or individuals.'
+                },
+                'High': {
+                    'type': 'metric',
+                    'metric': 'H',
+                    'description': 'Availability is of high importance, and loss of availability would likely have a catastrophic adverse effect on the organization or individuals.'
+                }
+            }
         }
+
     },
 
     "CVSS:4.0": {
@@ -579,6 +659,33 @@ const cvssUserGuideData = {
     }
 }
 
+copyCvssUserGuide('CVSS:3.1', 'AV', 'MAV');
+copyCvssUserGuide('CVSS:3.1', 'AC', 'MAC');
+copyCvssUserGuide('CVSS:3.1', 'UI', 'MUI');
+copyCvssUserGuide('CVSS:3.1', 'PR', 'MPR');
+copyCvssUserGuide('CVSS:3.1', 'S', 'MS');
+copyCvssUserGuide('CVSS:3.1', 'C', 'MC');
+copyCvssUserGuide('CVSS:3.1', 'I', 'MI');
+copyCvssUserGuide('CVSS:3.1', 'A', 'MA');
+
+copyCvssUserGuide('CVSS:4.0', 'AV', 'MAV');
+copyCvssUserGuide('CVSS:4.0', 'AC', 'MAC');
+copyCvssUserGuide('CVSS:4.0', 'AT', 'MAT');
+copyCvssUserGuide('CVSS:4.0', 'UI', 'MUI');
+copyCvssUserGuide('CVSS:4.0', 'PR', 'MPR');
+copyCvssUserGuide('CVSS:4.0', 'VC', 'MVC');
+copyCvssUserGuide('CVSS:4.0', 'VI', 'MVI');
+copyCvssUserGuide('CVSS:4.0', 'VA', 'MVA');
+copyCvssUserGuide('CVSS:4.0', 'SC', 'MSC');
+copyCvssUserGuide('CVSS:4.0', 'SI', 'MSI');
+copyCvssUserGuide('CVSS:4.0', 'SA', 'MSA');
+
+function copyCvssUserGuide(cvssVersion, metric, newMetric) {
+    if (cvssUserGuideData[cvssVersion] && cvssUserGuideData[cvssVersion][metric]) {
+        cvssUserGuideData[cvssVersion][newMetric] = cvssUserGuideData[cvssVersion][metric];
+    }
+}
+
 function findCvssUserGuide(version, metric) {
     if (cvssUserGuideData[version] && cvssUserGuideData[version][metric]) {
         return cvssUserGuideData[version][metric];
@@ -596,58 +703,64 @@ Answer the following questions to determine the value of the <b>${component.name
 `;
 
     function createQuestionContent(questionData, container) {
-        if (questionData.type === 'question') {
-            const questionDiv = document.createElement('h5');
-            questionDiv.innerText = questionData.question;
-            questionDiv.classList.add('mt-4')
-            container.appendChild(questionDiv);
+        try {
+            if (questionData.type === 'question') {
+                const questionDiv = document.createElement('h5');
+                questionDiv.innerText = questionData.question;
+                questionDiv.classList.add('mt-4')
+                container.appendChild(questionDiv);
 
-            Object.entries(questionData.options).forEach(([optionText, nextQuestion]) => {
-                if (nextQuestion.type === 'metric') {
-                    const card = document.createElement('div');
-                    card.classList.add('card', 'm-2');
-                    card.style.cursor = 'pointer';
+                Object.entries(questionData.options).forEach(([optionText, nextQuestion]) => {
+                    if (nextQuestion.type === 'metric') {
+                        const card = document.createElement('div');
+                        card.classList.add('card', 'm-2');
+                        card.style.cursor = 'pointer';
 
-                    const cardBody = document.createElement('div');
-                    cardBody.classList.add('card-body');
+                        const cardBody = document.createElement('div');
+                        cardBody.classList.add('card-body');
 
-                    const cardTitle = document.createElement('h5');
-                    cardTitle.classList.add('card-title');
-                    cardTitle.innerText = optionText + ' (' + nextQuestion.metric + ')';
+                        const cardTitle = document.createElement('h5');
+                        cardTitle.classList.add('card-title');
+                        cardTitle.innerText = optionText + ' (' + nextQuestion.metric + ')';
 
-                    const cardText = document.createElement('p');
-                    cardText.classList.add('card-text');
-                    cardText.innerText = `${nextQuestion.description}`;
+                        const cardText = document.createElement('p');
+                        cardText.classList.add('card-text');
+                        cardText.innerText = `${nextQuestion.description}`;
 
-                    card.onclick = () => applyMetric(nextQuestion);
+                        card.onclick = () => applyMetric(nextQuestion);
 
-                    cardBody.appendChild(cardTitle);
-                    cardBody.appendChild(cardText);
-                    card.appendChild(cardBody);
-                    container.appendChild(card);
-                } else {
-                    const card = document.createElement('div');
-                    card.classList.add('card', 'm-2');
-                    card.style.cursor = 'pointer';
+                        cardBody.appendChild(cardTitle);
+                        cardBody.appendChild(cardText);
+                        card.appendChild(cardBody);
+                        container.appendChild(card);
+                    } else {
+                        const card = document.createElement('div');
+                        card.classList.add('card', 'm-2');
+                        card.style.cursor = 'pointer';
 
-                    const cardBody = document.createElement('div');
-                    cardBody.classList.add('card-body');
+                        const cardBody = document.createElement('div');
+                        cardBody.classList.add('card-body');
 
-                    const cardTitle = document.createElement('h5');
-                    cardTitle.classList.add('card-title', 'mb-0');
-                    cardTitle.innerText = optionText;
+                        const cardTitle = document.createElement('h5');
+                        cardTitle.classList.add('card-title', 'mb-0');
+                        cardTitle.innerText = optionText;
 
-                    card.onclick = () => {
-                        disableAllButtons(container);
-                        createQuestionContent(nextQuestion, container);
-                        card.classList.add('bg-primary', 'text-white');
-                    };
+                        card.onclick = () => {
+                            disableAllButtons(container);
+                            createQuestionContent(nextQuestion, container);
+                            card.classList.add('bg-primary', 'text-white');
+                        };
 
-                    cardBody.appendChild(cardTitle);
-                    card.appendChild(cardBody);
-                    container.appendChild(card);
-                }
-            });
+                        cardBody.appendChild(cardTitle);
+                        card.appendChild(cardBody);
+                        container.appendChild(card);
+                    }
+                });
+            }
+        } catch (e) {
+            console.error(e);
+            // error toast
+            createBootstrapToast('Error in User Guide data', 'Failed to load the User Guide data for this attribute.', 'error');
         }
     }
 
