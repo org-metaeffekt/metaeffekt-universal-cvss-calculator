@@ -1,6 +1,40 @@
-# {metæffekt} CVSS Calculator
+<div align="center">
+	<h1>{metæffekt} CVSS Calculator</h1>
+    <a href="https://www.npmjs.com/package/ae-cvss-calculator"><img src="https://img.shields.io/npm/dm/ae-cvss-calculator?style=for-the-badge&label=npm%20downloads" alt="Weekly NPM downloads"></a>
+	<img src="https://img.shields.io/github/license/org-metaeffekt/metaeffekt-universal-cvss-calculator?style=for-the-badge" alt="License Apache-2">
+</div>
 
-## TypeScript Library
+<br>
+
+The {metæffekt} CVSS Calculator supports all versions of the CVSS standard by FIRST to model CVSS vectors and calculate
+their scores.
+It consists of the following components:
+
+<table>
+  <tr>
+    <td align="center">
+      <b>TypeScript Library</b>
+    </td>
+    <td align="center">
+      <b>UI</b>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      Supports CVSS versions 2.0, 3.0, 3.1 and 4.0.
+      Available on NPM as <a target="_blank" href="https://www.npmjs.com/package/ae-cvss-calculator">ae-cvss-calculator</a> and installable via:
+      <pre>npm install ae-cvss-calculator</pre>
+    </td>
+    <td>
+      <p>
+        The calculator is available on <a target="_blank" href="https://www.metaeffekt.com/security/cvss/calculator/index.html?vector=%5B%5B%22CVSS%3A4.0%22%2Ctrue%2C%22CVSS%3A4.0%2FAV%3AP%2FAC%3AL%2FAT%3AN%2FPR%3AN%2FUI%3AN%2FVC%3AH%2FVI%3AL%2FVA%3AL%2FSC%3AH%2FSI%3AH%2FSA%3AH%22%2C%22CVSS%3A4.0%22%5D%2C%5B%223.1+2020-5934+%28nist.gov%29%22%2Ctrue%2C%22CVSS%3A3.1%2FAV%3AN%2FAC%3AL%2FPR%3AL%2FUI%3AN%2FS%3AC%2FC%3AH%2FI%3AL%2FA%3AH%2FE%3AF%2FRL%3AU%2FRC%3AR%22%2C%22CVSS%3A3.1%22%5D%2C%5B%222.0+2020-5934+%28nist.gov%29%22%2Ctrue%2C%22AV%3AL%2FAC%3AH%2FAu%3AS%2FC%3AC%2FI%3AP%2FA%3AN%2FE%3AU%2FRL%3AU%2FRC%3AC%2FCDP%3ALM%2FTD%3AM%2FCR%3AH%2FIR%3AH%2FAR%3AH%22%2C%22CVSS%3A2.0%22%5D%5D&open=temporal&selected=3.1+2020-5934+%28nist.gov%29">our webpage</a> for you to try out and link from your applications.
+        The source code can be found in the <a href="https://github.com/org-metaeffekt/metaeffekt-universal-cvss-calculator/tree/master/site">site</a> directory.
+      </p>
+    </td>
+  </tr>
+</table>
+
+## Installation
 
 This project implements the following versions of the CVSS standard by FIRST:
 
@@ -15,11 +49,7 @@ Available on NPM as [ae-cvss-calculator](https://www.npmjs.com/package/ae-cvss-c
 npm install ae-cvss-calculator
 ```
 
-View the {metæffekt} CVSS Calculator
-([official online version](https://www.metaeffekt.com/security/cvss/calculator/index.html?vector=%5B%5B%22CVSS%3A4.0%22%2Ctrue%2C%22CVSS%3A4.0%2FAV%3AP%2FAC%3AL%2FAT%3AN%2FPR%3AN%2FUI%3AN%2FVC%3AH%2FVI%3AL%2FVA%3AL%2FSC%3AH%2FSI%3AH%2FSA%3AH%22%2C%22CVSS%3A4.0%22%5D%2C%5B%223.1+2020-5934+%28nist.gov%29%22%2Ctrue%2C%22CVSS%3A3.1%2FAV%3AN%2FAC%3AL%2FPR%3AL%2FUI%3AN%2FS%3AC%2FC%3AH%2FI%3AL%2FA%3AH%2FE%3AF%2FRL%3AU%2FRC%3AR%22%2C%22CVSS%3A3.1%22%5D%2C%5B%222.0+2020-5934+%28nist.gov%29%22%2Ctrue%2C%22AV%3AL%2FAC%3AH%2FAu%3AS%2FC%3AC%2FI%3AP%2FA%3AN%2FE%3AU%2FRL%3AU%2FRC%3AC%2FCDP%3ALM%2FTD%3AM%2FCR%3AH%2FIR%3AH%2FAR%3AH%22%2C%22CVSS%3A2.0%22%5D%5D&open=temporal&selected=3.1+2020-5934+%28nist.gov%29)),
-that allows to calculate CVSS scores for multiple CVSS vectors of different versions simultaneously.
-
-### Usage
+## Usage
 
 The CVSS versions are implemented in the following classes:
 
@@ -28,9 +58,10 @@ The CVSS versions are implemented in the following classes:
 - [Cvss3P1.ts](https://github.com/org-metaeffekt/metaeffekt-universal-cvss-calculator/blob/master/ae-cvss-calculator/src/cvss3p1/Cvss3P1.ts)
 - [Cvss4P0.ts](https://github.com/org-metaeffekt/metaeffekt-universal-cvss-calculator/blob/master/ae-cvss-calculator/src/cvss4p0/Cvss4P0.ts)
 
-They all inherit base functionality from the
-[CvssVector.ts](https://github.com/org-metaeffekt/metaeffekt-universal-cvss-calculator/blob/master/ae-cvss-calculator/src/CvssVector.ts)
-class.
+![](dependency-graph.png)
+
+A couple of examples, using the methods that can construct and modify vectors and calculate the several
+different CVSS scores:
 
 #### Usage V4.0
 
