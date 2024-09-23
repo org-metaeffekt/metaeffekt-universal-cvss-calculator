@@ -50,6 +50,10 @@ npm install ae-cvss-calculator
 See [README.md](ae-cvss-calculator/README.md) in the `ae-cvss-calculator` directory for instructions on how to build and
 use the library.
 
+See
+[our CVSS 4.0 implementation documentation](https://github.com/org-metaeffekt/metaeffekt-documentation/blob/main/metaeffekt-vulnerability-management/other-topics/security/cvss-4.0-calculation.md)
+to learn more about the specifics of our implementation and CVSS 4.0 in general.
+
 ## UI
 
 - A UI implementation can be found in the [site](site) directory.
