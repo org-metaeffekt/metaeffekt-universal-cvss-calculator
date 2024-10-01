@@ -633,3 +633,13 @@ body {
         transform: rotate(0deg);
     }
 }
+
+.popover-danger .popover-header {
+    background-color: var(--bs-danger) !important;
+    color: var(--bs-light) !important;
+}
+
+.popover-danger .popover-body {
+    background-color: #fdd7d7 !important;
+    color: var(--bs-dark) !important;
+}

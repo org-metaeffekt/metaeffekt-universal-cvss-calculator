@@ -1351,6 +1351,9 @@ window.addEventListener('resize', () => {
     abbreviationResizeTimeout = setTimeout(updateAbbreaviatableComponentElements, 500);
 });
 
+// by default, the base category user guides are only shown if the vector is empty upon selection
+let forceUserGuidesVisible = false;
+
 function setSelectedVector(vectorInstance) {
     selectedVector = vectorInstance;
     // now build the accordion
@@ -1375,6 +1378,9 @@ function setSelectedVector(vectorInstance) {
     for (let componentCategory of registeredComponents.keys()) {
         const componentCategoryName = componentCategory.name;
         const componentsList = registeredComponents.get(componentCategory);
+
+        // by default, show on non-base metrics or on all if the vector base metrics are empty
+        const showUserGuides = forceUserGuidesVisible || componentCategory.name !== 'base' || !vectorInstance.isBaseFullyDefined();
 
         const queryMap = new Map();
         queryMap.set(componentCategory, componentsList);
@@ -1462,40 +1468,58 @@ function setSelectedVector(vectorInstance) {
 
                     // find all user guides in this componentsList
                     if (isFirst) {
-                        const userGuides = [];
-                        for (let component of componentsList) {
-                            const userGuide = findCvssUserGuide(vectorInstance.getVectorName(), component.shortName);
-                            if (userGuide) {
-                                userGuides.push({
-                                    userGuide: userGuide,
-                                    component: component
+                        if (showUserGuides) {
+                            const userGuides = [];
+                            for (let component of componentsList) {
+                                const userGuide = findCvssUserGuide(vectorInstance.getVectorName(), component.shortName);
+                                if (userGuide) {
+                                    userGuides.push({
+                                        userGuide: userGuide,
+                                        component: component
+                                    });
+                                }
+                            }
+
+                            if (userGuides.length > 0) {
+                                const userGuideButton = document.createElement('i');
+                                userGuideButton.classList.add('position-absolute', 'bi', 'bi-question-circle-fill', 'text-secondary', 'user-guide-group');
+                                userGuideButton.setAttribute('data-bs-toggle', 'popover');
+                                userGuideButton.setAttribute('data-bs-placement', 'right');
+                                userGuideButton.setAttribute('data-bs-content', 'Click to open a multiple-choice dialog to select the correct values for the metrics in this group.');
+                                userGuideButton.setAttribute('title', 'User Guide: all ' + componentCategoryName + ' metrics');
+                                userGuideButton.setAttribute('data-bs-trigger', 'hover');
+                                accordionBody.appendChild(userGuideButton);
+
+                                userGuideButton.addEventListener('click', () => {
+                                    let index = 0;
+
+                                    function openNextUserGuideModal() {
+                                        if (index < userGuides.length) {
+                                            openUserGuideModal(vectorInstance, userGuides[index].component, userGuides[index].userGuide, openNextUserGuideModal);
+                                            index++;
+                                        }
+                                    }
+
+                                    openNextUserGuideModal();
                                 });
                             }
-                        }
-
-                        if (userGuides.length > 0) {
+                        } else {
+                            // add a dummy icon with a hint that user guides are available
                             const userGuideButton = document.createElement('i');
-                            userGuideButton.classList.add('position-absolute', 'bi', 'bi-question-circle-fill', 'text-secondary', 'user-guide-group');
+                            userGuideButton.classList.add('position-absolute', 'bi', 'bi-question-circle', 'text-danger', 'user-guide-group');
                             userGuideButton.setAttribute('data-bs-toggle', 'popover');
                             userGuideButton.setAttribute('data-bs-placement', 'right');
-                            userGuideButton.setAttribute('data-bs-content', 'Click to open a multiple-choice dialog to select the correct values for the metrics in this group.');
-                            userGuideButton.setAttribute('title', 'User Guide: all ' + componentCategoryName + ' metrics');
+                            userGuideButton.setAttribute('data-bs-content', 'Base metrics that are already defined should not be modified by an assessment team. User guides are disabled for that reason, but can be forced by clicking this button.');
+                            userGuideButton.setAttribute('title', 'User Guide disabled');
                             userGuideButton.setAttribute('data-bs-trigger', 'hover');
+                            userGuideButton.setAttribute('data-bs-custom-class', 'popover-danger');
                             accordionBody.appendChild(userGuideButton);
 
+                            // allow overriding the default behavior of showing user guides if the vector is empty using forceUserGuidesVisible
                             userGuideButton.addEventListener('click', () => {
-                                let index = 0;
-
-                                function openNextUserGuideModal() {
-                                    if (index < userGuides.length) {
-                                        openUserGuideModal(vectorInstance, userGuides[index].component, userGuides[index].userGuide, openNextUserGuideModal);
-                                        index++;
-                                    }
-                                }
-
-                                openNextUserGuideModal();
+                                forceUserGuidesVisible = !forceUserGuidesVisible;
+                                setSelectedVector(selectedVector);
                             });
-
                         }
                     }
                 }
@@ -1506,7 +1530,7 @@ function setSelectedVector(vectorInstance) {
 
                 // user guide button if available
                 const userGuide = findCvssUserGuide(vectorInstance.getVectorName(), component.shortName);
-                if (userGuide) {
+                if (userGuide && showUserGuides) {
                     const userGuideButton = document.createElement('i');
                     userGuideButton.classList.add('position-absolute', 'bi', 'bi-question-circle', 'text-secondary', 'user-guide-individual');
                     userGuideButton.setAttribute('data-bs-toggle', 'popover');
@@ -2159,7 +2183,7 @@ function loadDemo() {
 
 setTimeout(() => {
     const currentHtmlVersion = document.getElementById('cvss-calculator-current-version').innerText;
-    if (currentHtmlVersion !== '1.0.17') {
+    if (currentHtmlVersion !== '1.0.18') {
         createBootstrapToast('New version available', 'A new version of the CVSS Calculator is available. Please refresh the page to load the new version or clear the cache.', 'info', 10 * 1000);
     }
     const changelogBody = document.getElementById('cvss-calculator-changelog-body');
