@@ -136,8 +136,14 @@ export class Cvss4P0 extends CvssVector<SingleScoreResult> {
         } else if (adjustedOriginalMacroVectorScore > 10) {
             return 10.0;
         } else {
-            return parseFloat(adjustedOriginalMacroVectorScore.toFixed(1));
+            return this.roundToDecimalPlaces(adjustedOriginalMacroVectorScore);
         }
+    }
+
+    private readonly ROUNDING_EPSILON = Math.pow(10, -6);
+
+    private roundToDecimalPlaces(value: number) {
+        return Math.round((value + this.ROUNDING_EPSILON) * 10) / 10;
     }
 
     private generateCvssPermutations(

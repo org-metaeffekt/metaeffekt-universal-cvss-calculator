@@ -76,9 +76,9 @@ describe('Cvss4P0', () => {
         expect(cvss.calculateOverallScore()).toEqual(1.6);
     });
 
-    it('should evaluate to 212021 with score 0.9 (toFixed(1) rounding check)', () => {
+    it('should evaluate to 212021 with score 1.0 (toFixed(1) and EPSILON rounding check)', () => {
         const cvss = new Cvss4P0("CVSS:4.0/AV:P/AC:H/AT:P/PR:L/UI:P/VC:L/VI:L/VA:L/SC:H/SI:L/SA:L/S:P/R:I/U:Red/MAT:P/MPR:N/MUI:P/MVC:N/MVI:L/MVA:L/MSC:L/MSI:L/MSA:S/IR:M/AR:H/E:U");
         expect(cvss.getMacroVector().toString()).toEqual("212021");
-        expect(cvss.calculateOverallScore()).toEqual(0.9);
+        expect(cvss.calculateOverallScore()).toEqual(1.0);
     });
 });
