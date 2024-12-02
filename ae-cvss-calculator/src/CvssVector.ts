@@ -109,6 +109,10 @@ export abstract class CvssVector<R extends BaseScoreResult> {
 
     public abstract fillRandomBaseVector(): void;
 
+    public abstract isBaseFullyDefined(): boolean
+
+    public abstract isAnyBaseDefined(): boolean
+
     public clearComponents() {
         this.getRegisteredComponents().forEach((components, category) => {
             components.forEach(component => this.components.set(component, component.values[0]));
@@ -143,8 +147,13 @@ export abstract class CvssVector<R extends BaseScoreResult> {
     }
 
     public applyVector(vector: string) {
+        this.applyVectorCount(vector);
+    }
+
+    public applyVectorCount(vector: string): number {
         const normalizedVector = this.normalizeVector(vector);
         const components = normalizedVector.split('/');
+        let appliedParts = 0;
         components.forEach(component => {
             if (component.length === 0) {
                 return;
@@ -155,8 +164,10 @@ export abstract class CvssVector<R extends BaseScoreResult> {
                 return;
             }
             this.applyComponentString(identifier, value, false);
+            appliedParts++;
         });
         this.vectorChangedListeners.forEach(listener => listener(this));
+        return appliedParts;
     }
 
     public applyComponentString(setComponent: string, setValue: string, notifyListeners = true) {
@@ -176,11 +187,74 @@ export abstract class CvssVector<R extends BaseScoreResult> {
         }
     }
 
+    public applyComponentStringSilent(setComponent: string, setValue: string, notifyListeners = true): boolean {
+        try {
+            this.applyComponentString(setComponent, setValue, notifyListeners);
+            return true;
+        } catch (error) {
+            return false;
+        }
+    }
+
     public applyComponent(setComponent: VectorComponent<VectorComponentValue>, setValue: VectorComponentValue, notifyListeners = true) {
         this.components.set(setComponent, setValue);
         if (notifyListeners) {
             this.vectorChangedListeners.forEach(listener => listener(this));
         }
+    }
+
+    protected applyVectorPartsIf(vector: string, scoreType: (vector: CvssVector<R>) => number, lower: boolean): number {
+        if (!vector) return 0;
+
+        const normalizedVector = this.normalizeVector(vector);
+        if (normalizedVector.length === 0) return 0;
+
+        const args = normalizedVector.split('/');
+        let appliedPartsCount = 0;
+
+        for (const argument of args) {
+            if (!argument) continue;
+            const parts = argument.split(':', 2);
+
+            const clone = this.clone();
+
+            const currentScore = scoreType(clone);
+
+            if (parts.length === 2) {
+                clone.applyComponentStringSilent(parts[0], parts[1]);
+                const newScore = scoreType(clone);
+
+                if (lower) {
+                    if (newScore <= currentScore) {
+                        appliedPartsCount += this.applyComponentStringSilent(parts[0], parts[1]) ? 1 : 0;
+                    }
+                } else {
+                    if (newScore >= currentScore) {
+                        appliedPartsCount += this.applyComponentStringSilent(parts[0], parts[1]) ? 1 : 0;
+                    }
+                }
+            } else {
+                console.warn('Unknown vector argument:', argument);
+            }
+        }
+
+        return appliedPartsCount;
+    }
+
+    public applyVectorPartsIfLower(vector: string, scoreType: (vector: CvssVector<R>) => number): number {
+        return this.applyVectorPartsIf(vector, scoreType, true);
+    }
+
+    public applyVectorPartsIfHigher(vector: string, scoreType: (vector: CvssVector<R>) => number): number {
+        return this.applyVectorPartsIf(vector, scoreType, false);
+    }
+
+    public applyVectorPartsIfLowerVector(vector: CvssVector<R>, scoreType: (vector: CvssVector<R>) => number): number {
+        return this.applyVectorPartsIf(vector.toString(), scoreType, true);
+    }
+
+    public applyVectorPartsIfHigherVector(vector: CvssVector<R>, scoreType: (vector: CvssVector<R>) => number): number {
+        return this.applyVectorPartsIf(vector.toString(), scoreType, false);
     }
 
     public getComponent<T extends VectorComponentValue>(component: VectorComponent<T>): T {
