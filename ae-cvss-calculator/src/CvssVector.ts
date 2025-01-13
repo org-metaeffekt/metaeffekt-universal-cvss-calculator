@@ -163,22 +163,28 @@ export abstract class CvssVector<R extends BaseScoreResult> {
                 console.warn('Invalid component/value pair', component);
                 return;
             }
-            this.applyComponentString(identifier, value, false);
-            appliedParts++;
+            if (this.applyComponentString(identifier, value, false)) {
+                appliedParts++;
+            }
         });
         this.vectorChangedListeners.forEach(listener => listener(this));
         return appliedParts;
     }
 
-    public applyComponentString(setComponent: string, setValue: string, notifyListeners = true) {
+    public applyComponentString(setComponent: string, setValue: string, notifyListeners = true): boolean {
         const componentType = this.findComponent(setComponent);
         if (componentType) {
             const componentValue = componentType.values.find(value => value.name === setValue || value.shortName === setValue);
             if (componentValue) {
+                if (this.components.get(componentType) === componentValue) {
+                    return false;
+                }
                 this.applyComponent(componentType, componentValue);
                 if (notifyListeners) {
                     this.vectorChangedListeners.forEach(listener => listener(this));
                 }
+
+                return true;
             } else {
                 throw new Error(`Unknown component value ${setValue} for component ${setComponent}`);
             }
@@ -189,8 +195,7 @@ export abstract class CvssVector<R extends BaseScoreResult> {
 
     public applyComponentStringSilent(setComponent: string, setValue: string, notifyListeners = true): boolean {
         try {
-            this.applyComponentString(setComponent, setValue, notifyListeners);
-            return true;
+            return this.applyComponentString(setComponent, setValue, notifyListeners);
         } catch (error) {
             return false;
         }
@@ -304,6 +309,10 @@ export abstract class CvssVector<R extends BaseScoreResult> {
             }
         }
         return this.getVectorPrefix() + result.slice(0, -1);
+    }
+
+    public toStringDefinedParts(): string {
+        return this.toString(false, this.getRegisteredComponents(), true);
     }
 
     protected isCategoryFullyDefined(category: ComponentCategory): boolean {
