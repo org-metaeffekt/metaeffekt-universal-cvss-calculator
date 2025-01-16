@@ -53,11 +53,12 @@ export class Cvss2 extends CvssVector<MultiScoreResult> {
         }
     }
 
-    calculateScores(normalize: boolean = false): MultiScoreResult {
+    protected calculateScoresInternal(normalize: boolean = false): MultiScoreResult {
         const baseFullyDefined = this.isBaseFullyDefined();
         const temporalAnyDefined = this.isAnyTemporalDefined();
         const environmentalAnyDefined = this.isAnyEnvironmentalDefined();
         return {
+            normalized: normalize,
             base: baseFullyDefined ? super.round(this.calculateExactBaseScore(), 1) : undefined,
             impact: baseFullyDefined ? super.round(this.calculateExactImpactScore(), 1) : undefined,
             exploitability: baseFullyDefined ? super.round(this.calculateExactExploitabilityScore(), 1) : undefined,

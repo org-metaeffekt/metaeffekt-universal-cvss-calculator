@@ -66,8 +66,9 @@ export class Cvss4P0 extends CvssVector<SingleScoreResult> {
         }
     }
 
-    calculateScores(normalize: boolean = false): SingleScoreResult {
+    protected calculateScoresInternal(normalize: boolean = false): SingleScoreResult {
         return {
+            normalized: normalize,
             overall: this.calculateOverallScore(),
             vector: this.toString()
         };

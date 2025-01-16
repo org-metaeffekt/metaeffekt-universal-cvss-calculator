@@ -82,4 +82,16 @@ describe('Cvss3P1', () => {
         expect(makeNanFromUndefined(result.modifiedImpact)).toEqual(NaN);
         expect(makeNanFromUndefined(result.overall)).toEqual(0.0);
     });
+
+    it('should evaluate vector correctly to: CVSS:3.1/AV:L/AC:H/PR:L/UI:N/S:C/C:H/I:H/A:H', () => {
+        const cvss = new Cvss3P1("CVSS:3.1/AV:L/AC:H/PR:L/UI:N/S:C/C:H/I:H/A:H");
+        const result = cvss.calculateScores(true);
+        expect(makeNanFromUndefined(result.base)).toEqual(7.8);
+        expect(makeNanFromUndefined(result.impact)).toEqual(10.0);
+        expect(makeNanFromUndefined(result.exploitability)).toEqual(2.8);
+        expect(makeNanFromUndefined(result.temporal)).toEqual(NaN);
+        expect(makeNanFromUndefined(result.environmental)).toEqual(NaN);
+        expect(makeNanFromUndefined(result.modifiedImpact)).toEqual(NaN);
+        expect(makeNanFromUndefined(result.overall)).toEqual(7.8);
+    });
 });

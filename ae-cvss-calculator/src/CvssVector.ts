@@ -53,6 +53,7 @@ export interface ComponentCategory {
 export interface BaseScoreResult {
     readonly vector: string;
     readonly overall: number;
+    readonly normalized: boolean;
 }
 
 export interface MultiScoreResult extends BaseScoreResult {
@@ -67,9 +68,30 @@ export interface MultiScoreResult extends BaseScoreResult {
 export interface SingleScoreResult extends BaseScoreResult {
 }
 
+class CachedVectorScores<R extends BaseScoreResult> {
+    protected vector: string;
+    protected normalize: boolean;
+    protected scores: R;
+
+    constructor(vector: string, normalize: boolean, scores: R) {
+        this.vector = vector;
+        this.normalize = normalize;
+        this.scores = scores;
+    }
+
+    public isUpToDate(vector: string, normalize: boolean): boolean {
+        return this.vector === vector && this.normalize === normalize;
+    }
+
+    public getScores(): R {
+        return this.scores;
+    }
+}
+
 export abstract class CvssVector<R extends BaseScoreResult> {
     protected components: Map<VectorComponent<VectorComponentValue>, VectorComponentValue>;
     protected vectorChangedListeners: ((vector: CvssVector<R>) => void)[] = [];
+    protected cachedScores: CachedVectorScores<R> | undefined;
 
     protected constructor(initialVector?: string) {
         this.components = new Map();
@@ -80,7 +102,19 @@ export abstract class CvssVector<R extends BaseScoreResult> {
         }
     }
 
-    public abstract calculateScores(normalize: boolean): R;
+    public calculateScores(normalize: boolean = false): R {
+        const vectorString = this.toString(true);
+
+        if (this.cachedScores && this.cachedScores.isUpToDate(vectorString, normalize)) {
+            return this.cachedScores.getScores();
+        }
+
+        const scores = this.calculateScoresInternal(normalize);
+        this.cachedScores = new CachedVectorScores(vectorString, normalize, scores);
+        return scores;
+    }
+
+    protected abstract calculateScoresInternal(normalize: boolean): R;
 
     public abstract getVectorPrefix(): string;
 

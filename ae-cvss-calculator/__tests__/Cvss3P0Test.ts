@@ -63,7 +63,7 @@ describe('Cvss3P0', () => {
         });
     }
 
-    it('should evaluate vector correctly to: CVSS:3.1/AV:L/AC:L/PR:H/UI:N/S:C/C:L/I:H/A:L/E:H/MAC:H/MPR:N/MUI:N/MC:N/MI:N/MA:N/IR:M 0.0 7.3 5.3 1.5 7.3 0.0 0.0', () => {
+    it('should evaluate vector correctly to: CVSS:3.0/AV:L/AC:L/PR:H/UI:N/S:C/C:L/I:H/A:L/E:H/MAC:H/MPR:N/MUI:N/MC:N/MI:N/MA:N/IR:M', () => {
         const cvss = new Cvss3P0("CVSS:3.0/AV:L/AC:L/PR:H/UI:N/S:C/C:L/I:H/A:L/E:H/MAC:H/MPR:N/MUI:N/MC:N/MI:N/MA:N/IR:M");
         const result = cvss.calculateScores();
         expect(makeNanFromUndefined(result.base)).toEqual(7.3);
@@ -75,7 +75,7 @@ describe('Cvss3P0', () => {
         expect(makeNanFromUndefined(result.overall)).toEqual(0.0);
     });
 
-    it('should evaluate vector correctly to: CVSS:3.1/AV:P/AC:H/PR:H/UI:N/S:C/C:N/I:N/A:N', () => {
+    it('should evaluate vector correctly to: CVSS:3.0/AV:P/AC:H/PR:H/UI:N/S:C/C:N/I:N/A:N', () => {
         const cvss = new Cvss3P0("CVSS:3.0/AV:P/AC:H/PR:H/UI:N/S:C/C:N/I:N/A:N");
         const result = cvss.calculateScores();
         expect(makeNanFromUndefined(result.base)).toEqual(0.0);
