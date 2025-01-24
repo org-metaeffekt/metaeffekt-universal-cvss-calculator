@@ -289,11 +289,11 @@ export abstract class CvssVector<R extends BaseScoreResult> {
     }
 
     public applyVectorPartsIfLowerVector(vector: CvssVector<R>, scoreType: (vector: CvssVector<R>) => number): number {
-        return this.applyVectorPartsIf(vector.toString(), scoreType, true);
+        return this.applyVectorPartsIf(vector.toStringDefinedParts(), scoreType, true);
     }
 
     public applyVectorPartsIfHigherVector(vector: CvssVector<R>, scoreType: (vector: CvssVector<R>) => number): number {
-        return this.applyVectorPartsIf(vector.toString(), scoreType, false);
+        return this.applyVectorPartsIf(vector.toStringDefinedParts(), scoreType, false);
     }
 
     public getComponent<T extends VectorComponentValue>(component: VectorComponent<T>): T {

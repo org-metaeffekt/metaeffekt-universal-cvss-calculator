@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {Cvss2} from "../src";
+import { Cvss2, Cvss3P1 } from "../src";
 
 import fs from "fs";
 
@@ -71,4 +71,13 @@ describe('Cvss2', () => {
         expect(makeNanFromUndefined(result.modifiedImpact)).toEqual(1.4);
         expect(makeNanFromUndefined(result.overall)).toEqual(-0.1);
     });
+
+    it("should only apply the lower vector parts AV:N/AC:L/Au:N/C:C/I:C/A:C + AV:A", () => {
+        const base = new Cvss2("AV:N/AC:L/Au:N/C:C/I:C/A:C");
+        const applyLower = new Cvss2("AV:A");
+
+        base.applyVectorPartsIfLowerVector(applyLower, vector => vector.calculateScores(false).overall);
+
+        expect(base.toStringDefinedParts()).toEqual("AV:A/AC:L/Au:N/C:C/I:C/A:C")
+    })
 });
