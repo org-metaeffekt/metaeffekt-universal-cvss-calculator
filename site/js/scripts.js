@@ -1509,7 +1509,7 @@ function setSelectedVector(vectorInstance) {
                             userGuideButton.classList.add('position-absolute', 'bi', 'bi-question-circle', 'text-danger', 'user-guide-group');
                             userGuideButton.setAttribute('data-bs-toggle', 'popover');
                             userGuideButton.setAttribute('data-bs-placement', 'right');
-                            userGuideButton.setAttribute('data-bs-content', 'Base metrics that are already defined should not be modified during assessment. Instead, the temporal and environmental metric groups should be used to contextualize the . User guides are disabled for that reason, but can be forced by clicking this button.');
+                            userGuideButton.setAttribute('data-bs-content', 'Base metrics that are already defined should not be modified during assessment. Instead, the temporal and environmental metric groups should be used to contextualize the provided vector. User guides are disabled for that reason, but can be forced by clicking this button.');
                             userGuideButton.setAttribute('title', 'User Guide disabled');
                             userGuideButton.setAttribute('data-bs-trigger', 'hover');
                             userGuideButton.setAttribute('data-bs-custom-class', 'popover-danger');
