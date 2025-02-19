@@ -2150,6 +2150,40 @@ document.addEventListener('blur', () => {
     }
 });
 
+// check for option/alt key with up/down arrow key to select the next/previous vector
+document.addEventListener('keydown', (event) => {
+    if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+        if (event.altKey) {
+            let currentIndex = -1;
+            for (let i = 0; i < cvssVectors.length; i++) {
+                if (cvssVectors[i].cvssInstance === selectedVector) {
+                    currentIndex = i;
+                    break;
+                }
+            }
+
+            if (currentIndex === -1) {
+                return;
+            }
+
+            let nextIndex = currentIndex;
+            if (event.key === 'ArrowUp') {
+                nextIndex--;
+            } else if (event.key === 'ArrowDown') {
+                nextIndex++;
+            }
+
+            if (nextIndex < 0) {
+                nextIndex = cvssVectors.length - 1;
+            } else if (nextIndex >= cvssVectors.length) {
+                nextIndex = 0;
+            }
+
+            setSelectedVector(cvssVectors[nextIndex].cvssInstance);
+        }
+    }
+});
+
 // load page
 
 updateTooltip(document.body);
@@ -2183,7 +2217,7 @@ function loadDemo() {
 
 setTimeout(() => {
     const currentHtmlVersion = document.getElementById('cvss-calculator-current-version').innerText;
-    if (currentHtmlVersion !== '1.0.19') {
+    if (currentHtmlVersion !== '1.0.20') {
         createBootstrapToast('New version available', 'A new version of the CVSS Calculator is available. Please refresh the page to load the new version or clear the cache.', 'info', 10 * 1000);
     }
     const changelogBody = document.getElementById('cvss-calculator-changelog-body');

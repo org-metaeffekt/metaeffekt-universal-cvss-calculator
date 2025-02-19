@@ -311,13 +311,20 @@ body {
 .cvss-active-selection .btn:first-child {
     box-shadow: 10px 0 10px -3px #ffffff57 inset;
     border-left: none;
-
 }
 
-.cvss-active-selection .btn:nth-child(2) {
+.cvss-active-selection {
+    box-shadow: 0 0 0 2px rgba(144, 166, 180, 0.7);
+}
+
+/*.cvss-active-selection .btn:nth-child(2) {
+    text-decoration: underline;
+}*/
+
+/*.cvss-active-selection .btn:nth-child(2) {
     border-top-width: 4px;
     border-bottom-width: 4px;
-}
+}*/
 
 @media (min-width: 1400px) {
     .container, .container-lg, .container-md, .container-sm, .container-xl, .container-xxl {
@@ -543,7 +550,6 @@ body {
 .cvss-component-button {
     position: relative;
     height: 1.7rem;
-
 }
 
 .cvss-component-button .button-text {
