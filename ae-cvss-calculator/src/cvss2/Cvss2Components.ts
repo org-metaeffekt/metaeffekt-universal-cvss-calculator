@@ -13,7 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { ComponentCategory, NumberVectorComponentValue, VectorComponent, VectorComponentValue } from "../CvssVector";
+import {
+    ComponentCategory,
+    CvssVector,
+    NumberVectorComponentValue,
+    VectorComponent,
+    VectorComponentValue
+} from "../CvssVector";
 
 export class Cvss2Components {
     public static readonly BASE_CATEGORY: ComponentCategory = {
@@ -722,4 +728,68 @@ export class Cvss2Components {
         Cvss2Components.REGISTERED_COMPONENTS.set(Cvss2Components.TEMPORAL_CATEGORY, Cvss2Components.TEMPORAL_CATEGORY_VALUES);
         Cvss2Components.REGISTERED_COMPONENTS.set(Cvss2Components.ENVIRONMENTAL_CATEGORY, Cvss2Components.ENVIRONMENTAL_CATEGORY_VALUES);
     }
+
+    public static readonly ATTRIBUTE_SEVERITY_ORDER: VectorComponentValue[][] = CvssVector._reorderAttributeSeverityOrder([
+        Cvss2Components.AC_VALUES.ND,
+        Cvss2Components.AV_VALUES.ND,
+        Cvss2Components.Au_VALUES.ND,
+        Cvss2Components.C_VALUES.ND,
+        Cvss2Components.I_VALUES.ND,
+        Cvss2Components.A_VALUES.ND,
+        Cvss2Components.C_VALUES.N,
+        Cvss2Components.I_VALUES.N,
+        Cvss2Components.A_VALUES.N,
+        Cvss2Components.CDP_VALUES.N,
+        Cvss2Components.CDP_VALUES.ND,
+        Cvss2Components.TD_VALUES.N,
+        Cvss2Components.CDP_VALUES.L,
+        Cvss2Components.TD_VALUES.L,
+        Cvss2Components.C_VALUES.P,
+        Cvss2Components.I_VALUES.P,
+        Cvss2Components.A_VALUES.P,
+        Cvss2Components.CDP_VALUES.LM,
+        Cvss2Components.AC_VALUES.H,
+        Cvss2Components.AV_VALUES.L,
+        Cvss2Components.CDP_VALUES.MH,
+        Cvss2Components.Au_VALUES.M,
+        Cvss2Components.CDP_VALUES.H,
+        Cvss2Components.Au_VALUES.S,
+        Cvss2Components.AC_VALUES.M,
+        Cvss2Components.AV_VALUES.A,
+        Cvss2Components.C_VALUES.C,
+        Cvss2Components.I_VALUES.C,
+        Cvss2Components.A_VALUES.C,
+        Cvss2Components.Au_VALUES.N,
+        Cvss2Components.AC_VALUES.L,
+        Cvss2Components.TD_VALUES.M,
+        Cvss2Components.E_VALUES.U,
+        Cvss2Components.RL_VALUES.OF,
+        Cvss2Components.E_VALUES.POC,
+        Cvss2Components.RL_VALUES.TF,
+        Cvss2Components.RL_VALUES.W,
+        Cvss2Components.RC_VALUES.UC,
+        Cvss2Components.AV_VALUES.N,
+        Cvss2Components.E_VALUES.F,
+        Cvss2Components.E_VALUES.H,
+        Cvss2Components.E_VALUES.ND,
+        Cvss2Components.RL_VALUES.U,
+        Cvss2Components.RL_VALUES.ND,
+        Cvss2Components.RC_VALUES.UR,
+        Cvss2Components.RC_VALUES.C,
+        Cvss2Components.RC_VALUES.ND,
+        Cvss2Components.TD_VALUES.H,
+        Cvss2Components.TD_VALUES.ND,
+        Cvss2Components.CR_VALUES.L,
+        Cvss2Components.CR_VALUES.M,
+        Cvss2Components.IR_VALUES.L,
+        Cvss2Components.IR_VALUES.M,
+        Cvss2Components.AR_VALUES.L,
+        Cvss2Components.AR_VALUES.M,
+        Cvss2Components.CR_VALUES.ND,
+        Cvss2Components.IR_VALUES.ND,
+        Cvss2Components.AR_VALUES.ND,
+        Cvss2Components.CR_VALUES.H,
+        Cvss2Components.IR_VALUES.H,
+        Cvss2Components.AR_VALUES.H
+    ]);
 }

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {ComponentCategory, VectorComponent, VectorComponentValue} from "../CvssVector";
+import { ComponentCategory, CvssVector, VectorComponent, VectorComponentValue } from "../CvssVector";
 
 export class Cvss4P0Components {
 
@@ -1511,4 +1511,119 @@ export class Cvss4P0Components {
         "212211": 0.3,
         "212221": 0.1
     };
+
+    public static readonly ATTRIBUTE_SEVERITY_ORDER: VectorComponentValue[][] = CvssVector._reorderAttributeSeverityOrder([
+        Cvss4P0Components.AT_VALUES.P,
+        Cvss4P0Components.AT_VALUES.N,
+        Cvss4P0Components.AT_VALUES.X,
+
+        Cvss4P0Components.S_VALUES.X,
+        Cvss4P0Components.S_VALUES.N,
+        Cvss4P0Components.S_VALUES.P,
+
+        Cvss4P0Components.AU_VALUES.X,
+        Cvss4P0Components.AU_VALUES.N,
+        Cvss4P0Components.AU_VALUES.Y,
+
+        Cvss4P0Components.V_VALUES.X,
+        Cvss4P0Components.V_VALUES.D,
+        Cvss4P0Components.V_VALUES.C,
+
+        Cvss4P0Components.AC_VALUES.H,
+        Cvss4P0Components.AC_VALUES.L,
+        Cvss4P0Components.AC_VALUES.X,
+
+        Cvss4P0Components.PR_VALUES.H,
+        Cvss4P0Components.PR_VALUES.L,
+        Cvss4P0Components.PR_VALUES.N,
+        Cvss4P0Components.PR_VALUES.X,
+
+        Cvss4P0Components.UI_VALUES.A,
+        Cvss4P0Components.UI_VALUES.P,
+        Cvss4P0Components.UI_VALUES.N,
+        Cvss4P0Components.UI_VALUES.X,
+
+        Cvss4P0Components.VULNERABLE_SYSTEM_CONFIDENTIALITY_BASE_VALUES.X,
+        Cvss4P0Components.VULNERABLE_SYSTEM_CONFIDENTIALITY_BASE_VALUES.N,
+        Cvss4P0Components.VULNERABLE_SYSTEM_CONFIDENTIALITY_BASE_VALUES.L,
+        Cvss4P0Components.VULNERABLE_SYSTEM_CONFIDENTIALITY_BASE_VALUES.H,
+        Cvss4P0Components.VULNERABLE_SYSTEM_INTEGRITY_BASE_VALUES.X,
+        Cvss4P0Components.VULNERABLE_SYSTEM_INTEGRITY_BASE_VALUES.N,
+        Cvss4P0Components.VULNERABLE_SYSTEM_INTEGRITY_BASE_VALUES.L,
+        Cvss4P0Components.VULNERABLE_SYSTEM_INTEGRITY_BASE_VALUES.H,
+        Cvss4P0Components.VULNERABLE_SYSTEM_AVAILABILITY_BASE_VALUES.X,
+        Cvss4P0Components.VULNERABLE_SYSTEM_AVAILABILITY_BASE_VALUES.N,
+        Cvss4P0Components.VULNERABLE_SYSTEM_AVAILABILITY_BASE_VALUES.L,
+        Cvss4P0Components.VULNERABLE_SYSTEM_AVAILABILITY_BASE_VALUES.H,
+
+        Cvss4P0Components.SUBSEQUENT_SYSTEM_CONFIDENTIALITY_MODIFIED_VALUES.X, // Cvss4P0Components.ModifiedSubsequentConfidentiality.NOT_DEFINED
+        Cvss4P0Components.SUBSEQUENT_SYSTEM_INTEGRITY_MODIFIED_VALUES.X, // Cvss4P0Components.ModifiedSubsequentIntegrityAvailability.NOT_DEFINED (double 1)
+        Cvss4P0Components.SUBSEQUENT_SYSTEM_AVAILABILITY_MODIFIED_VALUES.X, // Cvss4P0Components.ModifiedSubsequentIntegrityAvailability.NOT_DEFINED (double 2)
+        Cvss4P0Components.SUBSEQUENT_SYSTEM_CONFIDENTIALITY_BASE_VALUES.X, // Cvss4P0Components.SubsequentCia.NOT_DEFINED (triple 1)
+        Cvss4P0Components.SUBSEQUENT_SYSTEM_INTEGRITY_BASE_VALUES.X, // Cvss4P0Components.SubsequentCia.NOT_DEFINED (triple 2)
+        Cvss4P0Components.SUBSEQUENT_SYSTEM_AVAILABILITY_BASE_VALUES.X, // Cvss4P0Components.SubsequentCia.NOT_DEFINED (triple 3)
+        Cvss4P0Components.SUBSEQUENT_SYSTEM_CONFIDENTIALITY_MODIFIED_VALUES.N,
+        Cvss4P0Components.SUBSEQUENT_SYSTEM_INTEGRITY_MODIFIED_VALUES.N,
+        Cvss4P0Components.SUBSEQUENT_SYSTEM_AVAILABILITY_MODIFIED_VALUES.N,
+        Cvss4P0Components.SUBSEQUENT_SYSTEM_CONFIDENTIALITY_BASE_VALUES.N,
+        Cvss4P0Components.SUBSEQUENT_SYSTEM_INTEGRITY_BASE_VALUES.N,
+        Cvss4P0Components.SUBSEQUENT_SYSTEM_AVAILABILITY_BASE_VALUES.N,
+        Cvss4P0Components.SUBSEQUENT_SYSTEM_CONFIDENTIALITY_MODIFIED_VALUES.L,
+        Cvss4P0Components.SUBSEQUENT_SYSTEM_INTEGRITY_MODIFIED_VALUES.L,
+        Cvss4P0Components.SUBSEQUENT_SYSTEM_AVAILABILITY_MODIFIED_VALUES.L,
+        Cvss4P0Components.SUBSEQUENT_SYSTEM_CONFIDENTIALITY_BASE_VALUES.L,
+        Cvss4P0Components.SUBSEQUENT_SYSTEM_INTEGRITY_BASE_VALUES.L,
+        Cvss4P0Components.SUBSEQUENT_SYSTEM_AVAILABILITY_BASE_VALUES.L,
+        Cvss4P0Components.SUBSEQUENT_SYSTEM_CONFIDENTIALITY_MODIFIED_VALUES.H,
+        Cvss4P0Components.SUBSEQUENT_SYSTEM_INTEGRITY_MODIFIED_VALUES.H,
+        Cvss4P0Components.SUBSEQUENT_SYSTEM_AVAILABILITY_MODIFIED_VALUES.H,
+        Cvss4P0Components.SUBSEQUENT_SYSTEM_CONFIDENTIALITY_BASE_VALUES.H,
+        Cvss4P0Components.SUBSEQUENT_SYSTEM_INTEGRITY_BASE_VALUES.H,
+        Cvss4P0Components.SUBSEQUENT_SYSTEM_AVAILABILITY_BASE_VALUES.H,
+        Cvss4P0Components.SUBSEQUENT_SYSTEM_INTEGRITY_MODIFIED_VALUES.S,
+        Cvss4P0Components.SUBSEQUENT_SYSTEM_AVAILABILITY_MODIFIED_VALUES.S,
+        Cvss4P0Components.SUBSEQUENT_SYSTEM_CONFIDENTIALITY_BASE_VALUES.S,
+        Cvss4P0Components.SUBSEQUENT_SYSTEM_INTEGRITY_BASE_VALUES.S,
+        Cvss4P0Components.SUBSEQUENT_SYSTEM_AVAILABILITY_BASE_VALUES.S,
+
+        Cvss4P0Components.REQUIREMENT_CONFIDENTIALITY_MODIFIED_VALUES.L,
+        Cvss4P0Components.REQUIREMENT_INTEGRITY_MODIFIED_VALUES.L,
+        Cvss4P0Components.REQUIREMENT_AVAILABILITY_MODIFIED_VALUES.L,
+        Cvss4P0Components.REQUIREMENT_CONFIDENTIALITY_MODIFIED_VALUES.M,
+        Cvss4P0Components.REQUIREMENT_INTEGRITY_MODIFIED_VALUES.M,
+        Cvss4P0Components.REQUIREMENT_AVAILABILITY_MODIFIED_VALUES.M,
+        Cvss4P0Components.REQUIREMENT_CONFIDENTIALITY_MODIFIED_VALUES.H,
+        Cvss4P0Components.REQUIREMENT_INTEGRITY_MODIFIED_VALUES.H,
+        Cvss4P0Components.REQUIREMENT_AVAILABILITY_MODIFIED_VALUES.H,
+        Cvss4P0Components.REQUIREMENT_CONFIDENTIALITY_MODIFIED_VALUES.X,
+        Cvss4P0Components.REQUIREMENT_INTEGRITY_MODIFIED_VALUES.X,
+        Cvss4P0Components.REQUIREMENT_AVAILABILITY_MODIFIED_VALUES.X,
+
+        Cvss4P0Components.E_VALUES.U,
+        Cvss4P0Components.E_VALUES.P,
+        Cvss4P0Components.E_VALUES.A,
+        Cvss4P0Components.E_VALUES.X,
+
+        Cvss4P0Components.R_VALUES.X,
+        Cvss4P0Components.R_VALUES.A,
+        Cvss4P0Components.R_VALUES.U,
+        Cvss4P0Components.R_VALUES.I,
+
+        Cvss4P0Components.RE_VALUES.X,
+        Cvss4P0Components.RE_VALUES.L,
+        Cvss4P0Components.RE_VALUES.M,
+        Cvss4P0Components.RE_VALUES.H,
+
+        Cvss4P0Components.U_VALUES.X,
+        Cvss4P0Components.U_VALUES.Clear,
+        Cvss4P0Components.U_VALUES.Green,
+        Cvss4P0Components.U_VALUES.Amber,
+        Cvss4P0Components.U_VALUES.Red,
+
+        Cvss4P0Components.AV_VALUES.X,
+        Cvss4P0Components.AV_VALUES.P,
+        Cvss4P0Components.AV_VALUES.L,
+        Cvss4P0Components.AV_VALUES.A,
+        Cvss4P0Components.AV_VALUES.N,
+    ]);
 }

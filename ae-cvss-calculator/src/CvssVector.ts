@@ -157,7 +157,7 @@ export abstract class CvssVector<R extends BaseScoreResult> {
         this.vectorChangedListeners.push(listener);
     }
 
-    protected normalizeVector(vector: string): string {
+    normalizeVector(vector: string): string {
         return vector
             .replace(/\(/g, '')
             .replace(/\)/g, '')
@@ -242,6 +242,8 @@ export abstract class CvssVector<R extends BaseScoreResult> {
         }
     }
 
+    // SECTION: apply by score change
+
     protected applyVectorPartsIf(vector: string, scoreType: (vector: CvssVector<R>) => number, lower: boolean): number {
         if (!vector) return 0;
 
@@ -296,6 +298,8 @@ export abstract class CvssVector<R extends BaseScoreResult> {
         return this.applyVectorPartsIf(vector.toStringDefinedParts(), scoreType, false);
     }
 
+    // SECTION: other access methods
+
     public getComponent<T extends VectorComponentValue>(component: VectorComponent<T>): T {
         const componentValue = this.components.get(component);
         if (!componentValue) {
@@ -314,6 +318,14 @@ export abstract class CvssVector<R extends BaseScoreResult> {
             throw new Error(`Unknown component: ${component}`);
         }
         return componentValue;
+    }
+
+    public getComponentByStringOpt(component: string): VectorComponentValue | null {
+        try {
+            return this.getComponentByString(component);
+        } catch (e) {
+            return null;
+        }
     }
 
     public size(): number {
@@ -467,5 +479,14 @@ export abstract class CvssVector<R extends BaseScoreResult> {
 
     protected isComponentValueDefined(component: VectorComponentValue | undefined): boolean {
         return component !== undefined && component.shortName !== 'ND' && component.shortName !== 'X';
+    }
+
+    static _reorderAttributeSeverityOrder(attributes: VectorComponentValue[]) {
+        // check if there is only one key. if so, take each single one value from that one key and add it as a new key with the index as key
+        const newAttributes: VectorComponentValue[][] = [];
+        attributes.forEach((value, index) => {
+            newAttributes.push([value]);
+        });
+        return newAttributes;
     }
 }

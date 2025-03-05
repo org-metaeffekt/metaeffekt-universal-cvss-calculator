@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 export {CvssVector} from './CvssVector';
+export * from './CvssVectorUtilities';
 export {Cvss2} from './cvss2/Cvss2';
 export {Cvss3P1} from './cvss3p1/Cvss3P1';
 export {Cvss3P0} from './cvss3p0/Cvss3P0';

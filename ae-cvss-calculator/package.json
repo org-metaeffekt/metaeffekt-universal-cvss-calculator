@@ -15,8 +15,9 @@
   "scripts": {
     "build": "webpack",
     "postbuild": "node add-license.js",
-    "pack": "webpack && npm pack",
-    "test": "jest"
+    "pack": "npm run test && npm run build && npm pack && npx madge --image dependency-graph.png --extensions ts ./src",
+    "test": "npm run dependency-test && jest",
+    "dependency-test": "npx madge --circular --extensions ts ./src"
   },
   "keywords": [
     "cvss",

@@ -724,6 +724,7 @@ export class Cvss3P0Components {
             shortName: 'N',
             value: 0.85,
             name: 'Network',
+            abbreviatedName: 'Netw.',
             jsonSchemaName: 'NETWORK',
             description: 'The vulnerable component is bound to the network stack and the set of possible attackers extends beyond the other options listed below, up to and including the entire Internet.'
         },
@@ -906,6 +907,7 @@ export class Cvss3P0Components {
             shortName: 'U',
             value: false,
             name: 'Unchanged',
+            abbreviatedName: 'Unchang.',
             jsonSchemaName: 'UNCHANGED',
             description: 'An exploited vulnerability can only affect resources managed by the same authority.'
         },
@@ -993,4 +995,77 @@ export class Cvss3P0Components {
         Cvss3P0Components.REGISTERED_COMPONENTS.set(Cvss3P0Components.TEMPORAL_CATEGORY, Cvss3P0Components.TEMPORAL_CATEGORY_VALUES);
         Cvss3P0Components.REGISTERED_COMPONENTS.set(Cvss3P0Components.ENVIRONMENTAL_CATEGORY, Cvss3P0Components.ENVIRONMENTAL_CATEGORY_VALUES);
     }
+
+    public static readonly ATTRIBUTE_SEVERITY_ORDER: VectorComponentValue[][] = [
+        [Cvss3P0Components.S_VALUES.U, Cvss3P0Components.MS_VALUES.U],
+        [
+            Cvss3P0Components.CONFIDENTIALITY_IMPACT_VALUES.N,
+            Cvss3P0Components.INTEGRITY_IMPACT_VALUES.N,
+            Cvss3P0Components.AVAILABILITY_IMPACT_VALUES.N,
+        ],
+        [Cvss3P0Components.AV_VALUES.P, Cvss3P0Components.MAV_VALUES.P],
+        [
+            Cvss3P0Components.CONFIDENTIALITY_IMPACT_VALUES.L,
+            Cvss3P0Components.INTEGRITY_IMPACT_VALUES.L,
+            Cvss3P0Components.AVAILABILITY_IMPACT_VALUES.L,
+        ],
+        [Cvss3P0Components.PR_VALUES.H, Cvss3P0Components.MPR_VALUES.H],
+        [Cvss3P0Components.AC_VALUES.H, Cvss3P0Components.MAC_VALUES.H],
+        [
+            Cvss3P0Components.CONFIDENTIALITY_REQUIREMENT_VALUES.L,
+            Cvss3P0Components.INTEGRITY_REQUIREMENT_VALUES.L,
+            Cvss3P0Components.AVAILABILITY_REQUIREMENT_VALUES.L,
+        ],
+        [Cvss3P0Components.AV_VALUES.L, Cvss3P0Components.MAV_VALUES.L],
+        [
+            Cvss3P0Components.CONFIDENTIALITY_IMPACT_VALUES.H,
+            Cvss3P0Components.INTEGRITY_IMPACT_VALUES.H,
+            Cvss3P0Components.AVAILABILITY_IMPACT_VALUES.H,
+        ],
+        [Cvss3P0Components.AV_VALUES.A, Cvss3P0Components.MAV_VALUES.A],
+        [Cvss3P0Components.UI_VALUES.R, Cvss3P0Components.MUI_VALUES.R],
+        [Cvss3P0Components.PR_VALUES.L, Cvss3P0Components.MPR_VALUES.L],
+        [Cvss3P0Components.AC_VALUES.L, Cvss3P0Components.MAC_VALUES.L],
+        [Cvss3P0Components.AV_VALUES.N, Cvss3P0Components.MAV_VALUES.N],
+        [Cvss3P0Components.PR_VALUES.N, Cvss3P0Components.MPR_VALUES.N],
+        [Cvss3P0Components.UI_VALUES.N, Cvss3P0Components.MUI_VALUES.N],
+        [Cvss3P0Components.E_VALUES.U],
+        [Cvss3P0Components.E_VALUES.P],
+        [Cvss3P0Components.E_VALUES.F],
+        [Cvss3P0Components.E_VALUES.H],
+        [Cvss3P0Components.E_VALUES.X],
+        [Cvss3P0Components.RC_VALUES.U],
+        [Cvss3P0Components.RL_VALUES.O],
+        [Cvss3P0Components.RL_VALUES.T],
+        [Cvss3P0Components.RC_VALUES.R],
+        [Cvss3P0Components.RL_VALUES.W],
+        [Cvss3P0Components.AV_VALUES.X, Cvss3P0Components.MAV_VALUES.X],
+        [Cvss3P0Components.AC_VALUES.X, Cvss3P0Components.MAC_VALUES.X],
+        [Cvss3P0Components.PR_VALUES.X, Cvss3P0Components.MPR_VALUES.X],
+        [Cvss3P0Components.UI_VALUES.X, Cvss3P0Components.MUI_VALUES.X],
+        [Cvss3P0Components.S_VALUES.C, Cvss3P0Components.MS_VALUES.C],
+        [Cvss3P0Components.S_VALUES.X, Cvss3P0Components.MS_VALUES.X],
+        [Cvss3P0Components.CONFIDENTIALITY_IMPACT_VALUES.X],
+        [Cvss3P0Components.INTEGRITY_IMPACT_VALUES.X],
+        [Cvss3P0Components.AVAILABILITY_IMPACT_VALUES.X],
+        [Cvss3P0Components.RL_VALUES.U],
+        [Cvss3P0Components.RL_VALUES.X],
+        [Cvss3P0Components.RC_VALUES.C],
+        [Cvss3P0Components.RC_VALUES.X],
+        [
+            Cvss3P0Components.CONFIDENTIALITY_REQUIREMENT_VALUES.M,
+            Cvss3P0Components.INTEGRITY_REQUIREMENT_VALUES.M,
+            Cvss3P0Components.AVAILABILITY_REQUIREMENT_VALUES.M
+        ],
+        [
+            Cvss3P0Components.CONFIDENTIALITY_REQUIREMENT_VALUES.X,
+            Cvss3P0Components.INTEGRITY_REQUIREMENT_VALUES.X,
+            Cvss3P0Components.AVAILABILITY_REQUIREMENT_VALUES.X
+        ],
+        [
+            Cvss3P0Components.CONFIDENTIALITY_REQUIREMENT_VALUES.H,
+            Cvss3P0Components.INTEGRITY_REQUIREMENT_VALUES.H,
+            Cvss3P0Components.AVAILABILITY_REQUIREMENT_VALUES.H
+        ],
+    ];
 }
