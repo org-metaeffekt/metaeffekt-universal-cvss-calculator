@@ -109,6 +109,20 @@ describe('CvssVectorTest', () => {
             "CVSS:3.1/E:H/RL:U/RC:C", "CVSS:3.1/E:X/RL:X/RC:X",
             "CVSS:3.1/E:H/RL:U/RC:C",
             "CVSS:3.1/");
+
+        // equal parts
+        assertPartsLowerHigherApplied("CVSS:3.1/AV:N", "CVSS:3.1/MAV:N",
+            "CVSS:3.1/AV:N/MAV:N",
+            "CVSS:3.1/AV:N/MAV:N"
+        );
+        assertPartsLowerHigherApplied("CVSS:3.1/C:L", "CVSS:3.1/MC:L",
+            "CVSS:3.1/C:L/MC:L",
+            "CVSS:3.1/C:L/MC:L"
+        );
+        assertPartsLowerHigherApplied("CVSS:3.1/PR:L", "CVSS:3.1/MPR:L",
+            "CVSS:3.1/PR:L/MPR:L",
+            "CVSS:3.1/PR:L/MPR:L"
+        );
     });
 
     it('applyPartsIfMetricV30Test', () => {
@@ -165,6 +179,20 @@ describe('CvssVectorTest', () => {
             "CVSS:3.0/E:H/RL:U/RC:C", "CVSS:3.0/E:X/RL:X/RC:X",
             "CVSS:3.0/E:H/RL:U/RC:C",
             "CVSS:3.0/");
+
+        // equal parts
+        assertPartsLowerHigherApplied("CVSS:3.0/AV:N", "CVSS:3.0/MAV:N",
+            "CVSS:3.0/AV:N/MAV:N",
+            "CVSS:3.0/AV:N/MAV:N"
+        );
+        assertPartsLowerHigherApplied("CVSS:3.0/C:L", "CVSS:3.0/MC:L",
+            "CVSS:3.0/C:L/MC:L",
+            "CVSS:3.0/C:L/MC:L"
+        );
+        assertPartsLowerHigherApplied("CVSS:3.0/PR:L", "CVSS:3.0/MPR:L",
+            "CVSS:3.0/PR:L/MPR:L",
+            "CVSS:3.0/PR:L/MPR:L"
+        );
     });
 
     it('applyPartsIfMetricV4Test', () => {
@@ -199,6 +227,17 @@ describe('CvssVectorTest', () => {
             "CVSS:4.0/AV:P/AC:H/AT:N/PR:L/UI:A/VC:H/VI:H/VA:H/SC:H/SI:L/SA:H/CR:L/IR:M/AR:H",
             "CVSS:4.0/AV:P/AC:H/AT:N/PR:L/UI:A/VC:H/VI:H/VA:H/SC:H/SI:L/SA:H"
         );
+
+        // equal parts
+        assertPartsLowerHigherApplied("CVSS:4.0/AV:A", "CVSS:4.0/MAV:A",
+            "CVSS:4.0/AV:A/MAV:A",
+            "CVSS:4.0/AV:A/MAV:A"
+        );
+        assertPartsLowerHigherApplied("CVSS:4.0/SC:H", "CVSS:4.0/MSC:H",
+            "CVSS:4.0/SC:H/MSC:H",
+            "CVSS:4.0/SC:H/MSC:H"
+        );
+
         // random
         assertPartsLowerHigherApplied("CVSS:4.0/AV:L/AC:H/AT:N/PR:N/UI:P/VC:N/VI:N/VA:L/SC:N/SI:L/SA:N", "CVSS:4.0/AV:P/AC:H/AT:P/PR:L/UI:N/VC:N/VI:L/VA:L/SC:L/SI:N/SA:L",
             "CVSS:4.0/AV:P/AC:H/AT:P/PR:L/UI:P/VC:N/VI:N/VA:L/SC:N/SI:N/SA:N",
@@ -212,10 +251,12 @@ describe('CvssVectorTest', () => {
 
     function assertPartsLowerHigherApplied(originalVector: string, applyMetrics: string, expectedLower: string, expectedHigher: string) {
         const lower = fromVector(originalVector);
+        if (lower === null) throw new Error("failed to parse lower vector: " + originalVector);
         applyVectorPartsIfMetricsLower(lower, applyMetrics);
         expect(stripXValues(lower.toString())).toBe(stripXValues(expectedLower));
 
         const higher = fromVector(originalVector);
+        if (higher === null) throw new Error("failed to parse higher vector: " + originalVector);
         applyVectorPartsIfMetricsHigher(higher, applyMetrics);
         expect(stripXValues(higher.toString())).toBe(stripXValues(expectedHigher));
     }
