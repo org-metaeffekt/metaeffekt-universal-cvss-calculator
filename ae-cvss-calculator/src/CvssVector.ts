@@ -147,6 +147,10 @@ export abstract class CvssVector<R extends BaseScoreResult> {
 
     public abstract isAnyBaseDefined(): boolean
 
+    public getComponents(): Map<VectorComponent<VectorComponentValue>, VectorComponentValue> {
+        return this.components;
+    }
+
     public clearComponents() {
         this.getRegisteredComponents().forEach((components, category) => {
             components.forEach(component => this.components.set(component, component.values[0]));

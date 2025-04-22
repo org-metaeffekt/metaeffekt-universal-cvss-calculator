@@ -1,6 +1,6 @@
 {
   "name": "ae-cvss-calculator",
-  "version": "1.0.4",
+  "version": "1.0.6",
   "description": "A CVSS vector modeling and score calculation implementation for all CVSS versions by {metæffekt}.",
   "main": "dist/ae-cvss-calculator.js",
   "types": "dist/types/src/index.d.ts",
@@ -34,7 +34,7 @@
     "ts-jest": "^29.1.1",
     "ts-loader": "^9.5.0",
     "typescript": "^5.2.2",
-    "webpack": "^5.89.0",
+    "webpack": "^5.99.6",
     "webpack-cli": "^5.1.4"
   },
   "files": [
