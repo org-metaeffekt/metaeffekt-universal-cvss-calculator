@@ -13,15 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {ComponentCategory, CvssVector, SingleScoreResult, VectorComponent, VectorComponentValue} from "../CvssVector";
-import {Cvss4P0MacroVector} from "./Cvss4P0MacroVector";
-import {getEqImplementations} from "./EqOperations";
-import {Cvss4P0Components} from "./Cvss4P0Components";
-import {EQ} from "./EQ";
-import {SeverityType} from "../cvss3p1/Cvss3P1";
+import {
+    ComponentCategory,
+    CvssVector,
+    SingleScoreResult,
+    V4ScoreResult,
+    VectorComponent,
+    VectorComponentValue
+} from "../CvssVector";
+import { Cvss4P0MacroVector } from "./Cvss4P0MacroVector";
+import { getEqImplementations } from "./EqOperations";
+import { Cvss4P0Components } from "./Cvss4P0Components";
+import { EQ } from "./EQ";
+import { SeverityType } from "../cvss3p1/Cvss3P1";
 import { Cvss3P1Components } from "../cvss3p1/Cvss3P1Components";
 
-export class Cvss4P0 extends CvssVector<SingleScoreResult> {
+export class Cvss4P0 extends CvssVector<V4ScoreResult> {
 
     static {
         EQ.createCvssInstance = vector => new Cvss4P0(vector);
@@ -66,10 +73,52 @@ export class Cvss4P0 extends CvssVector<SingleScoreResult> {
         }
     }
 
-    protected calculateScoresInternal(normalize: boolean = false): SingleScoreResult {
+    protected calculateScoresInternal(normalize: boolean = false): V4ScoreResult {
+        const hasEnvironmental = this.isAnyEnvironmentalDefined();
+        const hasThreat = this.isAnyThreatDefined();
+
+        const overallScore = this.calculateOverallScore();
+
+        let baseScore: number | undefined;
+        if (hasEnvironmental || hasThreat) {
+            const vector: Cvss4P0 = this.clone() as Cvss4P0;
+            vector.clearSpecifiedComponents(Cvss4P0Components.THREAT_CATEGORY_VALUES);
+            vector.clearSpecifiedComponents(Cvss4P0Components.ENVIRONMENTAL_MODIFIED_BASE_CATEGORY_VALUES);
+            vector.clearSpecifiedComponents(Cvss4P0Components.ENVIRONMENTAL_SECURITY_REQUIREMENT_CATEGORY_VALUES);
+            baseScore = vector.calculateOverallScore();
+        } else {
+            baseScore = overallScore;
+        }
+
+        let environmentalScore: number | undefined;
+        if (hasEnvironmental) {
+            if (hasThreat) {
+                const vector: Cvss4P0 = this.clone() as Cvss4P0;
+                vector.clearSpecifiedComponents(Cvss4P0Components.THREAT_CATEGORY_VALUES);
+                environmentalScore = vector.calculateOverallScore();
+            } else {
+                environmentalScore = overallScore;
+            }
+        }
+
+        let threatScore: number | undefined;
+        if (hasThreat) {
+            if (hasEnvironmental) {
+                const vector: Cvss4P0 = this.clone() as Cvss4P0;
+                vector.clearSpecifiedComponents(Cvss4P0Components.ENVIRONMENTAL_MODIFIED_BASE_CATEGORY_VALUES);
+                vector.clearSpecifiedComponents(Cvss4P0Components.ENVIRONMENTAL_SECURITY_REQUIREMENT_CATEGORY_VALUES);
+                threatScore = vector.calculateOverallScore();
+            } else {
+                threatScore = overallScore;
+            }
+        }
+
         return {
             normalized: normalize,
-            overall: this.calculateOverallScore(),
+            overall: overallScore,
+            base: baseScore,
+            environmental: environmentalScore,
+            threat: threatScore,
             vector: this.toString()
         };
     }
@@ -300,25 +349,14 @@ export class Cvss4P0 extends CvssVector<SingleScoreResult> {
      CVSS-BTE           Base, Threat, Environmental metrics
      */
     public getNomenclature(): string {
-        const base = this.isCategoryPartiallyDefined(Cvss4P0Components.BASE_CATEGORY);
+        // const base = this.isCategoryPartiallyDefined(Cvss4P0Components.BASE_CATEGORY);
         const threat = this.isCategoryPartiallyDefined(Cvss4P0Components.THREAT_CATEGORY);
         const environmental = this.isCategoryPartiallyDefined(Cvss4P0Components.ENVIRONMENTAL_MODIFIED_BASE_CATEGORY)
             || this.isCategoryPartiallyDefined(Cvss4P0Components.ENVIRONMENTAL_SECURITY_REQUIREMENT_CATEGORY);
 
-        if (!base && !threat && !environmental) {
-            return "CVSS";
-        }
-
-        let nomenclature = "CVSS-";
-        if (base) {
-            nomenclature += "B";
-        }
-        if (threat) {
-            nomenclature += "T";
-        }
-        if (environmental) {
-            nomenclature += "E";
-        }
+        let nomenclature = "CVSS-B";
+        if (threat) nomenclature += "T";
+        if (environmental) nomenclature += "E";
 
         return nomenclature;
     }
@@ -341,6 +379,11 @@ export class Cvss4P0 extends CvssVector<SingleScoreResult> {
 
     public isAnyThreatDefined(): boolean {
         return super.isCategoryPartiallyDefined(Cvss4P0Components.THREAT_CATEGORY);
+    }
+
+    public isAnyEnvironmentalDefined(): boolean {
+        return super.isCategoryPartiallyDefined(Cvss4P0Components.ENVIRONMENTAL_MODIFIED_BASE_CATEGORY) ||
+            super.isCategoryPartiallyDefined(Cvss4P0Components.ENVIRONMENTAL_SECURITY_REQUIREMENT_CATEGORY);
     }
 
     private getJsonSchemaSeverity(score: number): SeverityType {

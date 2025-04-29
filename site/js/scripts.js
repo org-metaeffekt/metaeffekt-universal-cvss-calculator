@@ -124,7 +124,7 @@ class CvssVectorRepresentation {
                 return;
             }
             if (event.altKey || event.metaKey || event.ctrlKey || event.shiftKey) {
-                const diffVector = this.cvssInstance.diffVector(this.initialCvssInstance);
+                const diffVector = this.initialCvssInstance.diffVector(this.cvssInstance);
                 const diffVectorString = diffVector.toString(false, diffVector.getRegisteredComponents(), true);
                 if (diffVector && diffVector.size() > 0) {
                     copyText(diffVectorString, 'diff vector with ' + diffVector.size() + ' changes');
@@ -932,12 +932,14 @@ function updateScores() {
             const vectorName = vector.cvssInstance.getVectorName();
 
             if (vector.cvssInstance instanceof CvssCalculator.Cvss4P0) {
-                normalizedScores.base = normalizedScores.overall;
                 normalizedScores.impact = normalizedScores.overall;
                 normalizedScores.exploitability = normalizedScores.overall;
                 normalizedScores.modifiedImpact = normalizedScores.overall;
-                normalizedScores.temporal = normalizedScores.overall;
-                normalizedScores.environmental = normalizedScores.overall;
+                normalizedScores.temporal = normalizedScores.threat === undefined ? normalizedScores.overall : normalizedScores.threat;
+                normalizedScores.environmental = normalizedScores.environmental === undefined ? normalizedScores.overall : normalizedScores.environmental;
+
+                scores.temporal = scores.threat === undefined ? scores.overall : scores.threat;
+                scores.environmental = scores.environmental === undefined ? scores.overall : scores.environmental;
             }
 
             if (!isNotDefined(normalizedScores.overall)) {
@@ -1106,7 +1108,7 @@ Security requirements: ${securityRequirements}`;
         let hasBase = false;
         let hasImpact = false;
         let hasExploitability = false;
-        let hasTemporal = false;
+        let hasTemporalOrThreat = false;
         let hasEnvironmental = false;
         let hasModifiedImpact = false;
         for (let vector of cvssVectors) {
@@ -1115,7 +1117,7 @@ Security requirements: ${securityRequirements}`;
             if (!hasBase && scores.base !== undefined) hasBase = true;
             if (!hasImpact && scores.impact !== undefined) hasImpact = true;
             if (!hasExploitability && scores.exploitability !== undefined) hasExploitability = true;
-            if (!hasTemporal && scores.temporal !== undefined) hasTemporal = true;
+            if (!hasTemporalOrThreat && (scores.temporal !== undefined || scores.threat !== undefined)) hasTemporalOrThreat = true;
             if (!hasEnvironmental && scores.environmental !== undefined) hasEnvironmental = true;
             if (!hasModifiedImpact && scores.modifiedImpact !== undefined) hasModifiedImpact = true;
         }
@@ -1163,7 +1165,7 @@ Security requirements: ${securityRequirements}`;
         appendHeaderCellIfPresent('Base', hasBase);
         appendHeaderCellIfPresent('Impact', hasImpact);
         appendHeaderCellIfPresent('Exploitability', hasExploitability);
-        appendHeaderCellIfPresent('Temporal', hasTemporal);
+        appendHeaderCellIfPresent('Temporal/Threat', hasTemporalOrThreat);
         appendHeaderCellIfPresent('Environmental', hasEnvironmental);
         appendHeaderCellIfPresent('Adj. Impact', hasModifiedImpact);
 
@@ -1186,12 +1188,13 @@ Security requirements: ${securityRequirements}`;
                 nameElement.classList.add('text-cvss-4P0');
             }
 
+            console.log(scores, normalizedScores);
             appendContentCellIfPresent(row, nameElement, true);
             appendContentCellIfPresent(row, createScoreEntry(scores.overall, normalizedScores.overall), scores.overall !== undefined);
             appendContentCellIfPresent(row, createScoreEntry(scores.base, normalizedScores.base), scores.base !== undefined);
             appendContentCellIfPresent(row, createScoreEntry(scores.impact, normalizedScores.impact), scores.impact !== undefined);
             appendContentCellIfPresent(row, createScoreEntry(scores.exploitability, normalizedScores.exploitability), scores.exploitability !== undefined);
-            appendContentCellIfPresent(row, createScoreEntry(scores.temporal, normalizedScores.temporal), scores.temporal !== undefined);
+            appendContentCellIfPresent(row, createScoreEntry(scores.temporal === undefined ? scores.threat : scores.temporal, normalizedScores.temporal === undefined ? normalizedScores.threat : normalizedScores.temporal), scores.temporal !== undefined || scores.threat !== undefined);
             appendContentCellIfPresent(row, createScoreEntry(scores.environmental, normalizedScores.environmental), scores.environmental !== undefined);
             appendContentCellIfPresent(row, createScoreEntry(scores.modifiedImpact, normalizedScores.modifiedImpact), scores.modifiedImpact !== undefined);
         }
@@ -2217,7 +2220,7 @@ function loadDemo() {
 
 setTimeout(() => {
     const currentHtmlVersion = document.getElementById('cvss-calculator-current-version').innerText;
-    if (currentHtmlVersion !== '1.0.21') {
+    if (currentHtmlVersion !== '1.0.22') {
         createBootstrapToast('New version available', 'A new version of the CVSS Calculator is available. Please refresh the page to load the new version or clear the cache.', 'info', 10 * 1000);
     }
     const changelogBody = document.getElementById('cvss-calculator-changelog-body');

@@ -81,4 +81,20 @@ describe('Cvss4P0', () => {
         expect(cvss.getMacroVector().toString()).toEqual("212021");
         expect(cvss.calculateOverallScore()).toEqual(1.0);
     });
+
+    it('calculate the correct nomenclature', () => {
+        expect(new Cvss4P0("CVSS:4.0/AV:P/AC:H/AT:P/PR:L/UI:P/VC:L/VI:L/VA:L/SC:H/SI:L/SA:L/S:P/R:I/U:Red/MAT:P/MPR:N/MUI:P/MVC:N/MVI:L/MVA:L/MSC:L/MSI:L/MSA:S/IR:M/AR:H/E:U").getNomenclature()).toEqual("CVSS-BTE");
+        expect(new Cvss4P0("CVSS:4.0/AV:P/AC:H/AT:P/PR:L/UI:P/VC:L/VI:L/VA:L/SC:H/SI:L/SA:L/").getNomenclature()).toEqual("CVSS-B");
+        expect(new Cvss4P0("CVSS:4.0/AV:P/AC:H/AT:P/PR:L/UI:P/VC:L/VI:L/VA:L/SC:H/SI:L/SA:L/E:A").getNomenclature()).toEqual("CVSS-BT");
+        expect(new Cvss4P0("CVSS:4.0").getNomenclature()).toEqual("CVSS-B");
+    });
+
+    it('should correctly calculate the CVSS nomenclature values', () => {
+        const cvss = new Cvss4P0("CVSS:4.0/AV:P/AC:H/AT:P/PR:L/UI:P/VC:L/VI:L/VA:L/SC:H/SI:L/SA:L/S:P/R:I/U:Red/MAT:P/MPR:N/MUI:P/MVC:N/MVI:L/MVA:L/MSC:L/MSI:L/MSA:S/IR:M/AR:H/E:U");
+        const scores = cvss.calculateScores();
+        expect(scores.overall).toEqual(1.0);
+        expect(scores.base).toEqual(2.1);
+        expect(scores.environmental).toEqual(4.6);
+        expect(scores.threat).toEqual(0.3);
+    });
 });

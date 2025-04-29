@@ -65,6 +65,12 @@ export interface MultiScoreResult extends BaseScoreResult {
     readonly modifiedImpact: number | undefined;
 }
 
+export interface V4ScoreResult extends BaseScoreResult {
+    readonly base: number | undefined;
+    readonly environmental: number | undefined;
+    readonly threat: number | undefined;
+}
+
 export interface SingleScoreResult extends BaseScoreResult {
 }
 
@@ -155,6 +161,10 @@ export abstract class CvssVector<R extends BaseScoreResult> {
         this.getRegisteredComponents().forEach((components, category) => {
             components.forEach(component => this.components.set(component, component.values[0]));
         });
+    }
+
+    public clearSpecifiedComponents(components: VectorComponent<any>[]) {
+        components.forEach(component => this.components.set(component, component.values[0]));
     }
 
     public addVectorChangedListener(listener: (vector: CvssVector<R>) => void): void {
