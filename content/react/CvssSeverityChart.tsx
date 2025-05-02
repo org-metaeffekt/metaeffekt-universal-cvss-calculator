@@ -65,14 +65,15 @@ export function CvssSeverityChart({ vectors, colorFunction }: CvssSeverityChartP
         vectorColors.push(color)
 
         const scores = vectorData.calculateScores(true)
+        const overallScore = scores.overall || scores.base || 0;
         const baseScore = scores.base || scores.overall || 0;
 
         metricsMap[labels.base].push(baseScore);
-        metricsMap[labels.impact].push(scores.impact || baseScore);
-        metricsMap[labels.exploitability].push(scores.exploitability || baseScore);
-        metricsMap[labels.temporal].push(scores.temporal || baseScore);
-        metricsMap[labels.environmental].push(scores.environmental || baseScore);
-        metricsMap[labels.adjustedImpact].push(scores.modifiedImpact || scores.impact || baseScore);
+        metricsMap[labels.impact].push(scores.impact || overallScore);
+        metricsMap[labels.exploitability].push(scores.exploitability || overallScore);
+        metricsMap[labels.temporal].push(scores.temporal || scores.threat || baseScore);
+        metricsMap[labels.environmental].push(scores.environmental || overallScore);
+        metricsMap[labels.adjustedImpact].push(scores.modifiedImpact || scores.impact || overallScore);
 
         const hasValuesArray: boolean[] = [];
         hasValue.push(hasValuesArray);
@@ -80,7 +81,7 @@ export function CvssSeverityChart({ vectors, colorFunction }: CvssSeverityChartP
         hasValuesArray.push(!!scores.base);
         hasValuesArray.push(!!scores.modifiedImpact);
         hasValuesArray.push(!!scores.impact);
-        hasValuesArray.push(!!scores.temporal);
+        hasValuesArray.push(!!scores.temporal || !!scores.threat);
         hasValuesArray.push(!!scores.exploitability);
         hasValuesArray.push(!!scores.environmental);
     });
@@ -117,7 +118,7 @@ export function CvssSeverityChart({ vectors, colorFunction }: CvssSeverityChartP
 
                         {vectorNames.map((name, index) => (
                             <Radar
-                                key={name}
+                                key={name + "-" + index}
                                 name={name}
                                 dataKey={name}
                                 stroke={vectorColors[index]}
