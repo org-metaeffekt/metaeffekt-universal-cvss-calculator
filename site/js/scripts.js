@@ -1188,7 +1188,6 @@ Security requirements: ${securityRequirements}`;
                 nameElement.classList.add('text-cvss-4P0');
             }
 
-            console.log(scores, normalizedScores);
             appendContentCellIfPresent(row, nameElement, true);
             appendContentCellIfPresent(row, createScoreEntry(scores.overall, normalizedScores.overall), scores.overall !== undefined);
             appendContentCellIfPresent(row, createScoreEntry(scores.base, normalizedScores.base), scores.base !== undefined);

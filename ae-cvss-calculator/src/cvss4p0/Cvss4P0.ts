@@ -400,17 +400,17 @@ export class Cvss4P0 extends CvssVector<V4ScoreResult> {
         }
     }
 
-    public createJsonSchema(): JSONSchemaForCommonVulnerabilityScoringSystemVersion40 {
+    public createJsonSchema(): any {
         const scores = this.calculateScores();
         return {
             version: "4.0",
             vectorString: this.toString(),
             baseScore: scores.overall,
             baseSeverity: this.getJsonSchemaSeverity(scores.overall),
-            environmentalScore: 0.0,
-            environmentalSeverity: "NONE",
-            threatScore: 0.0,
-            threatSeverity: "NONE",
+            environmentalScore: scores.environmental,
+            environmentalSeverity: this.getJsonSchemaSeverity(scores.environmental || 0.0),
+            threatScore: scores.threat,
+            threatSeverity: this.getJsonSchemaSeverity(scores.threat || 0.0),
 
             attackVector: this.getComponent(Cvss4P0Components.AV).jsonSchemaName as AttackVectorType,
             attackComplexity: this.getComponent(Cvss4P0Components.AC).jsonSchemaName as AttackComplexityType,
