@@ -116,7 +116,8 @@ export class Cvss4P0 extends CvssVector<V4ScoreResult> {
         return {
             normalized: normalize,
             overall: overallScore,
-            base: baseScore,
+            base: overallScore,
+            baseMetricsOnly: baseScore,
             environmental: environmentalScore,
             threat: threatScore,
             vector: this.toString()

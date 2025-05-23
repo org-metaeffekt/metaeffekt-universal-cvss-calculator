@@ -67,6 +67,7 @@ export interface MultiScoreResult extends BaseScoreResult {
 
 export interface V4ScoreResult extends BaseScoreResult {
     readonly base: number | undefined;
+    readonly baseMetricsOnly: number | undefined;
     readonly environmental: number | undefined;
     readonly threat: number | undefined;
 }

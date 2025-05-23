@@ -168,7 +168,7 @@ class CvssVectorRepresentation {
             }
 
             if (event.altKey || event.metaKey || event.ctrlKey || event.shiftKey) {
-                downloadText('cvss-vector-' + this.name + '.json', JSON.stringify(this.createJsonSchema()));
+                openTextInNewTab('cvss-vector-' + this.name + '.json', JSON.stringify(this.createJsonSchema(), null, 2));
             } else {
                 this.cloneAndAppendVector();
                 updateScores();
@@ -2058,8 +2058,8 @@ function storeInGet() {
 
 function downloadAllJsonSchema() {
     const allSchema = cvssVectors.map(vector => vector.createJsonSchema());
-    const stringifySchema = JSON.stringify(allSchema);
-    downloadText('cvss-vectors.json', stringifySchema);
+    const stringifySchema = JSON.stringify(allSchema, null, 2);
+    openTextInNewTab('cvss-vectors.json', stringifySchema);
 }
 
 function downloadText(filename, text) {
@@ -2078,6 +2078,30 @@ function downloadText(filename, text) {
     element.click();
 
     document.body.removeChild(element);
+}
+
+function openTextInNewTab(filename, text) {
+    filename = filename.toLowerCase()
+        .replace(/[^a-z0-9._+]/g, '-')
+        .replace(/-+/g, '-')
+        .replace(/^-/, '')
+        .replace(/-\./g, '.');
+
+    const blob = new Blob([text], {type: 'application/json;charset=utf-8'});
+    const blobUrl = URL.createObjectURL(blob);
+
+    const tab = window.open(blobUrl, '_blank');
+
+    if (tab) {
+        tab.onload = () => {
+            try {
+                tab.document.title = filename;
+            } catch (ignored) {
+            }
+        };
+    }
+
+    setTimeout(() => URL.revokeObjectURL(blobUrl), 60_000); // 1 min
 }
 
 // shift key actions
