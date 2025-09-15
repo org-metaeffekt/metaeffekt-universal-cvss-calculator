@@ -93,7 +93,8 @@ describe('Cvss4P0', () => {
         const cvss = new Cvss4P0("CVSS:4.0/AV:P/AC:H/AT:P/PR:L/UI:P/VC:L/VI:L/VA:L/SC:H/SI:L/SA:L/S:P/R:I/U:Red/MAT:P/MPR:N/MUI:P/MVC:N/MVI:L/MVA:L/MSC:L/MSI:L/MSA:S/IR:M/AR:H/E:U");
         const scores = cvss.calculateScores();
         expect(scores.overall).toEqual(1.0);
-        expect(scores.base).toEqual(2.1);
+        expect(scores.base).toEqual(1.0);
+        expect(scores.baseMetricsOnly).toEqual(2.1);
         expect(scores.environmental).toEqual(4.6);
         expect(scores.threat).toEqual(0.3);
     });

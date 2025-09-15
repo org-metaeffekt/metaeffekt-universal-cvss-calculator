@@ -58,7 +58,7 @@ describe('CvssVectorTest', () => {
     it('applyPartsIfMetricV31Test', () => {
         assertPartsLowerHigherApplied(
             "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:N/I:L/A:N/RL:O/MAC:H", "CVSS:3.1/AV:N/MAV:P/AC:H/MAC:H/E:U/RL:W/CR:M",
-            "CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:C/C:N/I:L/A:N/E:U/RL:O/MAV:P/MAC:H/CR:M",
+            "CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:C/C:N/I:L/A:N/E:U/RL:O/CR:M/MAV:P/MAC:H",
             "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:N/I:L/A:N/RL:W/MAC:H");
         {
             const i = "CVSS:3.1/AV:P/AC:H/PR:H/UI:R/S:C/C:H/I:H/A:H/E:H/RL:U/RC:C";
@@ -77,8 +77,8 @@ describe('CvssVectorTest', () => {
         assertPartsLowerHigherApplied(
             "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H", "CVSS:3.1/MAV:P/MAC:H/MPR:H/MUI:R/MS:C/MC:N/MI:N/MA:N/CR:H/IR:M/AR:L",
             // CR:H is not applied, since medium is the center where ND is equals
-            "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H/MAV:P/MAC:H/MPR:H/MUI:R/MC:N/MI:N/MA:N/IR:M/AR:L",
-            "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H/MS:C/CR:H");
+            "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H/IR:M/AR:L/MAV:P/MAC:H/MPR:H/MUI:R/MC:N/MI:N/MA:N",
+            "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H/CR:H/MS:C");
         // temporal lowest set values
         assertPartsLowerHigherApplied(
             "CVSS:3.1/E:U/RL:O/RC:U", "CVSS:3.1/E:X/RL:X/RC:X",
@@ -128,7 +128,7 @@ describe('CvssVectorTest', () => {
     it('applyPartsIfMetricV30Test', () => {
         assertPartsLowerHigherApplied(
             "CVSS:3.0/AV:N/AC:L/PR:L/UI:N/S:C/C:N/I:L/A:N/RL:O/MAC:H", "CVSS:3.0/AV:N/MAV:P/AC:H/MAC:H/E:U/RL:W/CR:M",
-            "CVSS:3.0/AV:N/AC:H/PR:L/UI:N/S:C/C:N/I:L/A:N/E:U/RL:O/MAV:P/MAC:H/CR:M",
+            "CVSS:3.0/AV:N/AC:H/PR:L/UI:N/S:C/C:N/I:L/A:N/E:U/RL:O/CR:M/MAV:P/MAC:H",
             "CVSS:3.0/AV:N/AC:L/PR:L/UI:N/S:C/C:N/I:L/A:N/RL:W/MAC:H");
         {
             const i = "CVSS:3.0/AV:P/AC:H/PR:H/UI:R/S:C/C:H/I:H/A:H/E:H/RL:U/RC:C";
@@ -147,8 +147,8 @@ describe('CvssVectorTest', () => {
         assertPartsLowerHigherApplied(
             "CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H", "CVSS:3.0/MAV:P/MAC:H/MPR:H/MUI:R/MS:C/MC:N/MI:N/MA:N/CR:H/IR:M/AR:L",
             // CR:H is not applied, since medium is the center where ND is equals
-            "CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H/MAV:P/MAC:H/MPR:H/MUI:R/MC:N/MI:N/MA:N/IR:M/AR:L",
-            "CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H/MS:C/CR:H");
+            "CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H/IR:M/AR:L/MAV:P/MAC:H/MPR:H/MUI:R/MC:N/MI:N/MA:N",
+            "CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H/CR:H/MS:C");
         // temporal lowest set values
         assertPartsLowerHigherApplied(
             "CVSS:3.0/E:U/RL:O/RC:U", "CVSS:3.0/E:X/RL:X/RC:X",
