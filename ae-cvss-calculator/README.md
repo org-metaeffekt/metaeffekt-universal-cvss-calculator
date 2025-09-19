@@ -144,3 +144,11 @@ Otherwise, you can also build the packaged version by running
 ```bash
 npm run pack
 ```
+
+To publish a new version, run
+
+```bash
+npm login
+npm run pack
+npm publish
+```

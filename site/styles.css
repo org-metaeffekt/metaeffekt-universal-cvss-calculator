@@ -72,6 +72,9 @@
     --text-color-inverted-rgb: 236, 234, 231;
     --background-color: #ffffff;
     --background-color-rgb: 255, 255, 255;
+
+    --bs-border-color: #b7b7b7;
+    --bs-border-color-translucent: #b7b7b7 !important;
 }
 
 @media (prefers-color-scheme: dark) {
