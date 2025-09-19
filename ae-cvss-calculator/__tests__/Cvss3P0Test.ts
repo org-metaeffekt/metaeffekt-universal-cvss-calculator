@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {Cvss3P0} from "../src";
+import { Cvss3P0 } from "../src";
 
 import fs from "fs";
 
@@ -85,5 +85,11 @@ describe('Cvss3P0', () => {
         expect(makeNanFromUndefined(result.environmental)).toEqual(NaN);
         expect(makeNanFromUndefined(result.modifiedImpact)).toEqual(NaN);
         expect(makeNanFromUndefined(result.overall)).toEqual(0.0);
+    });
+
+    it('should serialize the metrics in the correct order', () => {
+        // see https://github.com/org-metaeffekt/metaeffekt-core/pull/290
+        const cvss = new Cvss3P0("CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H/E:U/RL:W/RC:R/MAV:A/MAC:H/MS:C/MC:N/MI:L/MA:N/CR:H");
+        expect(cvss.toString(true)).toEqual("CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H/E:U/RL:W/RC:R/CR:H/IR:X/AR:X/MAV:A/MAC:H/MPR:X/MUI:X/MS:C/MC:N/MI:L/MA:N");
     });
 });

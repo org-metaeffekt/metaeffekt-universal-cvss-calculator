@@ -985,7 +985,7 @@ export class Cvss3P1Components {
     };
 
     public static readonly ENVIRONMENTAL_CATEGORY_VALUES: VectorComponent<VectorComponentValue>[] = [
-        this.MAV, this.MAC, this.MPR, this.MUI, this.MS, this.MC, this.MI, this.MA, this.CR, this.IR, this.AR
+        this.CR, this.IR, this.AR, this.MAV, this.MAC, this.MPR, this.MUI, this.MS, this.MC, this.MI, this.MA
     ];
 
     static readonly REGISTERED_COMPONENTS = new Map<ComponentCategory, VectorComponent<VectorComponentValue>[]>();
