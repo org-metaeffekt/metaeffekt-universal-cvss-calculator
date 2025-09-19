@@ -145,10 +145,17 @@ Otherwise, you can also build the packaged version by running
 npm run pack
 ```
 
-To publish a new version, run
+To publish a new version:
+
+1. Make sure that you pushed all the code related to the release, including the version bump to git, as npm will fetch
+   that state for the release.
+2. Ensure that you removed all target folders (`dist`) and bundles (`ae-cvss-calculator-1.0.9.tgz`).
+3. Run the following commands:
 
 ```bash
 npm login
 npm run pack
 npm publish
 ```
+
+4. Update the dependency in Artifact Analysis in the VAD.
