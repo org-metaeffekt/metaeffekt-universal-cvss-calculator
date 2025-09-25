@@ -406,7 +406,7 @@ class CvssVectorRepresentation {
         const targetSize = actualWidth / (actualWidth < 100 ? 6 : (actualWidth < 165 ? 5.2 : (actualWidth < 270 ? 5 : (actualWidth < 320 ? 4.4 : (actualWidth < 380 ? 4 : (3))))));
         for (let vector of cvssVectors) {
             vector.nameElement.size = targetSize;
-            vector.nameElement.style.maxWidth = actualWidth + 30 + 'px';
+            vector.nameElement.style.maxWidth = Math.min(310, actualWidth + 30) + 'px';
         }
     }
 
@@ -1267,7 +1267,7 @@ Security requirements: ${securityRequirements}`;
                 const cvssNameInputElement = cvssNameInputElements[0];
                 cvssNameInputElement.value = selectedVectorContainerInstance.name;
                 const cvssNameInputElementTargetWidth = CvssVectorRepresentation.findRealRenderedTextWidthWithFontOfElement(cvssNameInputElement, cvssNameInputElement.value);
-                cvssNameInputElement.style.maxWidth = (cvssNameInputElementTargetWidth + 30) + 'px';
+                cvssNameInputElement.style.maxWidth = Math.min(200, cvssNameInputElementTargetWidth + 30) + 'px';
             }
 
             updateTooltip(selectedCvssDuplicatedSection);
@@ -2243,7 +2243,7 @@ function loadDemo() {
 
 setTimeout(() => {
     const currentHtmlVersion = document.getElementById('cvss-calculator-current-version').innerText;
-    if (currentHtmlVersion !== '1.0.23') {
+    if (currentHtmlVersion !== '1.0.24') {
         createBootstrapToast('New version available', 'A new version of the CVSS Calculator is available. Please refresh the page to load the new version or clear the cache.', 'info', 10 * 1000);
     }
     const changelogBody = document.getElementById('cvss-calculator-changelog-body');
