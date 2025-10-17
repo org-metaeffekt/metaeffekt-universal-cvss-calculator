@@ -58,43 +58,43 @@ export function CvssSeverityChart({ vectors, colorFunction }: CvssSeverityChartP
     const hasValue: boolean[][] = []
 
     validVectors.forEach((vectorData) => {
-        const vectorName = vectorData.getVectorName()
-        vectorNames.push(vectorName)
+        const vectorName = vectorData.getVectorName();
+        vectorNames.push(vectorName);
 
         const color = colorFunction(vectorData, vectorName);
-        vectorColors.push(color)
+        vectorColors.push(color);
 
         const scores = vectorData.calculateScores(true)
-        const overallScore = scores.overall || scores.base || 0;
-        const baseScore = scores.base || scores.overall || 0;
+        const overallScore = scores.overall ?? scores.base ?? 0;
+        const baseScore = scores.base ?? scores.overall ?? 0;
 
         metricsMap[labels.base].push(baseScore);
-        metricsMap[labels.impact].push(scores.impact || overallScore);
-        metricsMap[labels.exploitability].push(scores.exploitability || overallScore);
-        metricsMap[labels.temporal].push(scores.temporal || scores.threat || baseScore);
-        metricsMap[labels.environmental].push(scores.environmental || overallScore);
-        metricsMap[labels.adjustedImpact].push(scores.modifiedImpact || scores.impact || overallScore);
+        metricsMap[labels.impact].push(scores.impact ?? overallScore);
+        metricsMap[labels.exploitability].push(scores.exploitability ?? overallScore);
+        metricsMap[labels.temporal].push(scores.temporal ?? scores.threat ?? baseScore);
+        metricsMap[labels.environmental].push(scores.environmental ?? overallScore);
+        metricsMap[labels.adjustedImpact].push(scores.modifiedImpact ?? scores.impact ?? overallScore);
 
         const hasValuesArray: boolean[] = [];
         hasValue.push(hasValuesArray);
 
-        hasValuesArray.push(!!scores.base);
-        hasValuesArray.push(!!scores.modifiedImpact);
-        hasValuesArray.push(!!scores.impact);
-        hasValuesArray.push(!!scores.temporal || !!scores.threat);
-        hasValuesArray.push(!!scores.exploitability);
-        hasValuesArray.push(!!scores.environmental);
+        hasValuesArray.push(isDefined(scores.base));
+        hasValuesArray.push(isDefined(scores.modifiedImpact));
+        hasValuesArray.push(isDefined(scores.impact));
+        hasValuesArray.push(isDefined(scores.temporal) || isDefined(scores.threat));
+        hasValuesArray.push(isDefined(scores.exploitability));
+        hasValuesArray.push(isDefined(scores.environmental));
     });
 
     const chartData = Object.keys(metricsMap).map((metric) => {
-        const dataPoint: Record<string, any> = { metric }
+        const dataPoint: Record<string, any> = { metric };
 
         validVectors.forEach((_, index) => {
-            const vectorName = vectorNames[index]
-            dataPoint[vectorName] = metricsMap[metric][index] || 0
-        })
+            const vectorName = vectorNames[index];
+            dataPoint[vectorName] = metricsMap[metric][index] ?? 0;
+        });
 
-        return dataPoint
+        return dataPoint;
     })
 
     const chartConfig: Record<string, { label: string; color: string }> = {}
@@ -154,4 +154,8 @@ export function CvssSeverityChart({ vectors, colorFunction }: CvssSeverityChartP
             </ChartContainer>
         </div>
     )
+}
+
+export function isDefined(value: any): boolean {
+    return value !== undefined && value !== null;
 }
