@@ -7,7 +7,7 @@
   "homepage": "https://www.metaeffekt.com/security/cvss/calculator",
   "repository": {
     "type": "git",
-    "url": "https://github.com/org-metaeffekt/metaeffekt-universal-cvss-calculator"
+    "url": "git+https://github.com/org-metaeffekt/metaeffekt-universal-cvss-calculator.git"
   },
   "bugs": {
     "url": "https://github.com/org-metaeffekt/metaeffekt-universal-cvss-calculator/issues"
