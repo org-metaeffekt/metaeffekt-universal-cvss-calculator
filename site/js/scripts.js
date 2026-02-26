@@ -1188,13 +1188,18 @@ Security requirements: ${securityRequirements}`;
                 nameElement.classList.add('text-cvss-4P0');
             }
 
+            let threatEnvironmentalTooltip;
+            if (vector.cvssInstance instanceof CvssCalculator.Cvss4P0) {
+                threatEnvironmentalTooltip = "CVSS version 4.0 does not specify a temporal or environmental score. The score seen here is calculated using the full vector, with certain metrics deactivated to simulate a score with only a subset of metrics.";
+            }
+
             appendContentCellIfPresent(row, nameElement, true);
             appendContentCellIfPresent(row, createScoreEntry(scores.overall, normalizedScores.overall), scores.overall !== undefined);
             appendContentCellIfPresent(row, createScoreEntry(scores.base, normalizedScores.base), scores.base !== undefined);
             appendContentCellIfPresent(row, createScoreEntry(scores.impact, normalizedScores.impact), scores.impact !== undefined);
             appendContentCellIfPresent(row, createScoreEntry(scores.exploitability, normalizedScores.exploitability), scores.exploitability !== undefined);
-            appendContentCellIfPresent(row, createScoreEntry(scores.temporal === undefined ? scores.threat : scores.temporal, normalizedScores.temporal === undefined ? normalizedScores.threat : normalizedScores.temporal), scores.temporal !== undefined || scores.threat !== undefined);
-            appendContentCellIfPresent(row, createScoreEntry(scores.environmental, normalizedScores.environmental), scores.environmental !== undefined);
+            appendContentCellIfPresent(row, createScoreEntry(scores.temporal === undefined ? scores.threat : scores.temporal, normalizedScores.temporal === undefined ? normalizedScores.threat : normalizedScores.temporal, threatEnvironmentalTooltip), scores.temporal !== undefined || scores.threat !== undefined);
+            appendContentCellIfPresent(row, createScoreEntry(scores.environmental, normalizedScores.environmental, threatEnvironmentalTooltip), scores.environmental !== undefined);
             appendContentCellIfPresent(row, createScoreEntry(scores.modifiedImpact, normalizedScores.modifiedImpact), scores.modifiedImpact !== undefined);
         }
 
@@ -1205,12 +1210,16 @@ Security requirements: ${securityRequirements}`;
             cvssScoreDetailsContainerElement.appendChild(table);
         }
 
-        function createScoreEntry(baseScore, normalizedScore) {
+        function createScoreEntry(baseScore, normalizedScore, tooltip = undefined) {
             const container = document.createElement('span');
             if (baseScore === normalizedScore) {
                 container.innerHTML = coloredElementForSeverity(baseScore);
             } else {
                 container.innerHTML = coloredElementForSeverity(baseScore) + ' → ' + coloredElementForSeverity(normalizedScore);
+            }
+            if (tooltip) {
+                container.title = tooltip;
+                container.innerHTML += "*";
             }
             return container;
         }
@@ -2243,7 +2252,7 @@ function loadDemo() {
 
 setTimeout(() => {
     const currentHtmlVersion = document.getElementById('cvss-calculator-current-version').innerText;
-    if (currentHtmlVersion !== '1.0.24') {
+    if (currentHtmlVersion !== '1.0.25') {
         createBootstrapToast('New version available', 'A new version of the CVSS Calculator is available. Please refresh the page to load the new version or clear the cache.', 'info', 10 * 1000);
     }
     const changelogBody = document.getElementById('cvss-calculator-changelog-body');

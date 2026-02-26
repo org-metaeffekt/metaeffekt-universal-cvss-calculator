@@ -408,10 +408,6 @@ export class Cvss4P0 extends CvssVector<V4ScoreResult> {
             vectorString: this.toString(),
             baseScore: scores.overall,
             baseSeverity: this.getJsonSchemaSeverity(scores.overall),
-            environmentalScore: scores.environmental,
-            environmentalSeverity: this.getJsonSchemaSeverity(scores.environmental || 0.0),
-            threatScore: scores.threat,
-            threatSeverity: this.getJsonSchemaSeverity(scores.threat || 0.0),
 
             attackVector: this.getComponent(Cvss4P0Components.AV).jsonSchemaName as AttackVectorType,
             attackComplexity: this.getComponent(Cvss4P0Components.AC).jsonSchemaName as AttackComplexityType,

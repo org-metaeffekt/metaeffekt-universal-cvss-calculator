@@ -51,84 +51,58 @@ npm install ae-cvss-calculator
 
 ## Usage
 
-The CVSS versions are implemented in the following classes:
+The library exports classes for CVSS versions 2.0 (`Cvss2`), 3.0 (`Cvss3P0`), 3.1 (`Cvss3P1`), and 4.0 (`Cvss4P0`), along with utility functions for parsing.
 
-- [Cvss2.ts](https://github.com/org-metaeffekt/metaeffekt-universal-cvss-calculator/blob/master/ae-cvss-calculator/src/cvss2/Cvss2.ts)
-- [Cvss3P0.ts](https://github.com/org-metaeffekt/metaeffekt-universal-cvss-calculator/blob/master/ae-cvss-calculator/src/cvss3p0/Cvss3P0.ts)
-- [Cvss3P1.ts](https://github.com/org-metaeffekt/metaeffekt-universal-cvss-calculator/blob/master/ae-cvss-calculator/src/cvss3p1/Cvss3P1.ts)
-- [Cvss4P0.ts](https://github.com/org-metaeffekt/metaeffekt-universal-cvss-calculator/blob/master/ae-cvss-calculator/src/cvss4p0/Cvss4P0.ts)
+![Depenndency Graph of all Classes and Interfaces in the CVSS Calculator Library](dependency-graph.png)
 
-![](dependency-graph.png)
+### Basic Usage (Specific Version)
 
-A couple of examples, using the methods that can construct and modify vectors and calculate the several
-different CVSS scores:
+If you know the specific CVSS version of your vector, you can instantiate the corresponding class directly.
 
-#### Usage V4.0
+```typescript
+// Initialize with a vector string
+const cvss = new Cvss3P1('CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:L/A:L');
 
-```ts
-const cvss4 = new Cvss4P0()
-cvss4.applyVector('CVSS:4.0/AV:A/AC:L/AT:N/PR:N/UI:N/VC:L/VI:L/VA:L')
-cvss4.applyVector('SC:L/SI:L/SA:L')
-console.log(cvss4.toString())
+// Calculate scores
+const scores = cvss.calculateScores();
+console.log(`Base Score: ${scores.base}`);
+console.log(`Vector: ${scores.vector}`);
+
+// Normalize scores to 0-10 scale (useful for visualization)
+const normalized = cvss.calculateScores(true);
+console.log(`Exploitability: ${normalized.exploitability}`);
 ```
 
-```
-CVSS:4.0/AV:A/AC:L/AT:N/PR:N/UI:N/VC:L/VI:L/VA:L/SC:L/SI:L/SA:L
-```
+Depending on the vector version, different scores are exposed via the returned object.
 
----
+### Generic Vector Parsing
 
-```ts
-const cvss4 = new Cvss4P0('CVSS:4.0/AV:A/AC:L/AT:N/PR:N/UI:N/VC:L/VI:L/VA:L/SC:L/SI:L/SA:L')
-cvss4.applyComponentString('MAC', 'L')
-cvss4.applyComponent(Cvss4P0Components.AC, Cvss4P0Components.AC_VALUES.H) // alternatively via types
-const scores = cvss4.calculateScores()
-console.log(scores)
-```
+Use `fromVector` to automatically detect the CVSS version and parse the string into the appropriate object instance.
 
-```json
-{
-  "overall": 5.3,
-  "vector": "CVSS:4.0/AV:A/AC:H/AT:N/PR:N/UI:N/VC:L/VI:L/VA:L/SC:L/SI:L/SA:L/MAV:X/MAC:L/MAT:X/MPR:X/MUI:X/MVC:X/MVI:X/MVA:X/MSC:X/MSI:X/MSA:X"
+```typescript
+const vectorString = 'CVSS:3.1/AV:A/AC:L/PR:N/UI:N/S:C/C:H/I:L/A:L';
+const cvss = fromVector(vectorString);
+
+if (cvss) {
+  console.log(`Detected: ${cvss.getVectorName()}`); // CVSS:3.1
+  console.log(`Score: ${cvss.calculateScores().overall}`);
+} else {
+  console.error('Invalid or unsupported CVSS vector');
 }
 ```
 
-#### Usage V3.1
+### Modifying Components
 
-```ts
-const cvss3 = new Cvss3P1('CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:L/A:L')
-cvss3.applyComponentString("AC", "L")
-console.log(cvss3.calculateScores(false))
-console.log(cvss3.calculateScores(true)) // normalize all scores to a scale 0-10 (CVSS:3.1 Exploitability, Impact)
+You can modify vector components programmatically using `applyComponentString`.
+
+```typescript
+const cvss = new Cvss4P0('CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:L/A:N');
+
+cvss.applyComponentString('AV', 'P');
+cvss.applyComponent(Cvss4P0Components.AC, Cvss4P0Components.AC_VALUES.H);
 ```
 
-```json
-{
-  "base": 7.3,
-  "impact": 3.4,
-  "exploitability": 3.9,
-  "temporal": null,
-  "environmental": null,
-  "modifiedImpact": null,
-  "overall": 7.3,
-  "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:L"
-}
-```
-
-```json
-{
-  "base": 7.3,
-  "impact": 5.7,
-  "exploitability": 10,
-  "temporal": null,
-  "environmental": null,
-  "modifiedImpact": null,
-  "overall": 7.3,
-  "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:L"
-}
-```
-
-### Build
+## Build
 
 ```bash
 git clone https://github.com/org-metaeffekt/metaeffekt-universal-cvss-calculator
