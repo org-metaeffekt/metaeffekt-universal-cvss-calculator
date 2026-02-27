@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
+set -o xtrace
 
 PUBLISH_ARG="$1"
 PUBLISH_MODE="--dry-run"
