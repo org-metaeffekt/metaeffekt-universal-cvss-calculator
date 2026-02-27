@@ -53,7 +53,7 @@ npm install ae-cvss-calculator
 
 The library exports classes for CVSS versions 2.0 (`Cvss2`), 3.0 (`Cvss3P0`), 3.1 (`Cvss3P1`), and 4.0 (`Cvss4P0`), along with utility functions for parsing.
 
-![Depenndency Graph of all Classes and Interfaces in the CVSS Calculator Library](dependency-graph.png)
+![Dependency Graph of all Classes and Interfaces in the CVSS Calculator Library](dependency-graph.png)
 
 ### Basic Usage (Specific Version)
 
