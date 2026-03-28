@@ -249,6 +249,17 @@ describe('CvssVectorTest', () => {
         );
     });
 
+    it('applyPartsBaseVsModifiedTest', () => {
+        assertPartsLowerHigherApplied("CVSS:4.0/AV:N/MAV:L", "MAV:A",
+            "CVSS:4.0/AV:N/MAV:L",
+            "CVSS:4.0/AV:N/MAV:A"
+        );
+        assertPartsLowerHigherApplied("CVSS:4.0/AV:N", "MAV:A",
+            "CVSS:4.0/AV:N/MAV:A",
+            "CVSS:4.0/AV:N"
+        );
+    });
+
     function assertPartsLowerHigherApplied(originalVector: string, applyMetrics: string, expectedLower: string, expectedHigher: string) {
         const lower = fromVector(originalVector);
         if (lower === null) throw new Error("failed to parse lower vector: " + originalVector);
