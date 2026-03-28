@@ -131,15 +131,12 @@ function findOldNewSeverityOrder(
     newAttribute: VectorComponentValue | null,
     isNewAttributeModified: boolean
 ): { oldSeverity: number; newSeverity: number } {
-    const isModifiedAttributeSet = modifiedAttribute?.name === 'NOT_DEFINED' || modifiedAttribute?.name === 'NULL';
-    const oldAttribute = isModifiedAttributeSet && isNewAttributeModified ? modifiedAttribute : unmodifiedAttribute;
+    // compare either the modified or the unmodified attribute with the new attribute
+    const isModifiedAttributeSet = modifiedAttribute != null && modifiedAttribute.name !== 'NOT_DEFINED' && modifiedAttribute.name !== 'NULL' && modifiedAttribute.shortName !== 'X';
 
-    /*const order = {
-        oldSeverity: determineAttributeSeverityOrder(self, oldAttribute),
-        newSeverity: determineAttributeSeverityOrder(self, newAttribute)
-    };
-    console.log(" ", order, oldAttribute?.shortName, newAttribute?.shortName)
-    return order;*/
+    // if applying a new modified attribute, evaluate against the existing modified attribute (if set) or fallback to base.
+    // if applying a new base attribute, evaluate only against the existing base attribute.
+    const oldAttribute = isNewAttributeModified && isModifiedAttributeSet ? modifiedAttribute : unmodifiedAttribute;
 
     return {
         oldSeverity: determineAttributeSeverityOrder(self, oldAttribute),
