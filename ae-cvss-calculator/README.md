@@ -113,23 +113,16 @@ npm run build
 
 The minified `ae-cvss-calculator.js` can be found in the `dist` directory.
 
-Otherwise, you can also build the packaged version by running
-
-```bash
-npm run pack
-```
+Otherwise, you can also build the packaged version by running `npm pack`.
 
 To publish a new version:
 
-1. Make sure that you pushed all the code related to the release, including the version bump to git, as npm will fetch
-   that state for the release.
-2. Ensure that you removed all target folders (`dist`) and bundles (`ae-cvss-calculator-1.0.9.tgz`).
-3. Run the following commands:
-
-```bash
-npm login
-npm run pack
-npm publish
-```
-
-4. Update the dependency in Artifact Analysis in the VAD.
+1. Preparation
+   - Make sure that you pushed all the code related to the release, including the version bump to git, as npm will fetch that state for the release.
+   - Increment the version in the [package.json](package.json) file.
+   - Run `npm install` to sync the [package-lock.json](package-lock.json) file.
+2. Publish Package
+   - Run `npm login` and follow their authentication flow.
+   - Optionally run the [./publish-package.sh](../publish-package.sh) script on the top level of the repository to perform a dry run first, inspecting the package contents on the command line from the logs.
+   - Optionally try manually installing the package into a test project via `npm i /path/to/metaeffekt-universal-cvss-calculator/ae-cvss-calculator/ae-cvss-calculator-x.x.x.tgz`.
+   - Finally, run [./publish-package.sh publish](../publish-package.sh) to publish the package.
