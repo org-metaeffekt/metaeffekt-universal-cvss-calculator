@@ -561,7 +561,7 @@ export class Cvss4P0Components {
         name: 'Attack Complexity',
         shortName: 'AC',
         subCategory: 'Exploitability Metrics',
-        description: '',
+        description: 'This metric captures measurable actions that the attacker must take to evade or circumvent built-in security-enhancing conditions in order to obtain a working exploit.',
         values: [
             Cvss4P0Components.AC_VALUES.X,
             Cvss4P0Components.AC_VALUES.L,
@@ -596,7 +596,7 @@ export class Cvss4P0Components {
         name: 'Attack Requirements',
         shortName: 'AT',
         subCategory: 'Exploitability Metrics',
-        description: '',
+        description: 'This metric captures the prerequisite deployment and execution conditions or variables of the vulnerable system that enable the attack.',
         values: [
             Cvss4P0Components.AT_VALUES.X,
             Cvss4P0Components.AT_VALUES.N,
@@ -637,7 +637,7 @@ export class Cvss4P0Components {
         name: 'Privileges Required',
         shortName: 'PR',
         subCategory: 'Exploitability Metrics',
-        description: '',
+        description: 'This metric describes the level of privileges an attacker must possess prior to successfully exploiting the vulnerability.',
         values: [
             Cvss4P0Components.PR_VALUES.X,
             Cvss4P0Components.PR_VALUES.N,
@@ -679,7 +679,7 @@ export class Cvss4P0Components {
         name: 'User Interaction',
         shortName: 'UI',
         subCategory: 'Exploitability Metrics',
-        description: '',
+        description: 'This metric captures the requirement for a human user, other than the attacker, to participate in the successful compromise of the vulnerable system.',
         values: [
             Cvss4P0Components.UI_VALUES.X,
             Cvss4P0Components.UI_VALUES.N,
@@ -693,7 +693,7 @@ export class Cvss4P0Components {
         name: 'Confidentiality',
         shortName: 'VC',
         subCategory: 'Vulnerable System Impact',
-        description: '',
+        description: 'This metric measures the impact to the confidentiality of the information managed by the Vulnerable System due to a successfully exploited vulnerability.',
         values: Cvss4P0Components.VULNERABLE_SYSTEM_CONFIDENTIALITY_BASE,
         worseCaseValue: Cvss4P0Components.VULNERABLE_SYSTEM_CONFIDENTIALITY_BASE_VALUES.H
     };
@@ -702,7 +702,7 @@ export class Cvss4P0Components {
         name: 'Integrity',
         shortName: 'VI',
         subCategory: 'Vulnerable System Impact',
-        description: '',
+        description: 'This metric measures the impact to the integrity of the Vulnerable System due to a successfully exploited vulnerability.',
         values: Cvss4P0Components.VULNERABLE_SYSTEM_INTEGRITY_BASE,
         worseCaseValue: Cvss4P0Components.VULNERABLE_SYSTEM_INTEGRITY_BASE_VALUES.H
     };
@@ -711,7 +711,7 @@ export class Cvss4P0Components {
         name: 'Availability',
         shortName: 'VA',
         subCategory: 'Vulnerable System Impact',
-        description: '',
+        description: 'This metric measures the impact to the availability of the Vulnerable System due to a successfully exploited vulnerability.',
         values: Cvss4P0Components.VULNERABLE_SYSTEM_AVAILABILITY_BASE,
         worseCaseValue: Cvss4P0Components.VULNERABLE_SYSTEM_AVAILABILITY_BASE_VALUES.H
     };
@@ -720,7 +720,7 @@ export class Cvss4P0Components {
         name: 'Confidentiality',
         shortName: 'SC',
         subCategory: 'Subsequent System Impact',
-        description: '',
+        description: 'This metric measures the impact to the confidentiality of information managed by a system other than the Vulnerable System as a consequence of a successfully exploited vulnerability.',
         values: Cvss4P0Components.SUBSEQUENT_SYSTEM_CONFIDENTIALITY_BASE,
         worseCaseValue: Cvss4P0Components.SUBSEQUENT_SYSTEM_CONFIDENTIALITY_BASE_VALUES.H
     };
@@ -729,7 +729,7 @@ export class Cvss4P0Components {
         name: 'Integrity',
         shortName: 'SI',
         subCategory: 'Subsequent System Impact',
-        description: '',
+        description: 'This metric measures the impact to the integrity of a system other than the Vulnerable System as a consequence of a successfully exploited vulnerability.',
         values: Cvss4P0Components.SUBSEQUENT_SYSTEM_INTEGRITY_BASE,
         worseCaseValue: Cvss4P0Components.SUBSEQUENT_SYSTEM_INTEGRITY_BASE_VALUES.H
     };
@@ -738,7 +738,7 @@ export class Cvss4P0Components {
         name: 'Availability',
         shortName: 'SA',
         subCategory: 'Subsequent System Impact',
-        description: '',
+        description: 'This metric measures the impact to the availability of a system other than the Vulnerable System as a consequence of a successfully exploited vulnerability.',
         values: Cvss4P0Components.SUBSEQUENT_SYSTEM_AVAILABILITY_BASE,
         worseCaseValue: Cvss4P0Components.SUBSEQUENT_SYSTEM_AVAILABILITY_BASE_VALUES.H
     };
@@ -771,7 +771,7 @@ export class Cvss4P0Components {
     public static readonly S = {
         name: 'Safety',
         shortName: 'S',
-        description: '',
+        description: 'This supplemental metric captures Safety impacts of a vulnerability when the affected system has an intended use or fitness of purpose aligned to safety.',
         values: [
             Cvss4P0Components.S_VALUES.X,
             Cvss4P0Components.S_VALUES.N,
@@ -805,7 +805,7 @@ export class Cvss4P0Components {
     public static readonly AU = {
         name: 'Automated',
         shortName: 'AU',
-        description: '',
+        description: 'This supplemental metric captures whether an attacker can reliably automate exploitation of this vulnerability across multiple targets, based on the first four steps of the kill chain (reconnaissance, weaponization, delivery, and exploitation).',
         values: [
             Cvss4P0Components.AU_VALUES.X,
             Cvss4P0Components.AU_VALUES.N,
@@ -847,7 +847,7 @@ export class Cvss4P0Components {
     public static readonly R = {
         name: 'Recovery',
         shortName: 'R',
-        description: '',
+        description: 'This supplemental metric describes the resilience of a system to recover services, in terms of performance and availability, after an attack has been performed.',
         values: [
             Cvss4P0Components.R_VALUES.X,
             Cvss4P0Components.R_VALUES.A,
@@ -883,7 +883,7 @@ export class Cvss4P0Components {
     public static readonly V = {
         name: 'Value Density',
         shortName: 'V',
-        description: '',
+        description: 'This supplemental metric describes the resources that the attacker will gain control over with a single exploitation event.',
         values: [
             Cvss4P0Components.V_VALUES.X,
             Cvss4P0Components.V_VALUES.D,
@@ -924,7 +924,7 @@ export class Cvss4P0Components {
     public static readonly RE = {
         name: 'Vulnerability Response Effort',
         shortName: 'RE',
-        description: '',
+        description: 'This supplemental metric provides supplemental information on how difficult it is for consumers to provide an initial response to the impact of a vulnerability for deployed products and services.',
         values: [
             Cvss4P0Components.RE_VALUES.X,
             Cvss4P0Components.RE_VALUES.L,
@@ -971,7 +971,7 @@ export class Cvss4P0Components {
     public static readonly U = {
         name: 'Provider Urgency',
         shortName: 'U',
-        description: '',
+        description: 'This supplemental metric provides a standardized way for the system provider to convey a qualitative urgency rating (Clear, Green, Amber, Red) for the vulnerability.',
         values: [
             Cvss4P0Components.U_VALUES.X,
             Cvss4P0Components.U_VALUES.Clear,
@@ -988,7 +988,7 @@ export class Cvss4P0Components {
         name: 'Modified Attack Vector',
         shortName: 'MAV',
         subCategory: 'Exploitability Metrics',
-        description: '',
+        description: 'Overrides the Base Attack Vector metric to reflect specific characteristics of the analyst\'s environment.',
         baseMetricEquivalent: Cvss4P0Components.AV,
         values: Cvss4P0Components.AV.values,
         worseCaseValue: Cvss4P0Components.AV_VALUES.N
@@ -998,7 +998,7 @@ export class Cvss4P0Components {
         name: 'Modified Attack Complexity',
         shortName: 'MAC',
         subCategory: 'Exploitability Metrics',
-        description: '',
+        description: 'Overrides the Base Attack Complexity metric to reflect specific characteristics of the analyst\'s environment.',
         baseMetricEquivalent: Cvss4P0Components.AC,
         values: Cvss4P0Components.AC.values,
         worseCaseValue: Cvss4P0Components.AC_VALUES.L
@@ -1008,7 +1008,7 @@ export class Cvss4P0Components {
         name: 'Modified Attack Requirements',
         shortName: 'MAT',
         subCategory: 'Exploitability Metrics',
-        description: '',
+        description: 'Overrides the Base Attack Requirements metric to reflect specific characteristics of the analyst\'s environment.',
         baseMetricEquivalent: Cvss4P0Components.AT,
         values: Cvss4P0Components.AT.values,
         worseCaseValue: Cvss4P0Components.AT_VALUES.P
@@ -1018,7 +1018,7 @@ export class Cvss4P0Components {
         name: 'Modified Privileges Required',
         shortName: 'MPR',
         subCategory: 'Exploitability Metrics',
-        description: '',
+        description: 'Overrides the Base Privileges Required metric to reflect specific characteristics of the analyst\'s environment.',
         baseMetricEquivalent: Cvss4P0Components.PR,
         values: Cvss4P0Components.PR.values,
         worseCaseValue: Cvss4P0Components.PR_VALUES.N
@@ -1028,7 +1028,7 @@ export class Cvss4P0Components {
         name: 'Modified User Interaction',
         shortName: 'MUI',
         subCategory: 'Exploitability Metrics',
-        description: '',
+        description: 'Overrides the Base User Interaction metric to reflect specific characteristics of the analyst\'s environment.',
         baseMetricEquivalent: Cvss4P0Components.UI,
         values: Cvss4P0Components.UI.values,
         worseCaseValue: Cvss4P0Components.UI_VALUES.N
@@ -1038,7 +1038,7 @@ export class Cvss4P0Components {
         name: 'Modified Confidentiality',
         shortName: 'MVC',
         subCategory: 'Vulnerable System Impact',
-        description: '',
+        description: 'Overrides the Base Vulnerable System Confidentiality metric to reflect specific characteristics of the analyst\'s environment.',
         baseMetricEquivalent: Cvss4P0Components.VC,
         values: Cvss4P0Components.VULNERABLE_SYSTEM_CONFIDENTIALITY_BASE,
         worseCaseValue: Cvss4P0Components.VULNERABLE_SYSTEM_CONFIDENTIALITY_BASE_VALUES.H
@@ -1048,7 +1048,7 @@ export class Cvss4P0Components {
         name: 'Modified Integrity',
         shortName: 'MVI',
         subCategory: 'Vulnerable System Impact',
-        description: '',
+        description: 'Overrides the Base Vulnerable System Integrity metric to reflect specific characteristics of the analyst\'s environment.',
         baseMetricEquivalent: Cvss4P0Components.VI,
         values: Cvss4P0Components.VULNERABLE_SYSTEM_INTEGRITY_BASE,
         worseCaseValue: Cvss4P0Components.VULNERABLE_SYSTEM_INTEGRITY_BASE_VALUES.H
@@ -1058,7 +1058,7 @@ export class Cvss4P0Components {
         name: 'Modified Availability',
         shortName: 'MVA',
         subCategory: 'Vulnerable System Impact',
-        description: '',
+        description: 'Overrides the Base Vulnerable System Availability metric to reflect specific characteristics of the analyst\'s environment.',
         baseMetricEquivalent: Cvss4P0Components.VA,
         values: Cvss4P0Components.VULNERABLE_SYSTEM_AVAILABILITY_BASE,
         worseCaseValue: Cvss4P0Components.VULNERABLE_SYSTEM_AVAILABILITY_BASE_VALUES.H
@@ -1068,7 +1068,7 @@ export class Cvss4P0Components {
         name: 'Modified Confidentiality',
         shortName: 'MSC',
         subCategory: 'Subsequent System Impact',
-        description: '',
+        description: 'Overrides the Base Subsequent System Confidentiality metric to reflect specific characteristics of the analyst\'s environment.',
         baseMetricEquivalent: Cvss4P0Components.SC,
         values: Cvss4P0Components.SUBSEQUENT_SYSTEM_CONFIDENTIALITY_MODIFIED,
         worseCaseValue: Cvss4P0Components.SUBSEQUENT_SYSTEM_CONFIDENTIALITY_MODIFIED_VALUES.H
@@ -1078,7 +1078,7 @@ export class Cvss4P0Components {
         name: 'Modified Integrity',
         shortName: 'MSI',
         subCategory: 'Subsequent System Impact',
-        description: '',
+        description: 'Overrides the Base Subsequent System Integrity metric to reflect specific characteristics of the analyst\'s environment.',
         baseMetricEquivalent: Cvss4P0Components.SI,
         baseMetricEquivalentMapper: (value: VectorComponentValue) => {
             if (value === Cvss4P0Components.SUBSEQUENT_SYSTEM_INTEGRITY_MODIFIED_VALUES.S) {
@@ -1094,7 +1094,7 @@ export class Cvss4P0Components {
         name: 'Modified Availability',
         shortName: 'MSA',
         subCategory: 'Subsequent System Impact',
-        description: '',
+        description: 'Overrides the Base Subsequent System Availability metric to reflect specific characteristics of the analyst\'s environment.',
         baseMetricEquivalent: Cvss4P0Components.SA,
         baseMetricEquivalentMapper: (value: VectorComponentValue) => {
             if (value === Cvss4P0Components.SUBSEQUENT_SYSTEM_AVAILABILITY_MODIFIED_VALUES.S) {
@@ -1109,7 +1109,7 @@ export class Cvss4P0Components {
     public static readonly CR = {
         name: 'Confidentiality Requirement',
         shortName: 'CR',
-        description: '',
+        description: 'This metric enables the consumer to customize the assessment depending on the importance of Confidentiality to the affected IT asset within the analyst\'s organization.',
         values: Cvss4P0Components.REQUIREMENT_CONFIDENTIALITY_MODIFIED,
         worseCaseValue: Cvss4P0Components.REQUIREMENT_CONFIDENTIALITY_MODIFIED_VALUES.H
     };
@@ -1117,7 +1117,7 @@ export class Cvss4P0Components {
     public static readonly IR = {
         name: 'Integrity Requirement',
         shortName: 'IR',
-        description: '',
+        description: 'This metric enables the consumer to customize the assessment depending on the importance of Integrity to the affected IT asset within the analyst\'s organization.',
         values: Cvss4P0Components.REQUIREMENT_INTEGRITY_MODIFIED,
         worseCaseValue: Cvss4P0Components.REQUIREMENT_INTEGRITY_MODIFIED_VALUES.H
     };
@@ -1125,7 +1125,7 @@ export class Cvss4P0Components {
     public static readonly AR = {
         name: 'Availability Requirement',
         shortName: 'AR',
-        description: '',
+        description: 'This metric enables the consumer to customize the assessment depending on the importance of Availability to the affected IT asset within the analyst\'s organization.',
         values: Cvss4P0Components.REQUIREMENT_AVAILABILITY_MODIFIED,
         worseCaseValue: Cvss4P0Components.REQUIREMENT_AVAILABILITY_MODIFIED_VALUES.H
     };
@@ -1161,7 +1161,7 @@ export class Cvss4P0Components {
     public static readonly E = {
         name: 'Exploit Maturity',
         shortName: 'E',
-        description: '',
+        description: 'This metric measures the likelihood of the vulnerability being attacked, based on the current state of exploit techniques, exploit code availability, and active in-the-wild exploitation.',
         values: [
             Cvss4P0Components.E_VALUES.X,
             Cvss4P0Components.E_VALUES.A,
