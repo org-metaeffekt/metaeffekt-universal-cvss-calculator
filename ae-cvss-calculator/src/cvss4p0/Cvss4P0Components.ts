@@ -803,7 +803,7 @@ export class Cvss4P0Components {
     };
 
     public static readonly AU = {
-        name: 'Automated',
+        name: 'Automatable',
         shortName: 'AU',
         description: 'This supplemental metric captures whether an attacker can reliably automate exploitation of this vulnerability across multiple targets, based on the first four steps of the kill chain (reconnaissance, weaponization, delivery, and exploitation).',
         values: [
@@ -924,7 +924,7 @@ export class Cvss4P0Components {
     public static readonly RE = {
         name: 'Vulnerability Response Effort',
         shortName: 'RE',
-        description: 'This supplemental metric provides supplemental information on how difficult it is for consumers to provide an initial response to the impact of a vulnerability for deployed products and services.',
+        description: 'This supplemental metric provides supplemental information on how difficult it is for consumers to provide an initial response to the impact of a vulnerability for deployed products and services in their infrastructure.',
         values: [
             Cvss4P0Components.RE_VALUES.X,
             Cvss4P0Components.RE_VALUES.L,
@@ -1161,7 +1161,7 @@ export class Cvss4P0Components {
     public static readonly E = {
         name: 'Exploit Maturity',
         shortName: 'E',
-        description: 'This metric measures the likelihood of the vulnerability being attacked, based on the current state of exploit techniques, exploit code availability, and active in-the-wild exploitation.',
+        description: 'This metric measures the likelihood of the vulnerability being attacked, and is based on the current state of exploit techniques, exploit code availability, or active in-the-wild exploitation.',
         values: [
             Cvss4P0Components.E_VALUES.X,
             Cvss4P0Components.E_VALUES.A,
