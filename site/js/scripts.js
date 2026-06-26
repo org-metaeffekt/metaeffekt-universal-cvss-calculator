@@ -1564,9 +1564,9 @@ function setSelectedVector(vectorInstance) {
                 componentHeader.setAttribute('title', component.shortName + ' - ' + component.name);
                 if (component.description) {
                     componentHeader.setAttribute('data-bs-html', true);
-                    componentHeader.setAttribute('data-bs-content', component.description + '<br/>Click to copy metric value to clipboard.');
+                    componentHeader.setAttribute('data-bs-content', component.description);
                 } else {
-                    componentHeader.setAttribute('data-bs-content', 'Click to copy metric value to clipboard.');
+                    componentHeader.setAttribute('data-bs-content', 'No description available.');
                 }
                 componentHeader.setAttribute('data-bs-trigger', 'hover focus');
                 componentHeader.classList.add('col-12', 'col-xl-3', 'col-xxl-3', 'align-middle', 'pe-2');
@@ -2252,7 +2252,7 @@ function loadDemo() {
 
 setTimeout(() => {
     const currentHtmlVersion = document.getElementById('cvss-calculator-current-version').innerText;
-    if (currentHtmlVersion !== '1.0.25') {
+    if (currentHtmlVersion !== '1.0.26') {
         createBootstrapToast('New version available', 'A new version of the CVSS Calculator is available. Please refresh the page to load the new version or clear the cache.', 'info', 10 * 1000);
     }
     const changelogBody = document.getElementById('cvss-calculator-changelog-body');

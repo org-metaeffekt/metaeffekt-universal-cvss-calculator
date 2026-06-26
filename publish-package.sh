@@ -14,6 +14,7 @@ fi
 
 cd ae-cvss-calculator
 
+npm i
 npm ci
 npm run build
 
