@@ -26,7 +26,6 @@ import { getEqImplementations } from "./EqOperations";
 import { Cvss4P0Components } from "./Cvss4P0Components";
 import { EQ } from "./EQ";
 import { SeverityType } from "../cvss3p1/Cvss3P1";
-import { Cvss3P1Components } from "../cvss3p1/Cvss3P1Components";
 
 export class Cvss4P0 extends CvssVector<V4ScoreResult> {
 
@@ -371,7 +370,7 @@ export class Cvss4P0 extends CvssVector<V4ScoreResult> {
     }
 
     public isAnyBaseDefined(): boolean {
-        return super.isCategoryPartiallyDefined(Cvss3P1Components.BASE_CATEGORY);
+        return super.isCategoryPartiallyDefined(Cvss4P0Components.BASE_CATEGORY);
     }
 
     public isThreatFullyDefined(): boolean {
