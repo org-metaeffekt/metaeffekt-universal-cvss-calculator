@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 import {Cvss4P0} from "../src";
+import {Cvss4P0Components} from "../src/cvss4p0/Cvss4P0Components";
 
 import fs from "fs";
 
@@ -97,5 +98,25 @@ describe('Cvss4P0', () => {
         expect(scores.baseMetricsOnly).toEqual(2.1);
         expect(scores.environmental).toEqual(4.6);
         expect(scores.threat).toEqual(0.3);
+    });
+
+    it('should only offer spec-defined values on the base subsequent system metrics', () => {
+        [Cvss4P0Components.SC, Cvss4P0Components.SI, Cvss4P0Components.SA].forEach(component => {
+            expect(component.values.map(v => v.shortName)).toEqual(['X', 'H', 'L', 'N']);
+        });
+    });
+
+    it('should reject Safety on the base subsequent system metrics', () => {
+        const base = "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H";
+        expect(() => new Cvss4P0(`${base}/SC:S/SI:H/SA:H`)).toThrow();
+        expect(() => new Cvss4P0(`${base}/SC:H/SI:S/SA:H`)).toThrow();
+        expect(() => new Cvss4P0(`${base}/SC:H/SI:H/SA:S`)).toThrow();
+    });
+
+    it('should accept Safety on the modified subsequent system metrics', () => {
+        const base = "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H";
+        expect(() => new Cvss4P0(`${base}/MSI:S`)).not.toThrow();
+        expect(() => new Cvss4P0(`${base}/MSA:S`)).not.toThrow();
+        expect(() => new Cvss4P0(`${base}/MSC:S`)).toThrow();
     });
 });
