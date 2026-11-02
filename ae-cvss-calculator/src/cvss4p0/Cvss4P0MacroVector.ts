@@ -176,7 +176,7 @@ export class Cvss4P0MacroVector {
     ];
 
     public static EQ4_DEFINITIONS: EQ[] = [
-        new EQ("0", 6, ["SC:H/SI:S/SA:S"], (vector) => this.is(vector, "MSI", "S") || this.is(vector, "MSA", "S")),
+        new EQ("0", 6, ["SC:H/SI:H/SA:H/MSI:S/MSA:S"], (vector) => this.is(vector, "MSI", "S") || this.is(vector, "MSA", "S")),
         new EQ("1", 5, ["SC:H/SI:H/SA:H"], (vector) => !(this.is(vector, "MSI", "S") && this.is(vector, "MSA", "S")) && (this.is(vector, "SC", "H") || this.is(vector, "SI", "H") || this.is(vector, "SA", "H"))),
         new EQ("2", 4, ["SC:L/SI:L/SA:L"], (vector) => !(this.is(vector, "MSI", "S") && this.is(vector, "MSA", "S")) && !(this.is(vector, "SC", "H") || this.is(vector, "SI", "H") || this.is(vector, "SA", "H")))
     ];
@@ -222,17 +222,6 @@ export class Cvss4P0MacroVector {
             return Cvss4P0Components.REQUIREMENT_INTEGRITY_MODIFIED_VALUES.H;
         } else if ("AR" === component && Cvss4P0Components.REQUIREMENT_AVAILABILITY_MODIFIED_VALUES.X === selectedComponentValue) {
             return Cvss4P0Components.REQUIREMENT_AVAILABILITY_MODIFIED_VALUES.H;
-        }
-
-        // Special cases for MSI and MSA
-        // the SI:S cannot happen in reality, but the reference implementation checks for it, so we do too
-        if ("MSI" === component && Cvss4P0Components.SUBSEQUENT_SYSTEM_INTEGRITY_MODIFIED_VALUES.X === selectedComponentValue
-            && "S" === vector.getComponentByString("SI").shortName) {
-            return Cvss4P0Components.SUBSEQUENT_SYSTEM_INTEGRITY_MODIFIED_VALUES.H;
-        }
-        if ("MSA" === component && Cvss4P0Components.SUBSEQUENT_SYSTEM_AVAILABILITY_MODIFIED_VALUES.X === selectedComponentValue
-            && "S" === vector.getComponentByString("SA").shortName) {
-            return Cvss4P0Components.SUBSEQUENT_SYSTEM_AVAILABILITY_MODIFIED_VALUES.H;
         }
 
         // All other environmental metrics just overwrite base score values,

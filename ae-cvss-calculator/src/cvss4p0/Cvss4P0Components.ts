@@ -130,13 +130,6 @@ export class Cvss4P0Components {
             jsonSchemaName: 'NOT_DEFINED',
             description: 'Component is not defined.'
         },
-        S: {
-            shortName: 'S',
-            name: 'Safety',
-            jsonSchemaName: 'SAFETY',
-            description: '! NOT A VALID VALUE FOR Safety (S), REQUIRED FOR CALCULATION OF SCORE !',
-            hide: true
-        },
         H: {
             shortName: 'H',
             name: 'High',
@@ -159,7 +152,6 @@ export class Cvss4P0Components {
 
     public static readonly SUBSEQUENT_SYSTEM_CONFIDENTIALITY_BASE = [
         Cvss4P0Components.SUBSEQUENT_SYSTEM_CONFIDENTIALITY_BASE_VALUES.X,
-        Cvss4P0Components.SUBSEQUENT_SYSTEM_CONFIDENTIALITY_BASE_VALUES.S,
         Cvss4P0Components.SUBSEQUENT_SYSTEM_CONFIDENTIALITY_BASE_VALUES.H,
         Cvss4P0Components.SUBSEQUENT_SYSTEM_CONFIDENTIALITY_BASE_VALUES.L,
         Cvss4P0Components.SUBSEQUENT_SYSTEM_CONFIDENTIALITY_BASE_VALUES.N
@@ -172,13 +164,6 @@ export class Cvss4P0Components {
             abbreviatedName: 'Not Def.',
             jsonSchemaName: 'NOT_DEFINED',
             description: 'Component is not defined.'
-        },
-        S: {
-            shortName: 'S',
-            name: 'Safety',
-            jsonSchemaName: 'SAFETY',
-            description: '! NOT A VALID VALUE FOR Safety (S), REQUIRED FOR CALCULATION OF SCORE !',
-            hide: true
         },
         H: {
             shortName: 'H',
@@ -202,7 +187,6 @@ export class Cvss4P0Components {
 
     public static readonly SUBSEQUENT_SYSTEM_INTEGRITY_BASE = [
         Cvss4P0Components.SUBSEQUENT_SYSTEM_INTEGRITY_BASE_VALUES.X,
-        Cvss4P0Components.SUBSEQUENT_SYSTEM_INTEGRITY_BASE_VALUES.S,
         Cvss4P0Components.SUBSEQUENT_SYSTEM_INTEGRITY_BASE_VALUES.H,
         Cvss4P0Components.SUBSEQUENT_SYSTEM_INTEGRITY_BASE_VALUES.L,
         Cvss4P0Components.SUBSEQUENT_SYSTEM_INTEGRITY_BASE_VALUES.N
@@ -215,13 +199,6 @@ export class Cvss4P0Components {
             abbreviatedName: 'Not Def.',
             jsonSchemaName: 'NOT_DEFINED',
             description: 'Component is not defined.'
-        },
-        S: {
-            shortName: 'S',
-            name: 'Safety',
-            jsonSchemaName: 'SAFETY',
-            description: '! NOT A VALID VALUE FOR Safety (S), REQUIRED FOR CALCULATION OF SCORE !',
-            hide: true
         },
         H: {
             shortName: 'H',
@@ -245,7 +222,6 @@ export class Cvss4P0Components {
 
     public static readonly SUBSEQUENT_SYSTEM_AVAILABILITY_BASE = [
         Cvss4P0Components.SUBSEQUENT_SYSTEM_AVAILABILITY_BASE_VALUES.X,
-        Cvss4P0Components.SUBSEQUENT_SYSTEM_AVAILABILITY_BASE_VALUES.S,
         Cvss4P0Components.SUBSEQUENT_SYSTEM_AVAILABILITY_BASE_VALUES.H,
         Cvss4P0Components.SUBSEQUENT_SYSTEM_AVAILABILITY_BASE_VALUES.L,
         Cvss4P0Components.SUBSEQUENT_SYSTEM_AVAILABILITY_BASE_VALUES.N
@@ -1591,10 +1567,7 @@ export class Cvss4P0Components {
         ],
         [
             Cvss4P0Components.SUBSEQUENT_SYSTEM_INTEGRITY_MODIFIED_VALUES.S,
-            Cvss4P0Components.SUBSEQUENT_SYSTEM_AVAILABILITY_MODIFIED_VALUES.S,
-            Cvss4P0Components.SUBSEQUENT_SYSTEM_CONFIDENTIALITY_BASE_VALUES.S,
-            Cvss4P0Components.SUBSEQUENT_SYSTEM_INTEGRITY_BASE_VALUES.S,
-            Cvss4P0Components.SUBSEQUENT_SYSTEM_AVAILABILITY_BASE_VALUES.S
+            Cvss4P0Components.SUBSEQUENT_SYSTEM_AVAILABILITY_MODIFIED_VALUES.S
         ],
 
         // RequirementsCia
