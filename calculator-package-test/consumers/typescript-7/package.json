@@ -1,0 +1,14 @@
+{
+  "name": "consumer-typescript-7",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Type checks with TypeScript 7 for nodenext and bundler resolution, the nodenext part also runs on Node with type stripping",
+  "type": "module",
+  "scripts": {
+    "test": "tsc -p nodenext && node nodenext/check.ts && tsc -p bundler"
+  },
+  "devDependencies": {
+    "@types/node": "24.19.2",
+    "typescript": "7.0.2"
+  }
+}

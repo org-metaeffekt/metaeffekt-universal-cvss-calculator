@@ -21,10 +21,7 @@ npm run build
 TARBALL_NAME=$(npm pack)
 TARBALL_PATH="$(pwd)/${TARBALL_NAME}"
 
-cd ../calculator-package-test
-rm -rf node_modules package-lock.json
-npm install "${TARBALL_PATH}" --no-save
-npm test
+bash ../calculator-package-test/run-tests.sh "${TARBALL_PATH}"
 
 cd ..
 npm publish "${TARBALL_PATH}" ${PUBLISH_MODE}

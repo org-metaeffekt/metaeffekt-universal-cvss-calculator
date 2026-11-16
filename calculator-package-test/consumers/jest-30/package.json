@@ -1,0 +1,16 @@
+{
+  "name": "consumer-jest-30",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Jest 30 in CommonJS projects: plain JavaScript with jest.doMock, ts-jest, and a second run with --experimental-vm-modules",
+  "scripts": {
+    "test": "jest && node --experimental-vm-modules node_modules/jest/bin/jest.js"
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/node": "^24.10.0",
+    "jest": "^30.5.2",
+    "ts-jest": "^29.4.12",
+    "typescript": "^5.9.3"
+  }
+}

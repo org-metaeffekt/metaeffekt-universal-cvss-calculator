@@ -1,0 +1,14 @@
+{
+  "name": "consumer-node-esm-nodenext",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Node ES module projects type-checked with moduleResolution nodenext that use the default export",
+  "type": "module",
+  "scripts": {
+    "test": "tsc -p default-import && node default-import/dist/src/check.js && tsc -b checkjs && node checkjs/lib/check.js"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.0",
+    "typescript": "^6.0.3"
+  }
+}

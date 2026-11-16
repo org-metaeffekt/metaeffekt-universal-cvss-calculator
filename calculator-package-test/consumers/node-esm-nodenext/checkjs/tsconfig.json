@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "composite": true,
+    "target": "esnext",
+    "module": "nodenext",
+    "types": ["node"],
+    "moduleResolution": "nodenext",
+    "allowJs": true,
+    "checkJs": true,
+    "emitDeclarationOnly": true,
+    "outDir": "./build/",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true
+  },
+  "include": ["**/*.js"],
+  "exclude": ["node_modules", "build"]
+}

@@ -1,0 +1,10 @@
+{
+  "name": "calculator-package-test-esm",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Integration test for the cvss calculator package loaded as an ES module",
+  "type": "module",
+  "scripts": {
+    "test": "node index.js && node named-imports.js"
+  }
+}

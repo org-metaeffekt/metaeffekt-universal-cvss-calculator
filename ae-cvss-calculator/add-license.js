@@ -19,21 +19,26 @@ const fs = require('fs');
 const path = require('path');
 
 const licensePath = path.join(__dirname, 'res/license-header.txt');
-const bundlePath = path.join(__dirname, 'dist/ae-cvss-calculator.js');
-
-console.log('Adding license header to bundle:');
-console.log('  license: ' + licensePath);
-console.log('  bundle:  ' + bundlePath);
-
 if (!fs.existsSync(licensePath)) {
     throw new Error('License file not found in ' + licensePath);
 }
+const license = fs.readFileSync(licensePath, 'utf8');
 
-if (!fs.existsSync(bundlePath)) {
-    throw new Error('Bundle file not found in ' + bundlePath);
+function addLicenseTo(addToFile) {
+    console.log('Adding license header:');
+    console.log('  license: ' + licensePath);
+    console.log('  target:  ' + addToFile);
+
+    if (!fs.existsSync(addToFile)) {
+        throw new Error('Target file not found in ' + addToFile);
+    }
+
+    const bundle = fs.readFileSync(addToFile, 'utf8');
+
+    fs.writeFileSync(addToFile, license + '\n' + bundle);
 }
 
-const license = fs.readFileSync(licensePath, 'utf8');
-const bundle = fs.readFileSync(bundlePath, 'utf8');
-
-fs.writeFileSync(bundlePath, license + '\n' + bundle);
+const bundlePath = path.join(__dirname, 'dist/ae-cvss-calculator.js');
+addLicenseTo(bundlePath);
+const mjsBundlePath = path.join(__dirname, 'dist/ae-cvss-calculator.mjs');
+addLicenseTo(mjsBundlePath);
