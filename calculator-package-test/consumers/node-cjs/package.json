@@ -1,0 +1,15 @@
+{
+  "name": "consumer-node-cjs",
+  "version": "1.0.0",
+  "private": true,
+  "description": "CommonJS projects: plain require, tsc with module commonjs and moduleResolution node10, require.resolve of package.json and copying the bundle out of dist, run on Node and Bun",
+  "type": "commonjs",
+  "scripts": {
+    "test": "tsc && node scripts/copy-bundle.mjs && node dist/check.js && node dist/vendor-check.js && bun src/check.ts && node plain/check.js && node plain/scores.cjs"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.0",
+    "bun": "^1.3.0",
+    "typescript": "^5.9.3"
+  }
+}

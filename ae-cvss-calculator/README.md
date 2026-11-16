@@ -52,8 +52,19 @@ npm install ae-cvss-calculator
 ## Usage
 
 The library exports classes for CVSS versions 2.0 (`Cvss2`), 3.0 (`Cvss3P0`), 3.1 (`Cvss3P1`), and 4.0 (`Cvss4P0`), along with utility functions for parsing.
+The metric definitions of each version are exported as `Cvss2Components`, `Cvss3P0Components`, `Cvss3P1Components` and `Cvss4P0Components`.
 
 ![Dependency Graph of all Classes and Interfaces in the CVSS Calculator Library, see on GitHub if image is not rendering: https://github.com/org-metaeffekt/metaeffekt-universal-cvss-calculator/blob/master/ae-cvss-calculator/dependency-graph.png](dependency-graph.png)
+
+### Importing
+
+```typescript
+// ES modules, TypeScript and bundlers
+import { Cvss3P1, fromVector } from 'ae-cvss-calculator';
+
+// CommonJS
+const { Cvss3P1, fromVector } = require('ae-cvss-calculator');
+```
 
 ### Basic Usage (Specific Version)
 
@@ -93,13 +104,17 @@ if (cvss) {
 
 ### Modifying Components
 
-You can modify vector components programmatically using `applyComponentString`.
+You can modify vector components programmatically, either by their short names with `applyComponentString` or with the metric definitions from the `*Components` classes with `applyComponent`.
 
 ```typescript
-const cvss = new Cvss4P0('CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:L/A:N');
+import { Cvss4P0, Cvss4P0Components } from 'ae-cvss-calculator';
+
+const cvss = new Cvss4P0('CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:L/VA:N/SC:N/SI:N/SA:N');
 
 cvss.applyComponentString('AV', 'P');
 cvss.applyComponent(Cvss4P0Components.AC, Cvss4P0Components.AC_VALUES.H);
+
+console.log(cvss.toString()); // CVSS:4.0/AV:P/AC:H/AT:N/PR:N/UI:N/VC:H/VI:L/VA:N/SC:N/SI:N/SA:N
 ```
 
 ## Build
@@ -111,7 +126,11 @@ npm install
 npm run build
 ```
 
-The minified `ae-cvss-calculator.js` can be found in the `dist` directory.
+The `dist` directory then contains:
+
+- `ae-cvss-calculator.js`, the minified UMD bundle used by `require`, bundlers and `<script>` tags.
+- `ae-cvss-calculator.mjs`, the ES module entry used by `import`.
+- `types/`, the TypeScript declarations, with `types/index.d.mts` for the ES module entry.
 
 Otherwise, you can also build the packaged version by running `npm pack`.
 
@@ -124,5 +143,6 @@ To publish a new version:
 2. Publish Package
    - Run `npm login` and follow their authentication flow.
    - Optionally run the [./publish-package.sh](../publish-package.sh) script on the top level of the repository to perform a dry run first, inspecting the package contents on the command line from the logs.
-   - Optionally try manually installing the package into a test project via `npm i /path/to/metaeffekt-universal-cvss-calculator/ae-cvss-calculator/ae-cvss-calculator-x.x.x.tgz`.
+     The script installs the packed tarball into every folder of [calculator-package-test](../calculator-package-test) and stops if any of them fails, see [setup.md](../calculator-package-test/setup.md) for what each folder covers.
+   - Already run by `.publish-package.sh`, so you don't have to do this manually: run the package tests on their own against a tarball or a released version via `../calculator-package-test/run-tests.sh ae-cvss-calculator-x.x.x.tgz` or `../calculator-package-test/run-tests.sh x.x.x`.
    - Finally, run [./publish-package.sh publish](../publish-package.sh) to publish the package.

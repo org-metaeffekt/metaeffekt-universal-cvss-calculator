@@ -1,0 +1,19 @@
+{
+  "name": "consumer-vitest-4",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Vitest 4 with jsdom and Vue single file components, with vi.mock and with the real package",
+  "type": "module",
+  "scripts": {
+    "test": "vitest run --config ./tests/unit/vitest.config.js"
+  },
+  "dependencies": {
+    "vue": "3.5.26"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.2.1",
+    "@vue/test-utils": "^2.4.6",
+    "jsdom": "^27.4.0",
+    "vitest": "^4.0.16"
+  }
+}

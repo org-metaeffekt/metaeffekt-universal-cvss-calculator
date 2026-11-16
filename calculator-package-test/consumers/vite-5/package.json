@@ -1,0 +1,14 @@
+{
+  "name": "consumer-vite-5",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Vite 5 with TypeScript 5.5 project references and a named import",
+  "type": "module",
+  "scripts": {
+    "test": "tsc -b && vite build && node dist/cvss-check.js"
+  },
+  "devDependencies": {
+    "typescript": "5.5.4",
+    "vite": "5.3.4"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "name": "consumer-webpack-5",
+  "version": "1.0.0",
+  "private": true,
+  "description": "webpack 5 production builds: babel-loader on all JavaScript with the default export, vue-loader with named imports",
+  "type": "module",
+  "scripts": {
+    "test": "NODE_ENV=production webpack --mode production && node dist/default-import.js && node dist/vue-sfc.cjs"
+  },
+  "dependencies": {
+    "vue": "3.5.26"
+  },
+  "devDependencies": {
+    "@babel/core": "^8.0.1",
+    "@babel/preset-env": "^8.0.2",
+    "babel-loader": "^10.1.1",
+    "vue-loader": "^17.4.2",
+    "webpack": "^5.110.3",
+    "webpack-cli": "^7.2.3"
+  }
+}

@@ -1,2 +1,9 @@
 # generated bundle
 site/js/ae-cvss-calculator.js
+
+/ae-cvss-calculator/dist
+/ae-cvss-calculator/node_modules
+
+.idea
+
+ae-cvss-calculator-*.tgz

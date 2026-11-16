@@ -1,0 +1,21 @@
+{
+  "name": "consumer-next-15",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Next 15 app router with webpack, named import used from a client component",
+  "type": "module",
+  "scripts": {
+    "test": "NEXT_TELEMETRY_DISABLED=1 next build && node check-build.mjs"
+  },
+  "dependencies": {
+    "next": "15.5.28",
+    "react": "19.2.3",
+    "react-dom": "19.2.3"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.0",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "typescript": "^5.8.3"
+  }
+}

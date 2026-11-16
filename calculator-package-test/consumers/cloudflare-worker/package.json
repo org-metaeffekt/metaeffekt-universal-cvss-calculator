@@ -1,0 +1,14 @@
+{
+  "name": "consumer-cloudflare-worker",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Cloudflare worker bundled by wrangler with a named import, type-checked with TypeScript 7",
+  "type": "module",
+  "scripts": {
+    "test": "tsc -p worker && WRANGLER_SEND_METRICS=false wrangler deploy --dry-run --outdir dist && node check.js"
+  },
+  "devDependencies": {
+    "typescript": "^7.0.2",
+    "wrangler": "^4.112.0"
+  }
+}

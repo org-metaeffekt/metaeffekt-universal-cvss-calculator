@@ -13,9 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-export {CvssVector} from './CvssVector';
+export { CvssVector } from './CvssVector';
 export * from './CvssVectorUtilities';
-export {Cvss2} from './cvss2/Cvss2';
-export {Cvss3P1} from './cvss3p1/Cvss3P1';
-export {Cvss3P0} from './cvss3p0/Cvss3P0';
-export {Cvss4P0} from './cvss4p0/Cvss4P0';
+export { Cvss2 } from './cvss2/Cvss2';
+export { Cvss3P1 } from './cvss3p1/Cvss3P1';
+export { Cvss3P0 } from './cvss3p0/Cvss3P0';
+export { Cvss4P0 } from './cvss4p0/Cvss4P0';
+export { Cvss2Components } from './cvss2/Cvss2Components';
+export { Cvss3P0Components } from './cvss3p0/Cvss3P0Components';
+export { Cvss3P1Components } from './cvss3p1/Cvss3P1Components';
+export { Cvss4P0Components } from './cvss4p0/Cvss4P0Components';
